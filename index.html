@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>MONETA — clausier du cabinet</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+/* ---------- Charte FIDAL v2.2 ---------- */
+:root{
+  --nuit:#0F2238; --canard:#33838B; --orange:#FF982D; --carmin:#A01040;
+  --cyan:#6DD5DC; --jaune-forme:#FFE764; --jaune-texte:#FFC900;
+  --vert:#2E8B57; --papier:#FFFFFF; --gris:#F3F5F7; --trait:#D7DDE3; --texte:#1B2A3A; --doux:#5B6B7B;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:inherit;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:"Segoe UI",system-ui,sans-serif;color:var(--texte);background:var(--gris);line-height:1.5}
+h1,h2,h3{font-family:Georgia,"Times New Roman",serif;font-weight:normal;color:var(--nuit)}
+button{font:inherit;cursor:pointer}
+input,textarea,select{font:inherit}
+:focus-visible{outline:3px solid var(--cyan);outline-offset:2px}
+
+header{background:var(--nuit);color:#fff;padding:14px 22px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+header h1{color:#fff;font-size:1.6rem;letter-spacing:.04em}
+header small{opacity:.75}
+#etat-connexion{margin-left:auto;font-size:.85rem;opacity:.85}
+#btn-connexion{display:none;background:var(--canard);color:#fff;border:0;border-radius:4px;padding:7px 14px}
+
+main{max-width:980px;margin:0 auto;padding:24px 18px 60px}
+
+/* ---------- onglets ---------- */
+.onglets{display:flex;border-bottom:2px solid var(--trait);margin-bottom:18px;flex-wrap:wrap}
+.onglets button{background:none;border:0;padding:12px 18px;font-size:1rem;color:var(--nuit);border-bottom:3px solid transparent;margin-bottom:-2px;display:flex;align-items:center;gap:8px}
+.onglets button[aria-selected="true"]{border-bottom-color:var(--canard);font-weight:600}
+/* le compteur des dépôts en attente : l'élément qu'on doit voir en arrivant */
+.compteur{display:inline-flex;align-items:center;justify-content:center;min-width:1.7em;height:1.7em;padding:0 .45em;border-radius:1em;background:var(--orange);color:var(--nuit);font-weight:700;font-size:.85rem}
+.compteur.zero{background:var(--trait);color:var(--doux)}
+.panneau{display:none;background:var(--papier);border:1px solid var(--trait);border-radius:6px;padding:22px}
+.panneau.actif{display:block}
+
+label{display:block;font-size:.92rem;color:var(--nuit);margin-bottom:6px}
+select,textarea{width:100%;padding:10px 12px;border:1px solid var(--trait);border-radius:4px;background:#fff}
+textarea{min-height:140px;resize:vertical}
+.ligne{display:grid;gap:14px;margin-bottom:16px}
+@media(min-width:640px){.ligne.deux{grid-template-columns:1fr 1fr}}
+.aide{font-size:.85rem;color:var(--doux);margin-top:6px}
+
+.depot{display:block;border:2px dashed var(--canard);border-radius:6px;padding:34px;text-align:center;color:var(--nuit);background:#F7FBFB;cursor:pointer}
+.depot.survol{background:#E7F5F6}
+.depot input{display:none}
+.bouton{background:var(--canard);color:#fff;border:0;border-radius:4px;padding:11px 20px;font-size:1rem}
+.bouton.secondaire{background:#fff;color:var(--nuit);border:1px solid var(--nuit)}
+.bouton.discret{background:#fff;color:var(--carmin);border:1px solid var(--carmin)}
+.bouton[disabled]{opacity:.45;cursor:default}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;align-items:center}
+
+/* ---------- journal des versements en cours ---------- */
+#verses{margin-top:18px;list-style:none}
+#verses li{padding:8px 12px;border-left:4px solid var(--trait);background:var(--gris);margin-bottom:6px;font-size:.92rem;border-radius:0 3px 3px 0}
+#verses li.ok{border-left-color:var(--vert)}
+#verses li.ko{border-left-color:var(--carmin);background:#FBE9EE}
+
+/* ---------- file d'attente ---------- */
+table.file{width:100%;border-collapse:collapse}
+table.file th,table.file td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--trait);font-size:.93rem;vertical-align:top}
+table.file th{color:var(--doux);font-weight:600}
+table.file tr.ouvert td{background:#EAFAFB}
+.statut{font-size:.85rem;white-space:nowrap}
+.statut.attente{color:var(--doux)}.statut.decoupe{color:var(--canard)}.statut.erreur{color:var(--carmin)}
+.vide{padding:22px;text-align:center;color:var(--doux)}
+#fiche-depot{display:none;margin-top:18px;border:1px solid var(--trait);border-radius:6px;padding:18px;background:#FBFCFD}
+#fiche-depot h3{font-size:1.2rem;margin-bottom:6px}
+#fiche-texte{max-height:340px;overflow:auto;white-space:pre-wrap;font-family:Georgia,serif;font-size:.95rem;line-height:1.65;background:#fff;border:1px solid var(--trait);border-radius:4px;padding:14px 16px;margin-top:10px}
+.note-moteur{background:#FFF3C4;border-left:4px solid var(--jaune-texte);padding:9px 12px;border-radius:3px;margin-top:12px;font-size:.92rem}
+
+/* ---------- clausier ---------- */
+.type-acte{border-top:1px solid var(--trait);padding:14px 0}
+.type-acte:first-child{border-top:0;padding-top:0}
+.type-acte h3{font-size:1.15rem;display:flex;align-items:baseline;gap:10px}
+.type-acte h3 small{font-family:"Segoe UI",system-ui,sans-serif;font-size:.85rem;color:var(--doux)}
+.parties{list-style:none;margin-top:8px;columns:2 220px}
+.parties li{padding:3px 0;font-size:.93rem}
+.parties li span{color:var(--doux);margin-left:6px}
+
+.erreur{background:#FBE9EE;border-left:4px solid var(--carmin);padding:10px 14px;border-radius:3px;margin-bottom:14px;display:none}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <h1>MONETA</h1>
+  <small>Le clausier du cabinet</small>
+  <span id="etat-connexion">Connexion au Drive…</span>
+  <button id="btn-connexion">Autoriser l'accès au Drive</button>
+</header>
+
+<main>
+  <div id="erreur" class="erreur"></div>
+
+  <div class="onglets" role="tablist">
+    <button role="tab" aria-selected="true" data-onglet="verser">Verser</button>
+    <button role="tab" aria-selected="false" data-onglet="traiter">À traiter <span class="compteur zero" id="compteur">0</span></button>
+    <button role="tab" aria-selected="false" data-onglet="clausier">Clausier</button>
+  </div>
+
+  <!-- ======== VERSER : on dépose, rien d'autre ======== -->
+  <section class="panneau actif" id="panneau-verser" role="tabpanel">
+    <div class="ligne deux">
+      <div>
+        <label for="type-acte">Type d'acte</label>
+        <select id="type-acte"></select>
+        <p class="aide">Laissez « à reconnaître » si le lot mélange plusieurs types : MONETA le proposera au découpage.</p>
+      </div>
+      <div>
+        <label class="depot" id="zone-depot" for="fichiers">
+          Glissez ici un ou plusieurs actes (Word, PDF ou texte),<br>ou cliquez pour les choisir.
+          <input type="file" id="fichiers" multiple accept=".docx,.pdf,.txt">
+        </label>
+      </div>
+    </div>
+    <div class="ligne">
+      <div>
+        <label for="texte-colle">Ou collez un paragraphe d'acte</label>
+        <textarea id="texte-colle" placeholder="Le VENDEUR déclare que le BIEN n'est grevé d'aucune servitude…"></textarea>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="bouton" id="btn-verser-texte" disabled>Verser ce paragraphe</button>
+      <span class="aide">Les versements partent dans la file « À traiter ». Rien n'entre au clausier sans votre décision.</span>
+    </div>
+    <ul id="verses"></ul>
+  </section>
+
+  <!-- ======== À TRAITER : la file d'attente, du plus ancien au plus récent ======== -->
+  <section class="panneau" id="panneau-traiter" role="tabpanel">
+    <div id="file-contenu"><p class="vide">Chargement de la file…</p></div>
+    <div id="fiche-depot">
+      <h3 id="fiche-titre"></h3>
+      <p class="aide" id="fiche-meta"></p>
+      <div id="fiche-texte"></div>
+      <p class="note-moteur" id="fiche-note"></p>
+      <div class="actions">
+        <button class="bouton" id="btn-decouper">Découper et comparer</button>
+        <button class="bouton secondaire" id="btn-fermer">Fermer</button>
+        <button class="bouton discret" id="btn-retirer">Retirer de la file</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== CLAUSIER : un dossier par type d'acte, un sous-dossier par partie ======== -->
+  <section class="panneau" id="panneau-clausier" role="tabpanel">
+    <div id="clausier-contenu"><p class="vide">Chargement du clausier…</p></div>
+  </section>
+</main>
+
+<script>
+/* ============================================================
+   MONETA — squelette du 07/10/2026
+   Arbitrages (fiche clausier) : une application, deux moteurs ;
+   on VERSE d'un côté (file d'attente sur le Drive), on TRAITE quand on veut ;
+   le DÉCOUPAGE (neutralisation en champs, coupe en clauses, destination
+   proposée) tourne dès le versement ; la COMPARAISON tourne à l'ouverture
+   du dépôt, contre le clausier du jour ; l'humain tranche toujours.
+   Un dossier par type d'acte, sans tronc commun.
+   ÉTAT : écran, versement, file et clausier en place ; les deux moteurs
+   répondent « à venir » (plan des parties encore à construire).
+   ============================================================ */
+
+/* ---------- paramètres réglables en tête ---------- */
+// Types d'actes du premier périmètre (07/10/2026) — une ligne à ajouter pour élargir
+const TYPES_ACTE = [
+  { code: "vente",        libelle: "Vente" },
+  { code: "promesse",     libelle: "Promesse de vente" },
+  { code: "statuts-sci",  libelle: "Statuts de SCI" },
+  { code: "donation-parts",   libelle: "Donation de parts sociales" },
+  { code: "donation-immeuble", libelle: "Donation d'immeuble" },
+];
+// Plan des parties par type d'acte : À CONSTRUIRE ENSEMBLE EN SÉANCE (vide pour l'instant)
+const PARTIES = { "vente": [], "promesse": [], "statuts-sci": [], "donation-parts": [], "donation-immeuble": [] };
+
+// Accès Drive PROPRE À MONETA : portée « drive.file » — MONETA ne voit et ne modifie
+// QUE les dossiers et fichiers qu'elle a créés elle-même ; rien d'autre du Drive.
+// (La connexion commune acces.js est en lecture seule : elle ne permet pas d'écrire.)
+// Même client OAuth que la suite (client TRENTE) : l'origine de MONETA doit y être déclarée.
+const CLIENT_ID = "82507767087-kr2q7r67r2m4llj6ftldgr4rc2n24gbu.apps.googleusercontent.com";
+const PORTEE = "https://www.googleapis.com/auth/drive.file";
+const DOSSIER_RACINE = "MONETA";
+const DOSSIER_FILE = "File d'attente";
+const DOSSIER_CLAUSIER = "Clausier";
+const MOTEURS = "/api/moteurs";           // fonction serveur unique, à actions (limite Vercel Hobby)
+const DRIVE = "https://www.googleapis.com/drive/v3/files";
+const DRIVE_ENVOI = "https://www.googleapis.com/upload/drive/v3/files";
+
+/* Forme d'un DÉPÔT (fichier JSON dans « File d'attente ») :
+   { moneta: 1, id, nom, origine: "fichier"|"collé", type_acte (code ou null),
+     verse_le (ISO), statut: "attente-decoupage"|"decoupe"|"erreur",
+     texte, html (Word seulement, pour garder les titres), clauses: [] }
+   Forme d'une CLAUSE (à venir, fichier JSON dans Clausier/<type>/<partie>/) :
+   { moneta: 1, id, type_acte, partie, texte_neutralise, champs: ["[VENDEUR]", …],
+     indication_cachee, source: { depot, nom, verse_le }, admise_le, admise_par } */
+
+const etat = { jeton: null, expire: 0, dossiers: {}, file: [], ouvert: null };
+
+/* ---------- petits outils ---------- */
+const $ = id => document.getElementById(id);
+const echapper = t => String(t ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const dateCourte = iso => new Date(iso).toLocaleString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" });
+const libelleType = code => TYPES_ACTE.find(t => t.code === code)?.libelle || "à reconnaître";
+function montrerErreur(msg) { const e = $("erreur"); e.textContent = msg; e.style.display = "block"; }
+function cacherErreur() { $("erreur").style.display = "none"; }
+
+/* ---------- onglets ---------- */
+document.querySelectorAll(".onglets [role=tab]").forEach(b => b.addEventListener("click", () => {
+  document.querySelectorAll(".onglets [role=tab]").forEach(x => x.setAttribute("aria-selected", x === b));
+  document.querySelectorAll(".panneau").forEach(p => p.classList.toggle("actif", p.id === "panneau-" + b.dataset.onglet));
+  if (b.dataset.onglet === "traiter") chargerFile();
+  if (b.dataset.onglet === "clausier") chargerClausier();
+}));
+$("type-acte").innerHTML = `<option value="">À reconnaître</option>` + TYPES_ACTE.map(t => `<option value="${t.code}">${t.libelle}</option>`).join("");
+
+/* ============================================================
+   ACCÈS AU DRIVE (portée drive.file)
+   Première ouverture : la fenêtre Google demande l'accord une fois ;
+   ensuite le jeton est redemandé en silence à chaque ouverture.
+   ============================================================ */
+let clientJeton = null, attenteJeton = null;
+function preparerClient() {
+  if (clientJeton || !window.google?.accounts?.oauth2) return !!clientJeton;
+  clientJeton = google.accounts.oauth2.initTokenClient({
+    client_id: CLIENT_ID, scope: PORTEE,
+    callback: r => {
+      const a = attenteJeton; attenteJeton = null;
+      if (r.error || !r.access_token) { a?.ko(new Error(r.error || "accès refusé")); return; }
+      etat.jeton = r.access_token; etat.expire = Date.now() + (r.expires_in - 60) * 1000;
+      a?.ok(etat.jeton);
+    },
+    error_callback: e => { const a = attenteJeton; attenteJeton = null; a?.ko(new Error(e?.type || "fenêtre fermée")); },
+  });
+  return true;
+}
+function demanderJeton(silencieux) {
+  return new Promise((ok, ko) => {
+    if (!preparerClient()) return ko(new Error("bibliothèque Google non chargée"));
+    attenteJeton = { ok, ko };
+    clientJeton.requestAccessToken({ prompt: silencieux ? "none" : "consent" });
+  });
+}
+async function jeton() {
+  if (etat.jeton && Date.now() < etat.expire) return etat.jeton;
+  try { return await demanderJeton(true); }
+  catch (e) { majConnexion(false); throw new Error("Drive non autorisé : cliquez « Autoriser l'accès au Drive » en haut de l'écran."); }
+}
+function majConnexion(ok) {
+  $("etat-connexion").textContent = ok ? "Drive connecté" : "Drive non autorisé";
+  $("btn-connexion").style.display = ok ? "none" : "inline-block";
+}
+$("btn-connexion").addEventListener("click", async () => {
+  try { await demanderJeton(false); majConnexion(true); cacherErreur(); await demarrer(); }
+  catch (e) { montrerErreur("Autorisation non obtenue (" + e.message + ")."); }
+});
+
+async function drive(url, options = {}) {
+  const t = await jeton();
+  const rep = await fetch(url, { ...options, headers: { Authorization: `Bearer ${t}`, ...(options.headers || {}) } });
+  if (rep.status === 401) { etat.jeton = null; throw new Error("Jeton expiré : rechargez la page."); }
+  if (!rep.ok) throw new Error(`Drive : ${rep.status} ${(await rep.text()).slice(0, 160)}`);
+  return rep.status === 204 ? null : rep.json();
+}
+const echapperQ = s => s.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+// Dossier enfant : trouvé, ou créé s'il n'existe pas encore
+async function dossier(nom, parent) {
+  const cle = `${parent || "racine"}/${nom}`;
+  if (etat.dossiers[cle]) return etat.dossiers[cle];
+  let q = `name = '${echapperQ(nom)}' and mimeType = 'application/vnd.google-apps.folder' and trashed = false`;
+  q += parent ? ` and '${parent}' in parents` : ` and 'root' in parents`;
+  const l = await drive(`${DRIVE}?q=${encodeURIComponent(q)}&fields=files(id)&pageSize=1`);
+  const id = l.files?.[0]?.id || (await drive(DRIVE, { method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name: nom, mimeType: "application/vnd.google-apps.folder", ...(parent ? { parents: [parent] } : {}) }) })).id;
+  etat.dossiers[cle] = id;
+  return id;
+}
+async function arborescence() {
+  const racine = await dossier(DOSSIER_RACINE);
+  const [file, clausier] = await Promise.all([dossier(DOSSIER_FILE, racine), dossier(DOSSIER_CLAUSIER, racine)]);
+  return { racine, file, clausier };
+}
+async function ecrireJson(nom, objet, parent) {
+  const limite = "moneta" + Math.random().toString(36).slice(2);
+  const corps = `--${limite}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify({ name: nom, parents: [parent], mimeType: "application/json" })}\r\n`
+              + `--${limite}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify(objet)}\r\n--${limite}--`;
+  return drive(`${DRIVE_ENVOI}?uploadType=multipart&fields=id`, { method: "POST", headers: { "Content-Type": `multipart/related; boundary=${limite}` }, body: corps });
+}
+const lireJson = id => drive(`${DRIVE}/${id}?alt=media`);
+async function lister(parent, autre = "") {
+  const q = `'${parent}' in parents and trashed = false${autre}`;
+  const out = []; let page = "";
+  do {
+    const l = await drive(`${DRIVE}?q=${encodeURIComponent(q)}&fields=nextPageToken,files(id,name,mimeType,createdTime)&pageSize=200&orderBy=createdTime${page ? "&pageToken=" + page : ""}`);
+    out.push(...(l.files || [])); page = l.nextPageToken || "";
+  } while (page);
+  return out;
+}
+
+/* ============================================================
+   VERSER — extraction du texte dans le navigateur, puis dépôt en file
+   ============================================================ */
+async function extraireTexte(f) {
+  const nom = f.name.toLowerCase();
+  if (nom.endsWith(".docx")) {
+    const tampon = await f.arrayBuffer();
+    const [brut, html] = await Promise.all([mammoth.extractRawText({ arrayBuffer: tampon }), mammoth.convertToHtml({ arrayBuffer: tampon })]);
+    return { texte: brut.value, html: html.value };
+  }
+  if (nom.endsWith(".pdf")) {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+    const pdf = await pdfjsLib.getDocument({ data: await f.arrayBuffer() }).promise;
+    let texte = "";
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const c = await (await pdf.getPage(i)).getTextContent();
+      texte += c.items.map(it => it.str + (it.hasEOL ? "\n" : " ")).join("") + "\n\n";
+    }
+    return { texte, html: null };
+  }
+  return { texte: await f.text(), html: null };
+}
+function noterVersement(txt, cls) {
+  const li = document.createElement("li"); li.className = cls || ""; li.textContent = txt;
+  $("verses").prepend(li); return li;
+}
+async function verser({ nom, origine, texte, html }) {
+  if (!texte || !texte.trim()) throw new Error("aucun texte lisible (PDF scanné ?)");
+  const { file } = await arborescence();
+  const id = (crypto.randomUUID?.() || String(Date.now()) + Math.random().toString(16).slice(2));
+  const depot = { moneta: 1, id, nom, origine, type_acte: $("type-acte").value || null,
+                  verse_le: new Date().toISOString(), statut: "attente-decoupage", texte, html, clauses: [] };
+  const horodatage = depot.verse_le.slice(0, 19).replace(/[:T]/g, "-");
+  const fichier = await ecrireJson(`${horodatage} — ${nom.replace(/[\\/:*?"<>|]/g, " ").slice(0, 80)}.json`, depot, file);
+  lancerDecoupage(fichier.id);          // en arrière-plan, sans attendre
+  return depot;
+}
+async function verserFichiers(liste) {
+  cacherErreur();
+  for (const f of liste) {
+    const li = noterVersement(`${f.name} : lecture…`);
+    try {
+      const { texte, html } = await extraireTexte(f);
+      await verser({ nom: f.name, origine: "fichier", texte, html });
+      li.className = "ok"; li.textContent = `${f.name} : versé dans la file (${libelleType($("type-acte").value)}).`;
+    } catch (e) { li.className = "ko"; li.textContent = `${f.name} : non versé — ${e.message}`; }
+  }
+  majCompteur();
+}
+(() => {
+  const zone = $("zone-depot"), entree = $("fichiers");
+  ["dragenter", "dragover"].forEach(ev => zone.addEventListener(ev, e => { e.preventDefault(); zone.classList.add("survol"); }));
+  ["dragleave", "drop"].forEach(ev => zone.addEventListener(ev, e => { e.preventDefault(); zone.classList.remove("survol"); }));
+  zone.addEventListener("drop", e => { if (e.dataTransfer.files.length) verserFichiers([...e.dataTransfer.files]); });
+  entree.addEventListener("change", () => { if (entree.files.length) verserFichiers([...entree.files]); entree.value = ""; });
+})();
+$("texte-colle").addEventListener("input", () => { $("btn-verser-texte").disabled = !$("texte-colle").value.trim(); });
+$("btn-verser-texte").addEventListener("click", async () => {
+  cacherErreur();
+  const texte = $("texte-colle").value.trim(), debut = texte.replace(/\s+/g, " ").slice(0, 50);
+  const li = noterVersement(`Paragraphe collé : versement…`);
+  try {
+    await verser({ nom: `Paragraphe — ${debut}…`, origine: "collé", texte, html: null });
+    li.className = "ok"; li.textContent = `Paragraphe « ${debut}… » versé dans la file.`;
+    $("texte-colle").value = ""; $("btn-verser-texte").disabled = true;
+  } catch (e) { li.className = "ko"; li.textContent = `Paragraphe non versé — ${e.message}`; }
+  majCompteur();
+});
+
+/* ============================================================
+   LES DEUX MOTEURS — côté serveur, une seule fonction à actions
+   Pour l'instant ils répondent « à venir » : le dépôt reste en file,
+   avec son statut, et rien n'est perdu.
+   ============================================================ */
+async function appelerMoteur(action, donnees) {
+  const rep = await fetch(MOTEURS, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action, ...donnees }) });
+  const j = await rep.json().catch(() => ({}));
+  if (!rep.ok) { const err = new Error(j?.erreur?.message || `moteur ${action} : ${rep.status}`); err.code = j?.erreur?.code; throw err; }
+  return j;
+}
+async function lancerDecoupage(idFichier) {
+  try { await appelerMoteur("decouper", { depot: idFichier }); }
+  catch (e) { if (e.code !== "moteur-a-venir") console.warn("découpage :", e.message); }
+}
+
+/* ============================================================
+   À TRAITER — la file, du plus ancien au plus récent
+   (règle commune de la suite : ce qui traîne remonte en tête)
+   ============================================================ */
+const STATUTS = { "attente-decoupage": ["attente", "en attente de découpage"], "decoupe": ["decoupe", "découpé, à comparer"], "erreur": ["erreur", "découpage en échec"] };
+async function chargerFile() {
+  const zone = $("file-contenu");
+  try {
+    const { file } = await arborescence();
+    const fichiers = (await lister(file)).filter(f => f.name.endsWith(".json"));
+    etat.file = fichiers;
+    majCompteur(fichiers.length);
+    if (!fichiers.length) { zone.innerHTML = `<p class="vide">La file est vide. Versez un acte ou un paragraphe dans l'onglet « Verser ».</p>`; return; }
+    zone.innerHTML = `<table class="file"><thead><tr><th>Versé le</th><th>Dépôt</th><th>Type d'acte</th><th>État</th></tr></thead><tbody>
+      ${fichiers.map((f, i) => `<tr data-i="${i}" tabindex="0" style="cursor:pointer"><td>${dateCourte(f.createdTime)}</td><td>${echapper(f.name.replace(/^[\d-]+ — /, "").replace(/\.json$/, ""))}</td><td class="t-type">…</td><td class="statut attente">…</td></tr>`).join("")}
+    </tbody></table>`;
+    zone.querySelectorAll("tr[data-i]").forEach(tr => {
+      const ouvrir = () => ouvrirDepot(+tr.dataset.i);
+      tr.addEventListener("click", ouvrir); tr.addEventListener("keydown", e => { if (e.key === "Enter") ouvrir(); });
+    });
+    // type et état lus dans chaque dépôt, sans bloquer l'affichage de la liste
+    fichiers.forEach((f, i) => lireJson(f.id).then(d => {
+      f.depot = d;
+      const tr = zone.querySelector(`tr[data-i="${i}"]`); if (!tr) return;
+      tr.querySelector(".t-type").textContent = libelleType(d.type_acte);
+      const [cls, txt] = STATUTS[d.statut] || ["attente", d.statut];
+      const st = tr.querySelector(".statut"); st.className = `statut ${cls}`; st.textContent = txt;
+    }).catch(() => {}));
+  } catch (e) { zone.innerHTML = `<p class="vide">${echapper(e.message)}</p>`; }
+}
+async function ouvrirDepot(i) {
+  const f = etat.file[i]; if (!f) return;
+  etat.ouvert = f;
+  document.querySelectorAll("table.file tr").forEach(tr => tr.classList.toggle("ouvert", tr.dataset.i === String(i)));
+  const d = f.depot || (f.depot = await lireJson(f.id));
+  $("fiche-titre").textContent = d.nom;
+  $("fiche-meta").textContent = `Versé le ${dateCourte(d.verse_le)}, ${libelleType(d.type_acte)}, ${d.texte.length.toLocaleString("fr-FR")} caractères`;
+  $("fiche-texte").textContent = d.texte.slice(0, 20000) + (d.texte.length > 20000 ? "\n\n[…]" : "");
+  $("fiche-note").textContent = "Les moteurs de découpage et de comparaison ne sont pas encore en service : le plan des parties de chaque type d'acte est à construire. Le dépôt reste dans la file en attendant.";
+  $("fiche-depot").style.display = "block";
+  $("fiche-depot").scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+$("btn-fermer").addEventListener("click", () => { $("fiche-depot").style.display = "none"; etat.ouvert = null; document.querySelectorAll("table.file tr.ouvert").forEach(tr => tr.classList.remove("ouvert")); });
+$("btn-decouper").addEventListener("click", async () => {
+  if (!etat.ouvert) return;
+  try { await appelerMoteur("comparer", { depot: etat.ouvert.id }); }
+  catch (e) { $("fiche-note").textContent = e.code === "moteur-a-venir" ? "Moteur pas encore en service : le dépôt reste dans la file." : `Échec : ${e.message}`; }
+});
+// Retirer = mettre à la corbeille du Drive (récupérable), jamais effacer définitivement
+$("btn-retirer").addEventListener("click", async () => {
+  const f = etat.ouvert; if (!f) return;
+  if (!confirm(`Retirer « ${f.depot?.nom || f.name} » de la file ? Il part dans la corbeille du Drive, d'où il reste récupérable.`)) return;
+  try {
+    await drive(`${DRIVE}/${f.id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ trashed: true }) });
+    $("fiche-depot").style.display = "none"; etat.ouvert = null; chargerFile();
+  } catch (e) { montrerErreur("Retrait impossible : " + e.message); }
+});
+
+async function majCompteur(n) {
+  if (n == null) {
+    try { const { file } = await arborescence(); n = (await lister(file)).filter(f => f.name.endsWith(".json")).length; }
+    catch { return; }
+  }
+  const c = $("compteur"); c.textContent = n; c.classList.toggle("zero", n === 0);
+  c.setAttribute("aria-label", `${n} dépôt${n > 1 ? "s" : ""} à traiter`);
+}
+
+/* ============================================================
+   CLAUSIER — un dossier par type d'acte (créé au besoin),
+   un sous-dossier par partie (plan à construire)
+   ============================================================ */
+async function chargerClausier() {
+  const zone = $("clausier-contenu");
+  try {
+    const { clausier } = await arborescence();
+    const blocs = await Promise.all(TYPES_ACTE.map(async t => {
+      const idType = await dossier(t.libelle, clausier);
+      const sous = (await lister(idType, ` and mimeType = 'application/vnd.google-apps.folder'`));
+      const comptes = await Promise.all(sous.map(async s => ({ nom: s.name, n: (await lister(s.id, ` and mimeType = 'application/json'`)).length })));
+      const total = comptes.reduce((a, c) => a + c.n, 0);
+      return `<div class="type-acte"><h3>${echapper(t.libelle)}<small>${total} clause${total > 1 ? "s" : ""}</small></h3>
+        ${comptes.length ? `<ul class="parties">${comptes.map(c => `<li>${echapper(c.nom)}<span>${c.n}</span></li>`).join("")}</ul>`
+                         : `<p class="aide">Plan des parties à construire.</p>`}</div>`;
+    }));
+    zone.innerHTML = blocs.join("");
+  } catch (e) { zone.innerHTML = `<p class="vide">${echapper(e.message)}</p>`; }
+}
+
+/* ---------- démarrage ---------- */
+async function demarrer() {
+  try { await jeton(); majConnexion(true); await majCompteur(); }
+  catch (e) { majConnexion(false); }
+}
+window.addEventListener("load", () => {
+  // la bibliothèque Google se charge en différé : on attend qu'elle soit prête
+  const essai = (n = 0) => window.google?.accounts?.oauth2 ? demarrer() : n < 50 ? setTimeout(() => essai(n + 1), 200) : majConnexion(false);
+  essai();
+});
+</script>
+</body>
+</html>
