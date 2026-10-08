@@ -156,6 +156,31 @@ table.file tr.ouvert td{background:#EAFAFB}
 .cl-ia{background:var(--gris);border-radius:4px;padding:12px 14px}
 .cl-ia .vide{padding:10px 0;text-align:left}
 
+.cl-ranger-tete{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:14px 0 6px}
+.cl-ranger-tete .avance{font-size:.9rem;color:var(--doux)}
+.cl-ctx{background:#F7FBFB;border:1px solid var(--trait);border-radius:4px;padding:10px 14px;margin:8px 0 14px}
+.cl-ctx .lib{font-size:.85rem;color:var(--nuit);font-weight:600;margin-bottom:6px}
+.cl-ctx label{display:inline-flex;align-items:center;gap:5px;margin:0 12px 4px 0;font-size:.88rem;color:var(--texte)}
+.cl-ctx input{width:auto;margin:0}
+.cl-ctx .ajout{border:1px dashed var(--trait);border-radius:12px;padding:2px 10px;font-size:.83rem;width:11em}
+.ranger-point{border:1px solid var(--trait);border-radius:5px;margin-bottom:10px;background:#fff}
+.ranger-point.classee{opacity:.6}
+.ranger-point.classee .rp-prop{display:none}
+.rp-haut{display:flex;gap:10px;align-items:baseline;padding:9px 12px;border-bottom:1px solid var(--trait);background:var(--gris)}
+.rp-haut .num{font-size:.78rem;color:var(--doux);font-variant-numeric:tabular-nums;min-width:4em}
+.rp-haut .verdict{margin-left:auto;font-size:.82rem;color:var(--doux)}
+.rp-haut .verdict.ok{color:var(--vert)}
+.rp-texte{padding:8px 12px;font-family:Georgia,serif;font-size:.92rem;line-height:1.55;max-height:7em;overflow:auto}
+.rp-prop{padding:0 12px 10px}
+.rp-choix{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0}
+.rp-choix button{border:1px solid var(--trait);background:#fff;border-radius:4px;padding:6px 10px;text-align:left;font-size:.88rem;color:var(--texte);flex:1 1 44%}
+.rp-choix button .r-id{font-size:.76rem;color:var(--doux);display:block}
+.rp-choix button .r-mots{font-size:.76rem;color:var(--canard);display:block;margin-top:2px}
+.rp-choix button[aria-pressed="true"]{border-color:var(--canard);background:#EAFAFB}
+.rp-choix button.second{opacity:.9}
+.rp-actions{display:flex;gap:8px;flex-wrap:wrap;padding:0 12px 12px;align-items:center}
+.rp-actions select{width:auto;flex:1 1 200px;padding:7px 10px}
+.rp-actions .ecarter{margin-left:auto}
 .erreur{background:#FBE9EE;border-left:4px solid var(--carmin);padding:10px 14px;border-radius:3px;margin-bottom:14px;display:none}
 @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
 </style>
@@ -163,7 +188,7 @@ table.file tr.ouvert td{background:#EAFAFB}
 <body>
 <header>
   <h1>MONETA</h1>
-  <small>Le clausier du cabinet, version 0.5</small>
+  <small>Le clausier du cabinet, version 0.6</small>
   <span id="etat-connexion">Connexion au Drive…</span>
   <button id="btn-connexion">Autoriser l'accès au Drive</button>
 </header>
@@ -219,8 +244,9 @@ table.file tr.ouvert td{background:#EAFAFB}
       <div id="fiche-decoupe"></div>
       <div id="fiche-texte" style="display:none"></div>
       <p class="note-moteur" id="fiche-note"></p>
+      <div id="fiche-ranger"></div>
       <div class="actions">
-        <button class="bouton" id="btn-decouper">Comparer avec le clausier</button>
+        <button class="bouton" id="btn-ranger">Ranger dans le clausier</button>
         <button class="bouton secondaire" id="btn-redecouper">Redécouper</button>
         <button class="bouton secondaire" id="btn-fermer">Fermer</button>
         <button class="bouton discret" id="btn-retirer">Retirer de la file</button>
@@ -236,7 +262,7 @@ table.file tr.ouvert td{background:#EAFAFB}
 
 <script>
 /* ============================================================
-   MONETA — version 0.5 du 08/10/2026 (module Clausier, première tranche : plans de référence PSV AKZO et PUV R3S, numéros permanents, page Clausier) ; 0.4 du 08/10/2026 (titres des PDF non numérotés déduits de la mise en forme) ; 0.3 du 08/10/2026 (lecture Word avec numérotation automatique, contrôles de vraisemblance) ; 0.2 : moteur de découpe en service ; squelette du 07/10/2026
+   MONETA — version 0.6 du 08/10/2026 (rangement des points d'un dépôt dans le clausier : proposition et deuxième candidate, contexte coché, validation point par point ou en bloc, journal des mouvements) ; 0.5 du 08/10/2026 (module Clausier, première tranche : plans de référence PSV AKZO et PUV R3S, numéros permanents, page Clausier) ; 0.4 du 08/10/2026 (titres des PDF non numérotés déduits de la mise en forme) ; 0.3 du 08/10/2026 (lecture Word avec numérotation automatique, contrôles de vraisemblance) ; 0.2 : moteur de découpe en service ; squelette du 07/10/2026
    Arbitrages (fiche clausier) : une application, deux moteurs ;
    on VERSE d'un côté (file d'attente sur le Drive), on TRAITE quand on veut ;
    le DÉCOUPAGE (neutralisation en champs, coupe en clauses, destination
@@ -661,6 +687,7 @@ async function ouvrirDepot(i) {
   document.querySelectorAll("table.file tr").forEach(tr => tr.classList.toggle("ouvert", tr.dataset.i === String(i)));
   const d = f.depot || (f.depot = await lireJson(f.id));
   remplirFiche(d);
+  $("fiche-ranger").innerHTML = "";
   $("fiche-depot").style.display = "block";
   $("fiche-depot").scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
@@ -677,11 +704,134 @@ $("btn-redecouper").addEventListener("click", async () => {
   finally { b.disabled = false; b.textContent = "Redécouper"; }
 });
 $("btn-fermer").addEventListener("click", () => { $("fiche-depot").style.display = "none"; etat.ouvert = null; document.querySelectorAll("table.file tr.ouvert").forEach(tr => tr.classList.remove("ouvert")); });
-$("btn-decouper").addEventListener("click", async () => {
-  if (!etat.ouvert) return;
-  try { await appelerMoteur("comparer", { depot: etat.ouvert.id }); }
-  catch (e) { $("fiche-note").textContent = e.code === "moteur-a-venir" ? "Moteur pas encore en service : le dépôt reste dans la file." : `Échec : ${e.message}`; }
-});
+/* ============================================================
+   RANGEMENT (0.6) — de la fiche d'un dépôt vers le clausier
+   Le moteur propose une rubrique et une 2ᵉ candidate par point (mots-clés) ;
+   l'humain valide, change de rubrique ou écarte. Chaque validation range la
+   clause et enrichit les mots-clés de la rubrique (origine « auto ») ; seuls
+   les points validés enrichissent. Chaque mouvement va au journal du clausier.
+   ============================================================ */
+const rg = { depot: null, clausier: null, fichier: null, points: [], propositions: [], contextes: [], choix: {}, dejaRanges: new Set() };
+const normMot = m => String(m).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+const STOP_AUTO = new Set(["les","des","une","aux","par","pour","sur","dans","avec","sans","que","qui","est","sont","sera","seront","son","ses","leur","leurs","cette","ces","tout","tous","toute","toutes","elle","present","presentes","partie","parties","article","declare","vendeur","acquereur","promettant","beneficiaire","bien","biens","notaire","termes","conditions","presente"]);
+function motsAuto(texte) {
+  const freq = {};
+  for (const m of normMot(texte).split(/[^a-z0-9]+/)) if (m.length >= 5 && !STOP_AUTO.has(m)) freq[m] = (freq[m] || 0) + 1;
+  return Object.entries(freq).filter(([, n]) => n >= 2).sort((a, b) => b[1] - a[1]).slice(0, 4).map(([m]) => m);
+}
+const CONTEXTES_CONNUS = ["habitation","bien professionnel ou industriel","copropriété","lotissement","cession d'activité","terrain","entre sociétés","entre particuliers"];
+function titresDuPoint(dec, num) {
+  const base = num.split(".").slice(0, -1).join(".");
+  return dec.structure.filter(e => e.t === "titre" && (base === e.num || base.startsWith(e.num + "."))).map(e => e.texte);
+}
+async function ouvrirRangement() {
+  const d = etat.ouvert?.depot, zone = $("fiche-ranger");
+  if (!d) return;
+  if (!d.type_acte || !PLANS[d.type_acte]) { zone.innerHTML = `<p class="note-moteur">Choisissez d'abord le type d'acte de ce dépôt : le rangement s'appuie sur un plan de référence (les deux promesses, pour l'instant).</p>`; return; }
+  if (!d.decoupe?.structure?.length) { zone.innerHTML = `<p class="note-moteur">Ce dépôt n'est pas encore découpé : cliquez « Redécouper ».</p>`; return; }
+  zone.innerHTML = `<p class="note-moteur">Lecture du clausier et rangement des points…</p>`;
+  try {
+    const r = await chargerType(d.type_acte);
+    rg.depot = d; rg.clausier = r.donnees; rg.fichier = r.fichier; rg.choix = {};
+    rg.points = d.decoupe.structure.filter(e => e.t === "point")
+      .map(e => ({ num: e.num, texte: e.paras.join("\n").replace(/\u200b/g, ""), titres: titresDuPoint(d.decoupe, e.num) }));
+    const rubriques = Object.values(rg.clausier.rubriques).map(x => ({ id: x.id, titre: x.titre, article: x.article,
+      article_titre: rg.clausier.articles.find(a => a.num === x.article)?.titre || "", mots_cles: x.mots_cles }));
+    const rep = await appelerMoteur("ranger", { points: rg.points, rubriques, texte_acte: sansMarques(d.texte) });
+    rg.propositions = rep.rangement.propositions;
+    rg.contextes = (d.contextes && d.contextes.length) ? d.contextes : (rep.rangement.contextes || []);
+    rg.dejaRanges = new Set(Object.values(rg.clausier.rubriques).flatMap(x => x.clauses).filter(c => c.source?.depot === d.id).map(c => c.point));
+    dessinerRangement();
+  } catch (e) { zone.innerHTML = `<p class="note-moteur">Rangement impossible : ${echapper(e.message)}</p>`; }
+}
+function dessinerRangement() {
+  const zone = $("fiche-ranger"), rubs = rg.clausier.rubriques;
+  const propo = new Map(rg.propositions.map(p => [p.num, p.candidats]));
+  const total = rg.points.length, faits = rg.dejaRanges.size;
+  const libRub = id => rubs[id] ? `${rubs[id].id} · ${rubs[id].titre}` : id;
+  const options = Object.values(rubs).map(r => `<option value="${r.id}">${echapper(r.id)} · ${echapper(r.titre)}</option>`).join("");
+  const ctx = CONTEXTES_CONNUS.concat(rg.contextes.filter(c => !CONTEXTES_CONNUS.includes(c)))
+    .map(c => `<label><input type="checkbox" value="${echapper(c)}"${rg.contextes.includes(c) ? " checked" : ""}> ${echapper(c)}</label>`).join("");
+  zone.innerHTML = `
+    <div class="cl-ctx"><div class="lib">Contexte du dépôt — proposé d'après l'acte, à corriger ; il sera porté par chaque clause rangée</div>
+      <div id="rg-ctx">${ctx}<input class="ajout" id="rg-ctx-ajout" placeholder="autre contexte" aria-label="Ajouter un contexte"></div></div>
+    <div class="cl-ranger-tete"><b>Ranger les points</b><span class="avance" id="rg-avance">${faits} sur ${total} classés</span>
+      <button class="bouton secondaire" id="rg-tout">Valider toutes les propositions</button></div>
+    <div id="rg-liste">${rg.points.map(p => {
+      const cand = propo.get(p.num) || [], deja = rg.dejaRanges.has(p.num), choix = rg.choix[p.num];
+      const classee = deja || choix !== undefined;
+      const verdict = deja ? '<span class="verdict ok">déjà rangé</span>'
+        : choix === null ? '<span class="verdict">écarté</span>'
+        : choix ? `<span class="verdict ok">→ ${echapper(libRub(choix))}</span>`
+        : cand.length ? "" : '<span class="verdict">aucune rubrique évidente</span>';
+      return `<div class="ranger-point${classee ? " classee" : ""}" data-point="${echapper(p.num)}">
+        <div class="rp-haut"><span class="num">Point ${echapper(p.num)}</span>${verdict}</div>
+        <div class="rp-texte">${echapper(p.texte.slice(0, 600))}${p.texte.length > 600 ? "…" : ""}</div>
+        ${classee ? "" : `<div class="rp-prop">
+          <div class="rp-choix">${cand.map((c, i) => `<button data-choisir="${echapper(c.id)}" class="${i ? "second" : ""}" aria-pressed="false">${i ? "2ᵉ candidate" : "Proposée"}<span class="r-id">${echapper(libRub(c.id))}</span>${c.mots?.length ? `<span class="r-mots">${echapper(c.mots.slice(0, 4).join(", "))}</span>` : ""}</button>`).join("")}</div>
+          <div class="rp-actions">
+            <select aria-label="Choisir une autre rubrique"><option value="">Autre rubrique…</option>${options}</select>
+            <button class="bouton valider" disabled>Valider</button>
+            <button class="bouton discret ecarter">Écarter</button>
+          </div></div>`}
+      </div>`;
+    }).join("")}</div>`;
+  brancherRangement();
+}
+function brancherRangement() {
+  const zone = $("fiche-ranger");
+  zone.querySelectorAll("#rg-ctx input[type=checkbox]").forEach(c => c.addEventListener("change", () => {
+    rg.contextes = [...zone.querySelectorAll("#rg-ctx input[type=checkbox]:checked")].map(x => x.value);
+  }));
+  const ajout = $("rg-ctx-ajout");
+  ajout?.addEventListener("keydown", e => { if (e.key !== "Enter") return; const v = ajout.value.trim(); if (!v) return;
+    if (!rg.contextes.includes(v)) rg.contextes.push(v); dessinerRangement(); });
+  zone.querySelectorAll(".ranger-point").forEach(bloc => {
+    const num = bloc.dataset.point, sel = bloc.querySelector("select"), valider = bloc.querySelector(".valider");
+    let choisi = null;
+    const poser = id => { choisi = id || null;
+      bloc.querySelectorAll("[data-choisir]").forEach(b => b.setAttribute("aria-pressed", b.dataset.choisir === id));
+      if (valider) valider.disabled = !choisi; };
+    bloc.querySelectorAll("[data-choisir]").forEach(b => b.addEventListener("click", () => { if (sel) sel.value = ""; poser(b.dataset.choisir); }));
+    sel?.addEventListener("change", () => { bloc.querySelectorAll("[data-choisir]").forEach(b => b.setAttribute("aria-pressed", "false")); poser(sel.value); });
+    valider?.addEventListener("click", () => choisi && validerPoint(num, choisi));
+    bloc.querySelector(".ecarter")?.addEventListener("click", () => ecarterPoint(num));
+  });
+  $("rg-tout")?.addEventListener("click", validerTout);
+}
+async function enregistrerClause(num, rubriqueId) {
+  const texte = rg.points.find(p => p.num === num)?.texte || "";
+  rg.clausier = await modifierClausier(f => {
+    const r = f.rubriques[rubriqueId]; if (!r) throw new Error("rubrique " + rubriqueId + " introuvable");
+    if (!r.clauses.some(c => c.source?.depot === rg.depot.id && c.point === num)) {
+      f.prochaine_clause = (f.prochaine_clause || 0) + 1;
+      r.clauses.push({ id: `${f.prefixe}-C${String(f.prochaine_clause).padStart(4, "0")}`, point: num, texte,
+        occurrences: 1, contextes: [...rg.contextes], sens: null, nature: null, commentaire: "",
+        source: { depot: rg.depot.id, nom: rg.depot.nom, date: rg.depot.verse_le.slice(0, 10) }, admise_le: new Date().toISOString() });
+      for (const m of motsAuto(texte)) if (!r.mots_cles.some(k => normMot(k.mot) === normMot(m))) r.mots_cles.push({ mot: m, origine: "auto" });
+    }
+    (f.journal ||= []).push({ quand: new Date().toISOString(), quoi: "ranger", point: num, rubrique: rubriqueId, depot: rg.depot.id });
+  }, rg.fichier);
+}
+async function validerPoint(num, rubriqueId) {
+  const bloc = $("fiche-ranger").querySelector(`.ranger-point[data-point="${CSS.escape(num)}"]`);
+  bloc?.querySelectorAll("button,select").forEach(b => b.disabled = true);
+  try { await enregistrerClause(num, rubriqueId); rg.choix[num] = rubriqueId; rg.dejaRanges.add(num); dessinerRangement(); }
+  catch (e) { montrerErreur("Point non rangé : " + e.message); dessinerRangement(); }
+}
+async function ecarterPoint(num) {
+  try { rg.clausier = await modifierClausier(f => { (f.journal ||= []).push({ quand: new Date().toISOString(), quoi: "ecarter", point: num, depot: rg.depot.id }); }, rg.fichier); } catch (e) { montrerErreur("Écart non enregistré : " + e.message); }
+  rg.choix[num] = null; dessinerRangement();
+}
+async function validerTout() {
+  const b = $("rg-tout"); if (b) { b.disabled = true; b.textContent = "Rangement…"; }
+  for (const p of rg.propositions) {
+    if (rg.dejaRanges.has(p.num) || rg.choix[p.num] !== undefined || !p.candidats[0]) continue;
+    try { await enregistrerClause(p.num, p.candidats[0].id); rg.choix[p.num] = p.candidats[0].id; rg.dejaRanges.add(p.num); } catch {}
+  }
+  dessinerRangement();
+}
+$("btn-ranger").addEventListener("click", ouvrirRangement);
 // Retirer = mettre à la corbeille du Drive (récupérable), jamais effacer définitivement
 $("btn-retirer").addEventListener("click", async () => {
   const f = etat.ouvert; if (!f) return;
@@ -759,12 +909,14 @@ async function chargerType(code) {
   return { fichier: cree.id, donnees };
 }
 // Toute modification relit d'abord le fichier : un collègue a pu l'enrichir entre-temps
-async function modifierClausier(changement) {
-  const frais = await lireJson(cl.fichier);
+async function modifierClausier(changement, fichier = cl.fichier) {
+  if (!fichier) throw new Error("fichier du clausier introuvable");
+  const frais = await lireJson(fichier);
   changement(frais);
   frais.modifie_le = new Date().toISOString();
-  await reecrireJson(cl.fichier, frais);
-  cl.donnees = frais;
+  await reecrireJson(fichier, frais);
+  if (fichier === cl.fichier) cl.donnees = frais;
+  return frais;
 }
 // Clause étoile : la plus utilisée (nombre d'actes où elle revient) ; à égalité, la plus récente
 function trierClauses(clauses) {
