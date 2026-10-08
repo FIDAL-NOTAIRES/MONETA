@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>MONETA — clausier du cabinet</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 /* ---------- Charte FIDAL v2.2 ---------- */
@@ -65,6 +65,7 @@ textarea{min-height:140px;resize:vertical}
 #verses li{padding:8px 12px;border-left:4px solid var(--trait);background:var(--gris);margin-bottom:6px;font-size:.92rem;border-radius:0 3px 3px 0}
 #verses li.ok{border-left-color:var(--vert)}
 #verses li.ko{border-left-color:var(--carmin);background:#FBE9EE}
+#verses li.ok.jaune{border-left-color:var(--jaune-texte);background:#FFF8DA}
 
 /* ---------- file d'attente ---------- */
 table.file{width:100%;border-collapse:collapse}
@@ -73,6 +74,16 @@ table.file th{color:var(--doux);font-weight:600}
 table.file tr.ouvert td{background:#EAFAFB}
 .statut{font-size:.85rem;white-space:nowrap}
 .statut.attente{color:var(--doux)}.statut.decoupe{color:var(--canard)}.statut.erreur{color:var(--carmin)}
+.pastille{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:baseline}
+.pastille.vert{background:var(--vert)}.pastille.jaune{background:var(--jaune-texte)}.pastille.carmin{background:var(--carmin)}
+#fiche-controles{margin-top:10px}
+#fiche-controles .bandeau{padding:9px 12px;border-radius:3px;font-size:.92rem;margin-bottom:6px}
+#fiche-controles .bandeau.vert{background:#E6F3EC;border-left:4px solid var(--vert)}
+#fiche-controles .bandeau.jaune{background:#FFF3C4;border-left:4px solid var(--jaune-texte)}
+#fiche-controles .bandeau.carmin{background:#FBE9EE;border-left:4px solid var(--carmin)}
+#fiche-controles ul{margin:4px 0 0 18px}
+#fiche-decoupe .point.alerte{background:#FFF8DA;box-shadow:inset 4px 0 0 var(--jaune-texte);padding-left:10px}
+#fiche-decoupe .point.alerte .motif{font-family:"Segoe UI",system-ui,sans-serif;font-size:.8rem;color:#8a6d00;margin-bottom:4px}
 .vide{padding:22px;text-align:center;color:var(--doux)}
 #fiche-depot{display:none;margin-top:18px;border:1px solid var(--trait);border-radius:6px;padding:18px;background:#FBFCFD}
 #fiche-depot h3{font-size:1.2rem;margin-bottom:6px}
@@ -133,7 +144,7 @@ table.file tr.ouvert td{background:#EAFAFB}
       <div>
         <label class="depot" id="zone-depot" for="fichiers">
           Glissez ici un ou plusieurs actes (Word, PDF ou texte),<br>ou cliquez pour les choisir.
-          <input type="file" id="fichiers" multiple accept=".docx,.pdf,.txt">
+          <input type="file" id="fichiers" multiple accept=".docx,.doc,.pdf,.txt">
         </label>
       </div>
     </div>
@@ -156,6 +167,7 @@ table.file tr.ouvert td{background:#EAFAFB}
     <div id="fiche-depot">
       <h3 id="fiche-titre"></h3>
       <p class="aide" id="fiche-meta"></p>
+      <div id="fiche-controles"></div>
       <div class="bascule" role="group" aria-label="Affichage du dépôt">
         <button id="vue-decoupe" aria-pressed="true">Vue découpée</button>
         <button id="vue-texte" aria-pressed="false">Texte lu</button>
@@ -180,7 +192,7 @@ table.file tr.ouvert td{background:#EAFAFB}
 
 <script>
 /* ============================================================
-   MONETA — version 0.2 du 08/10/2026 (moteur de découpe en service) ; squelette du 07/10/2026
+   MONETA — version 0.3 du 08/10/2026 (lecture Word avec numérotation automatique, contrôles de vraisemblance) ; 0.2 : moteur de découpe en service ; squelette du 07/10/2026
    Arbitrages (fiche clausier) : une application, deux moteurs ;
    on VERSE d'un côté (file d'attente sur le Drive), on TRAITE quand on veut ;
    le DÉCOUPAGE (neutralisation en champs, coupe en clauses, destination
@@ -332,13 +344,70 @@ async function lister(parent, autre = "") {
 /* ============================================================
    VERSER — extraction du texte dans le navigateur, puis dépôt en file
    ============================================================ */
+/* ============================================================
+   Lecture d'un fichier Word (.docx) en lignes pour le moteur de découpe (08/10/2026)
+   Les numéros de titres d'un acte Word sont produits par la numérotation
+   automatique : ils n'existent pas dans le texte. On les reconstitue comme
+   Word les affiche, à partir de word/numbering.xml (formats décimal, lettres,
+   chiffres romains ; puces rendues par « • »), puis chaque paragraphe devient
+   une ligne suivie d'une ligne vide. Fonctionne dans la page (window.JSZip)
+   comme dans les essais (JSZip importé).
+   ============================================================ */
+async function docxEnLignes(tampon, JSZipLib) {
+  const Z = JSZipLib || window.JSZip;
+  const zip = await Z.loadAsync(tampon);
+  const lire = async n => (zip.file(n) ? await zip.file(n).async("string") : "");
+  const docXml = await lire("word/document.xml"), numXml = await lire("word/numbering.xml");
+  const dec = s => s.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&apos;/g, "'").replace(/&amp;/g, "&");
+  // définitions de numérotation : numId → abstractNum → niveaux { fmt, texte, debut }
+  const abstraits = {};
+  for (const m of numXml.matchAll(/<w:abstractNum\b[^>]*w:abstractNumId="(\d+)"[^>]*>([\s\S]*?)<\/w:abstractNum>/g)) {
+    const niveaux = {};
+    for (const l of m[2].matchAll(/<w:lvl\b[^>]*w:ilvl="(\d)"[^>]*>([\s\S]*?)<\/w:lvl>/g)) {
+      niveaux[l[1]] = { fmt: (l[2].match(/<w:numFmt w:val="([^"]+)"/) || [])[1] || "decimal",
+                        texte: dec((l[2].match(/<w:lvlText w:val="([^"]*)"/) || [])[1] || ""),
+                        debut: +((l[2].match(/<w:start w:val="(\d+)"/) || [])[1] || 1) };
+    }
+    abstraits[m[1]] = niveaux;
+  }
+  const nums = {};
+  for (const m of numXml.matchAll(/<w:num\b[^>]*w:numId="(\d+)"[^>]*>([\s\S]*?)<\/w:num>/g)) {
+    const a = (m[2].match(/<w:abstractNumId w:val="(\d+)"/) || [])[1];
+    nums[m[1]] = { abstrait: a, debuts: Object.fromEntries([...m[2].matchAll(/<w:lvlOverride w:ilvl="(\d)">[\s\S]*?<w:startOverride w:val="(\d+)"/g)].map(x => [x[1], +x[2]])) };
+  }
+  const romain = n => { let r = "", v = [[1000,"M"],[900,"CM"],[500,"D"],[400,"CD"],[100,"C"],[90,"XC"],[50,"L"],[40,"XL"],[10,"X"],[9,"IX"],[5,"V"],[4,"IV"],[1,"I"]]; for (const [a, s] of v) while (n >= a) { r += s; n -= a; } return r; };
+  const forme = (n, fmt) => fmt === "upperLetter" ? String.fromCharCode(64 + ((n - 1) % 26) + 1) : fmt === "lowerLetter" ? String.fromCharCode(96 + ((n - 1) % 26) + 1)
+    : fmt === "upperRoman" ? romain(n) : fmt === "lowerRoman" ? romain(n).toLowerCase() : String(n);
+  const compteurs = {};   // par abstractNum : tableau des compteurs par niveau
+  const lignes = [];
+  for (const p of docXml.matchAll(/<w:p\b[^>]*>([\s\S]*?)<\/w:p>/g)) {
+    const corps = p[1];
+    let texte = "";
+    for (const r of corps.matchAll(/<w:t(?:\s[^>]*)?>([^<]*)<\/w:t>|<w:tab\/>|<w:br\/>|<w:noBreakHyphen\/>/g)) texte += r[1] !== undefined ? dec(r[1]) : (r[0] === "<w:noBreakHyphen/>" ? "-" : " ");
+    texte = texte.replace(/\u00a0/g, " ").replace(/[ \t]+/g, " ").trim();
+    const np = corps.match(/<w:numPr>([\s\S]*?)<\/w:numPr>/);
+    let prefixe = "";
+    if (np) {
+      const ilvl = +((np[1].match(/<w:ilvl w:val="(\d)"/) || [])[1] || 0), numId = (np[1].match(/<w:numId w:val="(\d+)"/) || [])[1];
+      const def = nums[numId], niv = def && abstraits[def.abstrait];
+      if (def && niv && niv[ilvl] && numId !== "0") {
+        const c = compteurs[def.abstrait] ||= [];
+        for (let i = 0; i <= ilvl; i++) if (c[i] === undefined) c[i] = (def.debuts[i] ?? niv[i]?.debut ?? 1) - 1;
+        c[ilvl]++; c.length = ilvl + 1;
+        if (niv[ilvl].fmt === "bullet") prefixe = "• ";
+        else if (niv[ilvl].fmt !== "none") prefixe = niv[ilvl].texte.replace(/%(\d)/g, (_, k) => forme(c[k - 1] ?? 1, niv[k - 1]?.fmt)) + " ";
+      }
+    }
+    if (!texte) continue;
+    lignes.push(prefixe + texte, "");
+  }
+  return lignes.join("\n");
+}
+
 async function extraireTexte(f) {
   const nom = f.name.toLowerCase();
-  if (nom.endsWith(".docx")) {
-    const tampon = await f.arrayBuffer();
-    const [brut, html] = await Promise.all([mammoth.extractRawText({ arrayBuffer: tampon }), mammoth.convertToHtml({ arrayBuffer: tampon })]);
-    return { texte: brut.value, html: html.value };
-  }
+  if (nom.endsWith(".doc")) throw new Error("ancien format Word (.doc) : ouvrez-le dans Word et enregistrez-le en .docx, ou versez le PDF signé");
+  if (nom.endsWith(".docx")) return { texte: await docxEnLignes(await f.arrayBuffer()), html: null };
   if (nom.endsWith(".pdf")) {
     pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
     const pdf = await pdfjsLib.getDocument({ data: await f.arrayBuffer() }).promise;
@@ -399,7 +468,9 @@ async function verserFichiers(liste) {
       const { texte, html } = await extraireTexte(f);
       const d = await verser({ nom: f.name, origine: "fichier", texte, html });
       li.className = "ok"; li.textContent = `${f.name} : versé dans la file (${libelleType($("type-acte").value)})` +
-        (d.decoupe ? ` — découpé en ${d.decoupe.points} points (${d.decoupe.articles} articles, ${d.decoupe.rubriques} rubriques).` : " — découpe à relancer.");
+        (d.decoupe ? ` — découpé en ${d.decoupe.points} points (${d.decoupe.articles} articles, ${d.decoupe.rubriques} rubriques)` +
+          (d.decoupe.etat === "vert" ? "." : d.decoupe.etat === "carmin" ? " : DÉCOUPE IMPOSSIBLE, voir la fiche." : ` : ${d.decoupe.controles.length} point${d.decoupe.controles.length > 1 ? "s" : ""} à vérifier.`) : " — découpe à relancer.");
+      if (d.decoupe?.etat === "jaune") li.className = "ok jaune"; if (d.decoupe?.etat === "carmin") li.className = "ko";
     } catch (e) { li.className = "ko"; li.textContent = `${f.name} : non versé — ${e.message}`; }
   }
   majCompteur();
@@ -466,18 +537,23 @@ async function chargerFile() {
       const tr = zone.querySelector(`tr[data-i="${i}"]`); if (!tr) return;
       tr.querySelector(".t-type").textContent = libelleType(d.type_acte);
       const [cls, txt] = STATUTS[d.statut] || ["attente", d.statut];
-      const st = tr.querySelector(".statut"); st.className = `statut ${cls}`; st.textContent = txt + (d.decoupe ? ` (${d.decoupe.points} points)` : "");
+      const st = tr.querySelector(".statut"); st.className = `statut ${cls}`;
+      const e = d.decoupe?.etat;
+      st.innerHTML = (e ? `<span class="pastille ${e}" title="${e === "vert" ? "sans anomalie" : e === "jaune" ? "à vérifier" : "découpe impossible"}"></span>` : "")
+        + echapper(txt + (d.decoupe ? ` (${d.decoupe.points} points${e === "jaune" ? ", à vérifier" : e === "carmin" ? ", impossible" : ""})` : ""));
     }).catch(() => {}));
   } catch (e) { zone.innerHTML = `<p class="vide">${echapper(e.message)}</p>`; }
 }
 const PUCE_AFFICHAGE = /^\s*(?:[•▪\uf0b7\uf0a7\uf0d8\uf0d7\uf076\uf0fc]|o\s|-\s|–\s)\s*/u;
 const estIntertitre = p => p.length < 90 && !/[.;:!?»”"]\s*$/.test(p) && /^\p{Lu}/u.test(p) && !PUCE_AFFICHAGE.test(p) && !p.startsWith("Annexe");
 function dessinerDecoupe(dec) {
+  const alertes = new Map((dec.controles || []).filter(c => c.point).map(c => [c.point, c.message]));
   return dec.structure.map(e => {
     if (e.t === "titre") return `<div class="t${Math.min(e.niveau, 3)}">${echapper(e.num)}. ${echapper(e.texte)}</div>`;
     const paras = e.paras.map(p => PUCE_AFFICHAGE.test(p) ? `<p class="puce">• ${echapper(p.replace(PUCE_AFFICHAGE, ""))}</p>`
       : estIntertitre(p) ? `<p class="intertitre">${echapper(p)}</p>` : `<p>${echapper(p)}</p>`).join("");
-    return `<div class="point"><div class="reperage">Point ${echapper(e.num)}</div>${paras}</div>`;
+    const a = alertes.get(e.num);
+    return `<div class="point${a ? " alerte" : ""}" id="point-${echapper(e.num)}"><div class="reperage">Point ${echapper(e.num)}</div>${a ? `<div class="motif">${echapper(a)}</div>` : ""}${paras}</div>`;
   }).join("");
 }
 function afficherVue(decoupe) {
@@ -494,6 +570,10 @@ function remplirFiche(d) {
   $("fiche-meta").textContent = `Versé le ${dateCourte(d.verse_le)}, ${libelleType(d.type_acte)}, ${d.texte.length.toLocaleString("fr-FR")} caractères`
     + (dec ? ` — découpé en ${dec.points} points, ${dec.articles} articles, ${dec.rubriques} rubriques (règles ${dec.version})` : " — pas encore découpé");
   $("fiche-decoupe").innerHTML = dec ? dessinerDecoupe(dec) : "";
+  $("fiche-controles").innerHTML = !dec ? "" : dec.etat === "vert" || !dec.controles?.length
+    ? `<div class="bandeau vert"><span class="pastille vert"></span>Découpe sans anomalie détectée.</div>`
+    : `<div class="bandeau ${dec.etat}"><span class="pastille ${dec.etat}"></span><b>${dec.etat === "carmin" ? "Découpe impossible" : "Découpe à vérifier"}</b> — ${dec.controles.length} alerte${dec.controles.length > 1 ? "s" : ""} :
+       <ul>${dec.controles.map(c => `<li>${c.point ? `<a href="#point-${echapper(c.point)}">${echapper(c.message)}</a>` : echapper(c.message)}</li>`).join("")}</ul></div>`;
   $("fiche-texte").textContent = d.texte.slice(0, 40000) + (d.texte.length > 40000 ? "\n\n[…]" : "");
   $("fiche-note").textContent = dec
     ? "Découpe faite. La comparaison avec le clausier n'est pas encore en service : le dépôt reste dans la file en attendant."
