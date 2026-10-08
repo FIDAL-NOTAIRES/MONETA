@@ -192,7 +192,7 @@ table.file tr.ouvert td{background:#EAFAFB}
 
 <script>
 /* ============================================================
-   MONETA — version 0.3 du 08/10/2026 (lecture Word avec numérotation automatique, contrôles de vraisemblance) ; 0.2 : moteur de découpe en service ; squelette du 07/10/2026
+   MONETA — version 0.4 du 08/10/2026 (titres des PDF non numérotés déduits de la mise en forme) ; 0.3 du 08/10/2026 (lecture Word avec numérotation automatique, contrôles de vraisemblance) ; 0.2 : moteur de découpe en service ; squelette du 07/10/2026
    Arbitrages (fiche clausier) : une application, deux moteurs ;
    on VERSE d'un côté (file d'attente sur le Drive), on TRAITE quand on veut ;
    le DÉCOUPAGE (neutralisation en champs, coupe en clauses, destination
@@ -407,12 +407,25 @@ async function docxEnLignes(tampon, JSZipLib) {
 async function extraireTexte(f) {
   const nom = f.name.toLowerCase();
   if (nom.endsWith(".doc")) throw new Error("ancien format Word (.doc) : ouvrez-le dans Word et enregistrez-le en .docx, ou versez le PDF signé");
-  if (nom.endsWith(".docx")) return { texte: await docxEnLignes(await f.arrayBuffer()), html: null };
+  if (nom.endsWith(".docx")) {
+    const tampon = await f.arrayBuffer(), o = new Uint8Array(tampon.slice(0, 4));
+    // signature d'un ancien .doc (D0 CF 11 E0) : fichier simplement renommé en .docx
+    if (o[0] === 0xD0 && o[1] === 0xCF && o[2] === 0x11 && o[3] === 0xE0)
+      throw new Error("ce fichier est en réalité un ancien .doc renommé en .docx : ouvrez-le dans Word et faites Fichier › Enregistrer sous › Document Word (.docx)");
+    if (!(o[0] === 0x50 && o[1] === 0x4B)) throw new Error("ce fichier n'est pas un document Word lisible");
+    const texte = await docxEnLignes(tampon);
+    if (!texte.trim()) throw new Error("document Word sans texte lisible (le contenu est peut-être une image)");
+    return { texte, html: null };
+  }
   if (nom.endsWith(".pdf")) {
     pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
     const pdf = await pdfjsLib.getDocument({ data: await f.arrayBuffer() }).promise;
     const pages = [];
-    for (let i = 1; i <= pdf.numPages; i++) pages.push(lignesDeLaPage((await (await pdf.getPage(i)).getTextContent()).items));
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      await page.getOperatorList();                       // charge les polices : on sait alors ce qui est en gras
+      pages.push(lignesDeLaPage((await page.getTextContent()).items, page));
+    }
     return { texte: pages.join("\n\f"), html: null };
   }
   return { texte: await f.text(), html: null };
@@ -420,35 +433,50 @@ async function extraireTexte(f) {
 /* Reconstitution des lignes d'une page PDF (08/10/2026) : les morceaux de texte sont
    regroupés par hauteur (les exposants « 1er » rejoignent leur ligne), remis dans
    l'ordre de lecture, et un écart vertical marqué devient une ligne vide, comme
-   entre deux paragraphes. C'est la forme de texte qu'attend le moteur de découpe. */
-function lignesDeLaPage(items) {
+   entre deux paragraphes. C'est la forme de texte qu'attend le moteur de découpe.
+   Mise en forme (règles 1.4) : une ligne entièrement en gras est préfixée ⟦G⟧, une
+   ligne centrée ⟦C⟧ (ou ⟦GC⟧) ; le moteur s'en sert pour retrouver les titres des
+   actes sans numérotation, et retire ces marques dans tous les cas. */
+function lignesDeLaPage(items, page) {
+  const largeur = page ? page.view[2] - page.view[0] : 595;
+  const grasDe = new Map();
+  const estGras = f => { if (!grasDe.has(f)) { let n = ""; try { n = page?.commonObjs.get(f)?.name || ""; } catch { } grasDe.set(f, /bold|black|heavy|semibold|demi/i.test(n)); } return grasDe.get(f); };
   const lignes = [];
   for (const it of items) {
     if (!it.str) continue;
     const y = Math.round(it.transform[5]), x = it.transform[4], h = Math.abs(it.transform[3]) || it.height || 10;
     let l = lignes.find(L => Math.abs(L.y - y) <= Math.max(3, Math.max(h, L.h) * 0.55));
     if (!l) { l = { y, h, morceaux: [] }; lignes.push(l); }
-    l.morceaux.push({ x, s: it.str, w: it.width });
+    l.morceaux.push({ x, s: it.str, w: it.width, g: estGras(it.fontName) });
     l.h = Math.max(l.h, h);
   }
   lignes.sort((a, b) => b.y - a.y);
+  const freq = {};
+  for (const l of lignes) { const g = Math.round(Math.min(...l.morceaux.map(m => m.x))); freq[g] = (freq[g] || 0) + 1; }
+  const marge = +(Object.entries(freq).sort((a, b) => b[1] - a[1])[0]?.[0] || 0);
   const sortie = []; let prec = null;
   for (const l of lignes) {
     l.morceaux.sort((a, b) => a.x - b.x);
     let t = "", fin = null;
     for (const m of l.morceaux) { if (fin !== null && m.x - fin > 1.5 && !/^(er|ère|e|ème|nd|nde)$/.test(m.s)) t += " "; t += m.s; fin = m.x + (m.w || 0); }
     if (!t.trim()) continue;
+    const pleins = l.morceaux.filter(m => m.s.trim());
+    const gras = pleins.length > 0 && pleins.every(m => m.g);
+    const xmin = Math.min(...pleins.map(m => m.x)), xmax = Math.max(...pleins.map(m => m.x + (m.w || 0)));
+    const centre = xmin > marge + 15 && Math.abs((xmin + xmax) / 2 - largeur / 2) < 25;
     if (prec && prec.y - l.y > Math.max(prec.h, l.h) * 1.9) sortie.push("");
-    sortie.push(t.replace(/\s+$/, "")); prec = l;
+    const marque = (gras ? "G" : "") + (centre ? "C" : "");
+    sortie.push((marque ? `⟦${marque}⟧` : "") + t.replace(/\s+$/, "")); prec = l;
   }
   return sortie.join("\n");
 }
+const sansMarques = t => String(t || "").replace(/^⟦[GC]+⟧/gmu, "");
 function noterVersement(txt, cls) {
   const li = document.createElement("li"); li.className = cls || ""; li.textContent = txt;
   $("verses").prepend(li); return li;
 }
 async function verser({ nom, origine, texte, html }) {
-  if (!texte || !texte.trim()) throw new Error("aucun texte lisible (PDF scanné ?)");
+  if (!texte || !texte.trim()) throw new Error(/\.pdf$/i.test(nom) ? "aucun texte lisible : le PDF est sans doute scanné en image" : "aucun texte lisible");
   const { file } = await arborescence();
   const id = (crypto.randomUUID?.() || String(Date.now()) + Math.random().toString(16).slice(2));
   const depot = { moneta: 1, id, nom, origine, type_acte: $("type-acte").value || null,
@@ -469,7 +497,7 @@ async function verserFichiers(liste) {
       const d = await verser({ nom: f.name, origine: "fichier", texte, html });
       li.className = "ok"; li.textContent = `${f.name} : versé dans la file (${libelleType($("type-acte").value)})` +
         (d.decoupe ? ` — découpé en ${d.decoupe.points} points (${d.decoupe.articles} articles, ${d.decoupe.rubriques} rubriques)` +
-          (d.decoupe.etat === "vert" ? "." : d.decoupe.etat === "carmin" ? " : DÉCOUPE IMPOSSIBLE, voir la fiche." : ` : ${d.decoupe.controles.length} point${d.decoupe.controles.length > 1 ? "s" : ""} à vérifier.`) : " — découpe à relancer.");
+          (d.decoupe.etat === "vert" ? "." : d.decoupe.etat === "carmin" ? " : DÉCOUPE IMPOSSIBLE, voir la fiche." : ` : ${d.decoupe.controles.length} alerte${d.decoupe.controles.length > 1 ? "s" : ""} à vérifier${d.decoupe.titres_deduits ? " (titres déduits de la mise en forme)" : ""}.`) : " — découpe à relancer.");
       if (d.decoupe?.etat === "jaune") li.className = "ok jaune"; if (d.decoupe?.etat === "carmin") li.className = "ko";
     } catch (e) { li.className = "ko"; li.textContent = `${f.name} : non versé — ${e.message}`; }
   }
@@ -485,7 +513,7 @@ async function verserFichiers(liste) {
 $("texte-colle").addEventListener("input", () => { $("btn-verser-texte").disabled = !$("texte-colle").value.trim(); });
 $("btn-verser-texte").addEventListener("click", async () => {
   cacherErreur();
-  const texte = $("texte-colle").value.trim(), debut = texte.replace(/\s+/g, " ").slice(0, 50);
+  const texte = $("texte-colle").value.trim().replace(/⟦[GC]+⟧/gu, ""), debut = texte.replace(/\s+/g, " ").slice(0, 50);
   const li = noterVersement(`Paragraphe collé : versement…`);
   try {
     await verser({ nom: `Paragraphe — ${debut}…`, origine: "collé", texte, html: null });
@@ -567,14 +595,15 @@ $("vue-texte").addEventListener("click", () => afficherVue(false));
 function remplirFiche(d) {
   const dec = d.decoupe;
   $("fiche-titre").textContent = d.nom;
-  $("fiche-meta").textContent = `Versé le ${dateCourte(d.verse_le)}, ${libelleType(d.type_acte)}, ${d.texte.length.toLocaleString("fr-FR")} caractères`
+  $("fiche-meta").textContent = `Versé le ${dateCourte(d.verse_le)}, ${libelleType(d.type_acte)}, ${sansMarques(d.texte).length.toLocaleString("fr-FR")} caractères`
     + (dec ? ` — découpé en ${dec.points} points, ${dec.articles} articles, ${dec.rubriques} rubriques (règles ${dec.version})` : " — pas encore découpé");
   $("fiche-decoupe").innerHTML = dec ? dessinerDecoupe(dec) : "";
   $("fiche-controles").innerHTML = !dec ? "" : dec.etat === "vert" || !dec.controles?.length
     ? `<div class="bandeau vert"><span class="pastille vert"></span>Découpe sans anomalie détectée.</div>`
     : `<div class="bandeau ${dec.etat}"><span class="pastille ${dec.etat}"></span><b>${dec.etat === "carmin" ? "Découpe impossible" : "Découpe à vérifier"}</b> — ${dec.controles.length} alerte${dec.controles.length > 1 ? "s" : ""} :
        <ul>${dec.controles.map(c => `<li>${c.point ? `<a href="#point-${echapper(c.point)}">${echapper(c.message)}</a>` : echapper(c.message)}</li>`).join("")}</ul></div>`;
-  $("fiche-texte").textContent = d.texte.slice(0, 40000) + (d.texte.length > 40000 ? "\n\n[…]" : "");
+  const lu = sansMarques(d.texte);
+  $("fiche-texte").textContent = lu.slice(0, 40000) + (lu.length > 40000 ? "\n\n[…]" : "");
   $("fiche-note").textContent = dec
     ? "Découpe faite. La comparaison avec le clausier n'est pas encore en service : le dépôt reste dans la file en attendant."
     : (d.erreur_decoupe ? `La découpe a échoué au versement (${d.erreur_decoupe}) : cliquez « Redécouper ».` : "Ce dépôt n'a pas encore été découpé : cliquez « Redécouper ».");
