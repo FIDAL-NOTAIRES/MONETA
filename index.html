@@ -10,6 +10,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="plans.js"></script>
 <style>
 /* ---------- Charte FIDAL v2.2 ---------- */
 :root{
@@ -103,14 +104,57 @@ table.file tr.ouvert td{background:#EAFAFB}
 #fiche-texte{max-height:340px;overflow:auto;white-space:pre-wrap;font-family:Georgia,serif;font-size:.95rem;line-height:1.65;background:#fff;border:1px solid var(--trait);border-radius:4px;padding:14px 16px;margin-top:10px}
 .note-moteur{background:#FFF3C4;border-left:4px solid var(--jaune-texte);padding:9px 12px;border-radius:3px;margin-top:12px;font-size:.92rem}
 
-/* ---------- clausier ---------- */
-.type-acte{border-top:1px solid var(--trait);padding:14px 0}
-.type-acte:first-child{border-top:0;padding-top:0}
-.type-acte h3{font-size:1.15rem;display:flex;align-items:baseline;gap:10px}
-.type-acte h3 small{font-family:"Segoe UI",system-ui,sans-serif;font-size:.85rem;color:var(--doux)}
-.parties{list-style:none;margin-top:8px;columns:2 220px}
-.parties li{padding:3px 0;font-size:.93rem}
-.parties li span{color:var(--doux);margin-left:6px}
+/* ---------- clausier (0.5) : plan en tête, rubrique en deux colonnes ---------- */
+.cl-tete{display:flex;gap:14px;align-items:end;flex-wrap:wrap;margin-bottom:14px}
+.cl-tete > div{flex:1 1 260px}
+.cl-bilan{font-size:.9rem;color:var(--doux);margin:0 0 12px}
+.cl-plan{border:1px solid var(--trait);border-radius:4px;max-height:46vh;overflow:auto;background:#fff}
+.cl-plan details{border-bottom:1px solid var(--trait)}
+.cl-plan details:last-child{border-bottom:0}
+.cl-plan summary{list-style:none;cursor:pointer;padding:8px 12px;display:flex;gap:10px;align-items:baseline;color:var(--nuit)}
+.cl-plan summary::-webkit-details-marker{display:none}
+.cl-plan summary::before{content:"▸";color:var(--canard);width:1em;flex:none}
+.cl-plan details[open] > summary::before{content:"▾"}
+.cl-plan summary .num{color:var(--doux);min-width:2em;font-variant-numeric:tabular-nums}
+.cl-plan summary .nb{margin-left:auto;font-size:.82rem;color:var(--doux)}
+.cl-plan details.en-cours > summary{background:#EAFAFB;font-weight:600}
+.cl-rubriques{list-style:none;padding:0 0 8px 42px}
+.cl-rubriques button{background:none;border:0;text-align:left;width:100%;padding:4px 10px;border-radius:3px;display:flex;gap:10px;color:var(--texte);font-size:.93rem}
+.cl-rubriques button:hover{background:var(--gris)}
+.cl-rubriques button[aria-current="true"]{background:var(--canard);color:#fff}
+.cl-rubriques .id{font-size:.78rem;color:var(--doux);min-width:5.6em;font-variant-numeric:tabular-nums}
+.cl-rubriques button[aria-current="true"] .id{color:#DDF3F4}
+.cl-rubriques .opt{font-size:.75rem;border:1px solid currentColor;border-radius:3px;padding:0 4px;opacity:.75}
+.cl-rubriques .nb{margin-left:auto;font-size:.82rem;opacity:.8}
+.cl-rubrique{margin-top:20px;border-top:3px solid var(--nuit);padding-top:14px}
+.cl-rubrique > h3{font-size:1.3rem;display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
+.cl-rubrique > h3 .id{font-family:"Segoe UI",system-ui,sans-serif;font-size:.85rem;color:var(--doux)}
+.cl-chemin{font-size:.88rem;color:var(--doux);margin:2px 0 10px}
+.mots{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:16px}
+.mots .lib{font-size:.85rem;color:var(--doux);margin-right:4px}
+.mot{display:inline-flex;align-items:center;gap:4px;font-size:.83rem;padding:2px 8px;border-radius:12px;border:1px solid}
+.mot.titre{border-color:var(--nuit);color:var(--nuit);background:#fff}
+.mot.auto{border-color:var(--canard);color:#fff;background:var(--canard)}
+.mot.main{border-color:var(--orange);color:var(--nuit);background:#FFE9CF}
+.mot button{background:none;border:0;color:inherit;font-size:.9rem;line-height:1;padding:0 0 0 2px}
+.mots input{border:1px dashed var(--trait);border-radius:12px;padding:2px 10px;font-size:.83rem;width:12em}
+.cl-colonnes{display:grid;gap:18px}
+@media(min-width:820px){.cl-colonnes{grid-template-columns:minmax(0,2fr) minmax(0,1fr)}}
+.cl-colonnes h4{font-family:"Segoe UI",system-ui,sans-serif;font-size:.95rem;font-weight:600;color:var(--nuit);margin-bottom:8px}
+.clause{border:1px solid var(--trait);border-radius:4px;padding:12px 14px;margin-bottom:10px;background:#fff}
+.clause.etoile{border:2px solid var(--orange);background:#FFFCF7}
+.clause .marque-etoile{font-size:.85rem;font-weight:600;color:var(--nuit);margin-bottom:6px}
+.clause .marque-etoile span{font-weight:normal;color:var(--doux)}
+.vignettes{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}
+.vignette{font-size:.78rem;padding:1px 7px;border-radius:3px}
+.vignette.contexte{background:#E2F3F4;color:#1F5E64}
+.vignette.sens{background:#EFE7F7;color:#4A2F6B}
+.vignette.nature{background:var(--gris);color:var(--doux)}
+.clause .texte{font-family:Georgia,serif;font-size:.95rem;line-height:1.6;text-align:justify;white-space:pre-wrap}
+.clause .commentaire{font-size:.86rem;color:var(--doux);font-style:italic;margin-top:8px}
+.clause .source{font-size:.8rem;color:var(--doux);margin-top:6px}
+.cl-ia{background:var(--gris);border-radius:4px;padding:12px 14px}
+.cl-ia .vide{padding:10px 0;text-align:left}
 
 .erreur{background:#FBE9EE;border-left:4px solid var(--carmin);padding:10px 14px;border-radius:3px;margin-bottom:14px;display:none}
 @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
@@ -119,7 +163,7 @@ table.file tr.ouvert td{background:#EAFAFB}
 <body>
 <header>
   <h1>MONETA</h1>
-  <small>Le clausier du cabinet</small>
+  <small>Le clausier du cabinet, version 0.5</small>
   <span id="etat-connexion">Connexion au Drive…</span>
   <button id="btn-connexion">Autoriser l'accès au Drive</button>
 </header>
@@ -192,7 +236,7 @@ table.file tr.ouvert td{background:#EAFAFB}
 
 <script>
 /* ============================================================
-   MONETA — version 0.4 du 08/10/2026 (titres des PDF non numérotés déduits de la mise en forme) ; 0.3 du 08/10/2026 (lecture Word avec numérotation automatique, contrôles de vraisemblance) ; 0.2 : moteur de découpe en service ; squelette du 07/10/2026
+   MONETA — version 0.5 du 08/10/2026 (module Clausier, première tranche : plans de référence PSV AKZO et PUV R3S, numéros permanents, page Clausier) ; 0.4 du 08/10/2026 (titres des PDF non numérotés déduits de la mise en forme) ; 0.3 du 08/10/2026 (lecture Word avec numérotation automatique, contrôles de vraisemblance) ; 0.2 : moteur de découpe en service ; squelette du 07/10/2026
    Arbitrages (fiche clausier) : une application, deux moteurs ;
    on VERSE d'un côté (file d'attente sur le Drive), on TRAITE quand on veut ;
    le DÉCOUPAGE (neutralisation en champs, coupe en clauses, destination
@@ -215,8 +259,10 @@ const TYPES_ACTE = [
   { code: "donation-parts",           libelle: "Donation de parts sociales" },
   { code: "donation-immeuble",        libelle: "Donation d'immeuble" },
 ];
-// Plan des parties par type d'acte : À CONSTRUIRE ENSEMBLE EN SÉANCE (vide pour l'instant)
-const PARTIES = {};   // à venir : plans de référence (R3S pour la promesse unilatérale, AKZO pour la synallagmatique)
+// Plans de référence par type d'acte : fichier plans.js (validés le 08/10/2026).
+// Ils ne servent qu'à CRÉER le clausier d'un type d'acte ; ensuite le clausier du Drive fait foi.
+const PLANS = window.PLANS || {};
+const NOM_CLAUSIER = "clausier.json";   // un fichier par type d'acte, dans Clausier/<type d'acte>/
 
 // Accès Drive PROPRE À MONETA : portée « drive.file » — MONETA ne voit et ne modifie
 // QUE les dossiers et fichiers qu'elle a créés elle-même ; rien d'autre du Drive.
@@ -656,24 +702,174 @@ async function majCompteur(n) {
 }
 
 /* ============================================================
-   CLAUSIER — un dossier par type d'acte (créé au besoin),
-   un sous-dossier par partie (plan à construire)
+   MODULE CLAUSIER (0.5) — la main de l'humain sur le clausier
+   Arbitrages du 08/10/2026 :
+   - le Clausier est la SEULE SOURCE DE VÉRITÉ ; chaque rubrique porte un
+     NUMÉRO PERMANENT (ex. PSV-0042), attribué à la création et jamais réutilisé ;
+   - en tête, le PLAN (article › rubrique), replié sauf l'article en cours ;
+   - chaque rubrique est amorcée avec les MOTS DE SON TITRE ; les mots saisis
+     à la main gardent leur origine et ne sont jamais effacés par le moteur ;
+   - écran en DEUX COLONNES : à gauche toutes les clauses de la rubrique,
+     la CLAUSE ÉTOILE en tête (la plus utilisée, ou celle qui couvre le plus
+     de situations), chacune avec ses vignettes de contexte et un commentaire ;
+     à droite les PROPOSITIONS DE L'IA (à venir) ;
+   - les propositions venues des dépôts restent dans l'onglet « À traiter ».
+   Forme du fichier Clausier/<type d'acte>/clausier.json :
+   { moneta: 1, type_acte, prefixe, reference, cree_le, modifie_le, prochain,
+     articles: [{ num, titre, rubriques: [id…] }],
+     rubriques: { id: { id, article, titre, option, mots_cles: [{ mot, origine }],
+                        clauses: [{ id, texte, occurrences, contextes: [], sens,
+                                    nature, commentaire, source: { nom, date } }],
+                        propositions: [] } } }
    ============================================================ */
+const MOTS_VIDES = new Set(["de","du","des","la","le","les","et","à","au","aux","en","d","l","un","une","sur","par","pour","ou","sans","avec","dans","son","sa","ses","qui","que","non"]);
+const motsDuTitre = t => [...new Set(t.toLowerCase().replace(/[’']/g, " ").split(/[^\p{L}\d.-]+/u)
+  .map(m => m.replace(/^[.-]+|[.-]+$/g, "")).filter(m => m.length >= 3 && !MOTS_VIDES.has(m)))];
+const cl = { type: null, fichier: null, donnees: null, ouverte: null };
+
+function creerClausier(code) {
+  const p = PLANS[code]; let n = 0;
+  const donnees = { moneta: 1, type_acte: code, prefixe: p.prefixe, reference: p.reference,
+                    cree_le: new Date().toISOString(), modifie_le: null, articles: [], rubriques: {} };
+  p.articles.forEach(([titre, rubs], i) => {
+    const art = { num: i + 1, titre, rubriques: [] };
+    for (const brut of rubs) {
+      const option = brut.startsWith("(o) "), t = option ? brut.slice(4) : brut;
+      const id = `${p.prefixe}-${String(++n).padStart(4, "0")}`;
+      donnees.rubriques[id] = { id, article: art.num, titre: t, option,
+        mots_cles: motsDuTitre(t).map(mot => ({ mot, origine: "titre" })), clauses: [], propositions: [] };
+      art.rubriques.push(id);
+    }
+    donnees.articles.push(art);
+  });
+  donnees.prochain = n + 1;   // les numéros ne sont jamais réutilisés
+  return donnees;
+}
+async function dossierType(code) {
+  const { clausier } = await arborescence();
+  return dossier(libelleType(code), clausier);
+}
+async function chargerType(code) {
+  const idType = await dossierType(code);
+  const f = (await lister(idType, ` and name = '${NOM_CLAUSIER}'`))[0];
+  if (f) return { fichier: f.id, donnees: await lireJson(f.id) };
+  if (!PLANS[code]) return { fichier: null, donnees: null };
+  const donnees = creerClausier(code);
+  const cree = await ecrireJson(NOM_CLAUSIER, donnees, idType);
+  return { fichier: cree.id, donnees };
+}
+// Toute modification relit d'abord le fichier : un collègue a pu l'enrichir entre-temps
+async function modifierClausier(changement) {
+  const frais = await lireJson(cl.fichier);
+  changement(frais);
+  frais.modifie_le = new Date().toISOString();
+  await reecrireJson(cl.fichier, frais);
+  cl.donnees = frais;
+}
+// Clause étoile : la plus utilisée (nombre d'actes où elle revient) ; à égalité, la plus récente
+function trierClauses(clauses) {
+  return [...clauses].sort((a, b) => (b.occurrences || 1) - (a.occurrences || 1) || String(b.source?.date || "").localeCompare(String(a.source?.date || "")));
+}
+
 async function chargerClausier() {
   const zone = $("clausier-contenu");
+  const types = TYPES_ACTE.filter(t => PLANS[t.code]);
+  if (!cl.type) cl.type = types[0]?.code;
+  zone.innerHTML = `<div class="cl-tete"><div><label for="cl-type">Type d'acte</label>
+      <select id="cl-type">${TYPES_ACTE.map(t => `<option value="${t.code}"${t.code === cl.type ? " selected" : ""}>${echapper(t.libelle)}${PLANS[t.code] ? "" : " (plan à construire)"}</option>`).join("")}</select></div></div>
+    <div id="cl-corps"><p class="vide">Chargement du clausier…</p></div>`;
+  $("cl-type").addEventListener("change", e => { cl.type = e.target.value; cl.ouverte = null; afficherType(); });
+  afficherType();
+}
+async function afficherType() {
+  const corps = $("cl-corps");
+  corps.innerHTML = `<p class="vide">Chargement du clausier…</p>`;
   try {
-    const { clausier } = await arborescence();
-    const blocs = await Promise.all(TYPES_ACTE.map(async t => {
-      const idType = await dossier(t.libelle, clausier);
-      const sous = (await lister(idType, ` and mimeType = 'application/vnd.google-apps.folder'`));
-      const comptes = await Promise.all(sous.map(async s => ({ nom: s.name, n: (await lister(s.id, ` and mimeType = 'application/json'`)).length })));
-      const total = comptes.reduce((a, c) => a + c.n, 0);
-      return `<div class="type-acte"><h3>${echapper(t.libelle)}<small>${total} clause${total > 1 ? "s" : ""}</small></h3>
-        ${comptes.length ? `<ul class="parties">${comptes.map(c => `<li>${echapper(c.nom)}<span>${c.n}</span></li>`).join("")}</ul>`
-                         : `<p class="aide">Plan des parties à construire.</p>`}</div>`;
-    }));
-    zone.innerHTML = blocs.join("");
-  } catch (e) { zone.innerHTML = `<p class="vide">${echapper(e.message)}</p>`; }
+    const r = await chargerType(cl.type);
+    cl.fichier = r.fichier; cl.donnees = r.donnees;
+    if (!r.donnees) { corps.innerHTML = `<p class="vide">Le plan de référence de ce type d'acte reste à construire. Les deux promesses sont prêtes.</p>`; return; }
+    dessinerType();
+  } catch (e) { corps.innerHTML = `<p class="vide">${echapper(e.message)}</p>`; }
+}
+function dessinerType() {
+  const d = cl.donnees, rubs = Object.values(d.rubriques);
+  const nClauses = rubs.reduce((a, r) => a + r.clauses.length, 0), vides = rubs.filter(r => !r.clauses.length).length;
+  const artOuvert = cl.ouverte ? d.rubriques[cl.ouverte]?.article : null;
+  $("cl-corps").innerHTML = `
+    <p class="cl-bilan">${d.articles.length} articles, ${rubs.length} rubriques, ${nClauses} clause${nClauses > 1 ? "s" : ""} rangée${nClauses > 1 ? "s" : ""}, ${vides} rubrique${vides > 1 ? "s" : ""} encore vide${vides > 1 ? "s" : ""}. Plan de référence : ${echapper(d.reference)}.</p>
+    <nav class="cl-plan" aria-label="Plan de classement">${d.articles.map(a => {
+      const n = a.rubriques.reduce((s, id) => s + d.rubriques[id].clauses.length, 0);
+      return `<details${a.num === artOuvert ? " open class=\"en-cours\"" : ""}><summary><span class="num">${a.num}.</span>${echapper(a.titre)}<span class="nb">${a.rubriques.length} rubrique${a.rubriques.length > 1 ? "s" : ""}${n ? `, ${n} clause${n > 1 ? "s" : ""}` : ""}</span></summary>
+        <ul class="cl-rubriques">${a.rubriques.map(id => { const r = d.rubriques[id];
+          return `<li><button data-rubrique="${id}"${id === cl.ouverte ? ' aria-current="true"' : ""}><span class="id">${id}</span><span>${echapper(r.titre)}</span>${r.option ? '<span class="opt" title="Rubrique tirée d\'un autre acte que la référence">option</span>' : ""}<span class="nb">${r.clauses.length || ""}</span></button></li>`; }).join("")}</ul></details>`;
+    }).join("")}</nav>
+    <div id="cl-rubrique"></div>`;
+  $("cl-corps").querySelectorAll("[data-rubrique]").forEach(b => b.addEventListener("click", () => ouvrirRubrique(b.dataset.rubrique)));
+  if (cl.ouverte) dessinerRubrique();
+}
+function ouvrirRubrique(id) {
+  cl.ouverte = id;
+  // le plan reste replié, sauf l'article de la rubrique ouverte
+  const art = cl.donnees.rubriques[id].article;
+  $("cl-corps").querySelectorAll(".cl-plan details").forEach((det, i) => { const ici = i + 1 === art; det.open = ici; det.classList.toggle("en-cours", ici); });
+  $("cl-corps").querySelectorAll("[data-rubrique]").forEach(b => b.dataset.rubrique === id ? b.setAttribute("aria-current", "true") : b.removeAttribute("aria-current"));
+  dessinerRubrique();
+  $("cl-rubrique").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+function vignettes(c) {
+  return [...(c.contextes || []).map(x => `<span class="vignette contexte">${echapper(x)}</span>`),
+          c.sens ? `<span class="vignette sens">${echapper(c.sens)}</span>` : "",
+          c.nature ? `<span class="vignette nature">${echapper(c.nature)}</span>` : ""].join("");
+}
+function carteClause(c, etoile) {
+  const n = c.occurrences || 1;
+  return `<article class="clause${etoile ? " etoile" : ""}">
+    ${etoile ? `<div class="marque-etoile">★ Clause étoile <span>la plus utilisée, ${n} acte${n > 1 ? "s" : ""}</span></div>` : ""}
+    <div class="vignettes">${vignettes(c)}</div>
+    <div class="texte">${echapper(c.texte)}</div>
+    ${c.commentaire ? `<p class="commentaire">${echapper(c.commentaire)}</p>` : ""}
+    <p class="source">${c.id ? echapper(c.id) + ", " : ""}${c.source?.nom ? "tirée de « " + echapper(c.source.nom) + " »" : ""}${c.source?.date ? ", " + echapper(c.source.date) : ""}${!etoile && n > 1 ? `, ${n} actes` : ""}</p>
+  </article>`;
+}
+function dessinerRubrique() {
+  const d = cl.donnees, r = d.rubriques[cl.ouverte]; if (!r) return;
+  const art = d.articles.find(a => a.num === r.article);
+  const clauses = trierClauses(r.clauses);
+  $("cl-rubrique").innerHTML = `<section class="cl-rubrique" aria-labelledby="cl-titre">
+    <h3 id="cl-titre"><span class="id">${r.id}</span>${echapper(r.titre)}${r.option ? ' <span class="opt">option</span>' : ""}</h3>
+    <p class="cl-chemin">Article ${art.num}, ${echapper(art.titre)}</p>
+    <div class="mots" aria-label="Mots-clés de la rubrique"><span class="lib">Mots-clés</span>
+      ${r.mots_cles.map((m, i) => `<span class="mot ${m.origine}" title="${m.origine === "titre" ? "tiré du titre" : m.origine === "auto" ? "tiré des clauses rangées" : "saisi à la main"}">${echapper(m.mot)}${m.origine === "main" ? `<button data-retirer="${i}" aria-label="Retirer le mot ${echapper(m.mot)}">×</button>` : ""}</span>`).join("")}
+      <input id="cl-mot" placeholder="ajouter un mot-clé" aria-label="Ajouter un mot-clé">
+    </div>
+    <div class="cl-colonnes">
+      <div><h4>Clauses de la rubrique (${clauses.length})</h4>
+        ${clauses.length ? clauses.map((c, i) => carteClause(c, i === 0)).join("")
+          : `<p class="vide" style="text-align:left;padding:10px 0">Aucune clause rangée ici pour l'instant. Les clauses arrivent par l'onglet « À traiter », une fois validées.</p>`}
+      </div>
+      <aside class="cl-ia"><h4>Propositions de l'IA</h4>
+        ${r.propositions?.length ? r.propositions.map(p => `<article class="clause"><div class="texte">${echapper(p.texte)}</div><p class="source">${echapper(p.fondement || "")}</p></article>`).join("")
+          : `<p class="vide">Ici viendront les rédactions que l'IA propose pour améliorer la clause étoile ou une variante, avec la doctrine ou la jurisprudence qui les fonde. Prochaine tranche.</p>`}
+      </aside>
+    </div></section>`;
+  const champ = $("cl-mot");
+  champ.addEventListener("keydown", async e => {
+    if (e.key !== "Enter") return;
+    const mot = champ.value.trim().toLowerCase(); if (!mot) return;
+    champ.disabled = true;
+    try {
+      await modifierClausier(f => { const rr = f.rubriques[cl.ouverte];
+        if (!rr.mots_cles.some(m => m.mot === mot)) rr.mots_cles.push({ mot, origine: "main", ajoute_le: new Date().toISOString() }); });
+      dessinerRubrique(); $("cl-mot").focus();
+    } catch (err) { montrerErreur("Mot-clé non enregistré : " + err.message); champ.disabled = false; }
+  });
+  $("cl-rubrique").querySelectorAll("[data-retirer]").forEach(b => b.addEventListener("click", async () => {
+    const mot = r.mots_cles[+b.dataset.retirer]?.mot;
+    try {
+      await modifierClausier(f => { const rr = f.rubriques[cl.ouverte]; rr.mots_cles = rr.mots_cles.filter(m => !(m.mot === mot && m.origine === "main")); });
+      dessinerRubrique();
+    } catch (err) { montrerErreur("Mot-clé non retiré : " + err.message); }
+  }));
 }
 
 /* ---------- démarrage ---------- */
