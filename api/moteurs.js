@@ -14,7 +14,7 @@ const TAILLE_MAX = 3_000_000;   // caractères : un acte fait rarement plus de 3
 
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
-  if (req.method === "GET") return res.status(200).json({ moneta: { version: "0.3",
+  if (req.method === "GET") return res.status(200).json({ moneta: { version: "0.4",
     moteurs: { decouper: { etat: "en service", version: VERSION_DECOUPE }, comparer: { etat: "à venir" } } } });
   if (req.method !== "POST") return res.status(405).json({ erreur: { code: "methode", message: "GET ou POST seulement." } });
   let corps = req.body;
