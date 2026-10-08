@@ -76,6 +76,19 @@ table.file tr.ouvert td{background:#EAFAFB}
 .vide{padding:22px;text-align:center;color:var(--doux)}
 #fiche-depot{display:none;margin-top:18px;border:1px solid var(--trait);border-radius:6px;padding:18px;background:#FBFCFD}
 #fiche-depot h3{font-size:1.2rem;margin-bottom:6px}
+/* vue découpée : même lecture que la simulation Word (repère gris, trait orange entre deux points) */
+#fiche-decoupe{max-height:70vh;overflow:auto;background:#fff;border:1px solid var(--trait);border-radius:4px;padding:6px 18px 14px;margin-top:10px;font-family:Georgia,serif;font-size:.95rem;line-height:1.6}
+#fiche-decoupe .t1{font-weight:bold;font-size:1.05rem;margin:18px 0 6px;color:var(--nuit)}
+#fiche-decoupe .t2{font-weight:bold;margin:12px 0 4px;color:var(--nuit)}
+#fiche-decoupe .t3{font-style:italic;margin:10px 0 4px;color:var(--nuit)}
+#fiche-decoupe .point{border-bottom:2px solid var(--orange);padding:6px 0 8px}
+#fiche-decoupe .reperage{font-family:"Segoe UI",system-ui,sans-serif;font-size:.75rem;font-weight:700;color:var(--doux);margin-bottom:2px}
+#fiche-decoupe p{margin:0 0 6px;text-align:justify}
+#fiche-decoupe p.puce{padding-left:1.4em;text-indent:-.9em}
+#fiche-decoupe p.intertitre{font-style:italic;color:var(--canard)}
+.bascule{display:inline-flex;border:1px solid var(--trait);border-radius:4px;overflow:hidden;margin-top:10px}
+.bascule button{border:0;background:#fff;padding:6px 12px;font-size:.88rem;color:var(--nuit)}
+.bascule button[aria-pressed="true"]{background:var(--canard);color:#fff}
 #fiche-texte{max-height:340px;overflow:auto;white-space:pre-wrap;font-family:Georgia,serif;font-size:.95rem;line-height:1.65;background:#fff;border:1px solid var(--trait);border-radius:4px;padding:14px 16px;margin-top:10px}
 .note-moteur{background:#FFF3C4;border-left:4px solid var(--jaune-texte);padding:9px 12px;border-radius:3px;margin-top:12px;font-size:.92rem}
 
@@ -143,10 +156,16 @@ table.file tr.ouvert td{background:#EAFAFB}
     <div id="fiche-depot">
       <h3 id="fiche-titre"></h3>
       <p class="aide" id="fiche-meta"></p>
-      <div id="fiche-texte"></div>
+      <div class="bascule" role="group" aria-label="Affichage du dépôt">
+        <button id="vue-decoupe" aria-pressed="true">Vue découpée</button>
+        <button id="vue-texte" aria-pressed="false">Texte lu</button>
+      </div>
+      <div id="fiche-decoupe"></div>
+      <div id="fiche-texte" style="display:none"></div>
       <p class="note-moteur" id="fiche-note"></p>
       <div class="actions">
-        <button class="bouton" id="btn-decouper">Découper et comparer</button>
+        <button class="bouton" id="btn-decouper">Comparer avec le clausier</button>
+        <button class="bouton secondaire" id="btn-redecouper">Redécouper</button>
         <button class="bouton secondaire" id="btn-fermer">Fermer</button>
         <button class="bouton discret" id="btn-retirer">Retirer de la file</button>
       </div>
@@ -161,28 +180,31 @@ table.file tr.ouvert td{background:#EAFAFB}
 
 <script>
 /* ============================================================
-   MONETA — squelette du 07/10/2026
+   MONETA — version 0.2 du 08/10/2026 (moteur de découpe en service) ; squelette du 07/10/2026
    Arbitrages (fiche clausier) : une application, deux moteurs ;
    on VERSE d'un côté (file d'attente sur le Drive), on TRAITE quand on veut ;
    le DÉCOUPAGE (neutralisation en champs, coupe en clauses, destination
    proposée) tourne dès le versement ; la COMPARAISON tourne à l'ouverture
    du dépôt, contre le clausier du jour ; l'humain tranche toujours.
    Un dossier par type d'acte, sans tronc commun.
-   ÉTAT : écran, versement, file et clausier en place ; les deux moteurs
-   répondent « à venir » (plan des parties encore à construire).
+   ÉTAT : écran, versement, file et clausier en place ; DÉCOUPE EN SERVICE
+   (règles fixes, côté serveur, validées sur R3S : 347 points) ; la comparaison
+   et le rangement dans les plans de référence restent à venir.
    ============================================================ */
 
 /* ---------- paramètres réglables en tête ---------- */
 // Types d'actes du premier périmètre (07/10/2026) — une ligne à ajouter pour élargir
+// Promesse scindée en deux types distincts (JFD, 07/10/2026)
 const TYPES_ACTE = [
-  { code: "vente",        libelle: "Vente" },
-  { code: "promesse",     libelle: "Promesse de vente" },
-  { code: "statuts-sci",  libelle: "Statuts de SCI" },
-  { code: "donation-parts",   libelle: "Donation de parts sociales" },
-  { code: "donation-immeuble", libelle: "Donation d'immeuble" },
+  { code: "vente",                    libelle: "Vente" },
+  { code: "promesse-unilaterale",     libelle: "Promesse unilatérale de vente" },
+  { code: "promesse-synallagmatique", libelle: "Promesse synallagmatique de vente" },
+  { code: "statuts-sci",              libelle: "Statuts de SCI" },
+  { code: "donation-parts",           libelle: "Donation de parts sociales" },
+  { code: "donation-immeuble",        libelle: "Donation d'immeuble" },
 ];
 // Plan des parties par type d'acte : À CONSTRUIRE ENSEMBLE EN SÉANCE (vide pour l'instant)
-const PARTIES = { "vente": [], "promesse": [], "statuts-sci": [], "donation-parts": [], "donation-immeuble": [] };
+const PARTIES = {};   // à venir : plans de référence (R3S pour la promesse unilatérale, AKZO pour la synallagmatique)
 
 // Accès Drive PROPRE À MONETA : portée « drive.file » — MONETA ne voit et ne modifie
 // QUE les dossiers et fichiers qu'elle a créés elle-même ; rien d'autre du Drive.
@@ -320,14 +342,37 @@ async function extraireTexte(f) {
   if (nom.endsWith(".pdf")) {
     pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
     const pdf = await pdfjsLib.getDocument({ data: await f.arrayBuffer() }).promise;
-    let texte = "";
-    for (let i = 1; i <= pdf.numPages; i++) {
-      const c = await (await pdf.getPage(i)).getTextContent();
-      texte += c.items.map(it => it.str + (it.hasEOL ? "\n" : " ")).join("") + "\n\n";
-    }
-    return { texte, html: null };
+    const pages = [];
+    for (let i = 1; i <= pdf.numPages; i++) pages.push(lignesDeLaPage((await (await pdf.getPage(i)).getTextContent()).items));
+    return { texte: pages.join("\n\f"), html: null };
   }
   return { texte: await f.text(), html: null };
+}
+/* Reconstitution des lignes d'une page PDF (08/10/2026) : les morceaux de texte sont
+   regroupés par hauteur (les exposants « 1er » rejoignent leur ligne), remis dans
+   l'ordre de lecture, et un écart vertical marqué devient une ligne vide, comme
+   entre deux paragraphes. C'est la forme de texte qu'attend le moteur de découpe. */
+function lignesDeLaPage(items) {
+  const lignes = [];
+  for (const it of items) {
+    if (!it.str) continue;
+    const y = Math.round(it.transform[5]), x = it.transform[4], h = Math.abs(it.transform[3]) || it.height || 10;
+    let l = lignes.find(L => Math.abs(L.y - y) <= Math.max(3, Math.max(h, L.h) * 0.55));
+    if (!l) { l = { y, h, morceaux: [] }; lignes.push(l); }
+    l.morceaux.push({ x, s: it.str, w: it.width });
+    l.h = Math.max(l.h, h);
+  }
+  lignes.sort((a, b) => b.y - a.y);
+  const sortie = []; let prec = null;
+  for (const l of lignes) {
+    l.morceaux.sort((a, b) => a.x - b.x);
+    let t = "", fin = null;
+    for (const m of l.morceaux) { if (fin !== null && m.x - fin > 1.5 && !/^(er|ère|e|ème|nd|nde)$/.test(m.s)) t += " "; t += m.s; fin = m.x + (m.w || 0); }
+    if (!t.trim()) continue;
+    if (prec && prec.y - l.y > Math.max(prec.h, l.h) * 1.9) sortie.push("");
+    sortie.push(t.replace(/\s+$/, "")); prec = l;
+  }
+  return sortie.join("\n");
 }
 function noterVersement(txt, cls) {
   const li = document.createElement("li"); li.className = cls || ""; li.textContent = txt;
@@ -339,9 +384,11 @@ async function verser({ nom, origine, texte, html }) {
   const id = (crypto.randomUUID?.() || String(Date.now()) + Math.random().toString(16).slice(2));
   const depot = { moneta: 1, id, nom, origine, type_acte: $("type-acte").value || null,
                   verse_le: new Date().toISOString(), statut: "attente-decoupage", texte, html, clauses: [] };
+  // découpe tout de suite (règles fixes, côté serveur) ; en cas d'échec le dépôt part quand même, à redécouper
+  try { const r = await appelerMoteur("decouper", { texte }); depot.decoupe = r.decoupe; depot.statut = "decoupe"; }
+  catch (e) { depot.erreur_decoupe = e.message; }
   const horodatage = depot.verse_le.slice(0, 19).replace(/[:T]/g, "-");
-  const fichier = await ecrireJson(`${horodatage} — ${nom.replace(/[\\/:*?"<>|]/g, " ").slice(0, 80)}.json`, depot, file);
-  lancerDecoupage(fichier.id);          // en arrière-plan, sans attendre
+  await ecrireJson(`${horodatage} — ${nom.replace(/[\\/:*?"<>|]/g, " ").slice(0, 80)}.json`, depot, file);
   return depot;
 }
 async function verserFichiers(liste) {
@@ -350,8 +397,9 @@ async function verserFichiers(liste) {
     const li = noterVersement(`${f.name} : lecture…`);
     try {
       const { texte, html } = await extraireTexte(f);
-      await verser({ nom: f.name, origine: "fichier", texte, html });
-      li.className = "ok"; li.textContent = `${f.name} : versé dans la file (${libelleType($("type-acte").value)}).`;
+      const d = await verser({ nom: f.name, origine: "fichier", texte, html });
+      li.className = "ok"; li.textContent = `${f.name} : versé dans la file (${libelleType($("type-acte").value)})` +
+        (d.decoupe ? ` — découpé en ${d.decoupe.points} points (${d.decoupe.articles} articles, ${d.decoupe.rubriques} rubriques).` : " — découpe à relancer.");
     } catch (e) { li.className = "ko"; li.textContent = `${f.name} : non versé — ${e.message}`; }
   }
   majCompteur();
@@ -387,16 +435,16 @@ async function appelerMoteur(action, donnees) {
   if (!rep.ok) { const err = new Error(j?.erreur?.message || `moteur ${action} : ${rep.status}`); err.code = j?.erreur?.code; throw err; }
   return j;
 }
-async function lancerDecoupage(idFichier) {
-  try { await appelerMoteur("decouper", { depot: idFichier }); }
-  catch (e) { if (e.code !== "moteur-a-venir") console.warn("découpage :", e.message); }
+// Réécrit le contenu d'un dépôt déjà versé (redécoupe d'un ancien dépôt)
+async function reecrireJson(id, objet) {
+  return drive(`${DRIVE_ENVOI}/${id}?uploadType=media`, { method: "PATCH", headers: { "Content-Type": "application/json; charset=UTF-8" }, body: JSON.stringify(objet) });
 }
 
 /* ============================================================
    À TRAITER — la file, du plus ancien au plus récent
    (règle commune de la suite : ce qui traîne remonte en tête)
    ============================================================ */
-const STATUTS = { "attente-decoupage": ["attente", "en attente de découpage"], "decoupe": ["decoupe", "découpé, à comparer"], "erreur": ["erreur", "découpage en échec"] };
+const STATUTS = { "attente-decoupage": ["attente", "à découper"], "decoupe": ["decoupe", "découpé, à comparer"], "erreur": ["erreur", "découpe en échec"] };
 async function chargerFile() {
   const zone = $("file-contenu");
   try {
@@ -418,22 +466,61 @@ async function chargerFile() {
       const tr = zone.querySelector(`tr[data-i="${i}"]`); if (!tr) return;
       tr.querySelector(".t-type").textContent = libelleType(d.type_acte);
       const [cls, txt] = STATUTS[d.statut] || ["attente", d.statut];
-      const st = tr.querySelector(".statut"); st.className = `statut ${cls}`; st.textContent = txt;
+      const st = tr.querySelector(".statut"); st.className = `statut ${cls}`; st.textContent = txt + (d.decoupe ? ` (${d.decoupe.points} points)` : "");
     }).catch(() => {}));
   } catch (e) { zone.innerHTML = `<p class="vide">${echapper(e.message)}</p>`; }
+}
+const PUCE_AFFICHAGE = /^\s*(?:[•▪\uf0b7\uf0a7\uf0d8\uf0d7\uf076\uf0fc]|o\s|-\s|–\s)\s*/u;
+const estIntertitre = p => p.length < 90 && !/[.;:!?»”"]\s*$/.test(p) && /^\p{Lu}/u.test(p) && !PUCE_AFFICHAGE.test(p) && !p.startsWith("Annexe");
+function dessinerDecoupe(dec) {
+  return dec.structure.map(e => {
+    if (e.t === "titre") return `<div class="t${Math.min(e.niveau, 3)}">${echapper(e.num)}. ${echapper(e.texte)}</div>`;
+    const paras = e.paras.map(p => PUCE_AFFICHAGE.test(p) ? `<p class="puce">• ${echapper(p.replace(PUCE_AFFICHAGE, ""))}</p>`
+      : estIntertitre(p) ? `<p class="intertitre">${echapper(p)}</p>` : `<p>${echapper(p)}</p>`).join("");
+    return `<div class="point"><div class="reperage">Point ${echapper(e.num)}</div>${paras}</div>`;
+  }).join("");
+}
+function afficherVue(decoupe) {
+  const avec = !!etat.ouvert?.depot?.decoupe;
+  const vueDecoupe = decoupe && avec;
+  $("vue-decoupe").setAttribute("aria-pressed", vueDecoupe); $("vue-texte").setAttribute("aria-pressed", !vueDecoupe);
+  $("fiche-decoupe").style.display = vueDecoupe ? "block" : "none"; $("fiche-texte").style.display = vueDecoupe ? "none" : "block";
+}
+$("vue-decoupe").addEventListener("click", () => afficherVue(true));
+$("vue-texte").addEventListener("click", () => afficherVue(false));
+function remplirFiche(d) {
+  const dec = d.decoupe;
+  $("fiche-titre").textContent = d.nom;
+  $("fiche-meta").textContent = `Versé le ${dateCourte(d.verse_le)}, ${libelleType(d.type_acte)}, ${d.texte.length.toLocaleString("fr-FR")} caractères`
+    + (dec ? ` — découpé en ${dec.points} points, ${dec.articles} articles, ${dec.rubriques} rubriques (règles ${dec.version})` : " — pas encore découpé");
+  $("fiche-decoupe").innerHTML = dec ? dessinerDecoupe(dec) : "";
+  $("fiche-texte").textContent = d.texte.slice(0, 40000) + (d.texte.length > 40000 ? "\n\n[…]" : "");
+  $("fiche-note").textContent = dec
+    ? "Découpe faite. La comparaison avec le clausier n'est pas encore en service : le dépôt reste dans la file en attendant."
+    : (d.erreur_decoupe ? `La découpe a échoué au versement (${d.erreur_decoupe}) : cliquez « Redécouper ».` : "Ce dépôt n'a pas encore été découpé : cliquez « Redécouper ».");
+  afficherVue(true);
 }
 async function ouvrirDepot(i) {
   const f = etat.file[i]; if (!f) return;
   etat.ouvert = f;
   document.querySelectorAll("table.file tr").forEach(tr => tr.classList.toggle("ouvert", tr.dataset.i === String(i)));
   const d = f.depot || (f.depot = await lireJson(f.id));
-  $("fiche-titre").textContent = d.nom;
-  $("fiche-meta").textContent = `Versé le ${dateCourte(d.verse_le)}, ${libelleType(d.type_acte)}, ${d.texte.length.toLocaleString("fr-FR")} caractères`;
-  $("fiche-texte").textContent = d.texte.slice(0, 20000) + (d.texte.length > 20000 ? "\n\n[…]" : "");
-  $("fiche-note").textContent = "Les moteurs de découpage et de comparaison ne sont pas encore en service : le plan des parties de chaque type d'acte est à construire. Le dépôt reste dans la file en attendant.";
+  remplirFiche(d);
   $("fiche-depot").style.display = "block";
   $("fiche-depot").scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
+// Redécouper : relance la découpe (règles à jour) et réécrit le dépôt sur le Drive
+$("btn-redecouper").addEventListener("click", async () => {
+  const f = etat.ouvert; if (!f?.depot) return;
+  const b = $("btn-redecouper"); b.disabled = true; b.textContent = "Découpe…";
+  try {
+    const r = await appelerMoteur("decouper", { texte: f.depot.texte });
+    f.depot.decoupe = r.decoupe; f.depot.statut = "decoupe"; delete f.depot.erreur_decoupe;
+    await reecrireJson(f.id, f.depot);
+    remplirFiche(f.depot); chargerFile();
+  } catch (e) { $("fiche-note").textContent = "Redécoupe en échec : " + e.message; }
+  finally { b.disabled = false; b.textContent = "Redécouper"; }
+});
 $("btn-fermer").addEventListener("click", () => { $("fiche-depot").style.display = "none"; etat.ouvert = null; document.querySelectorAll("table.file tr.ouvert").forEach(tr => tr.classList.remove("ouvert")); });
 $("btn-decouper").addEventListener("click", async () => {
   if (!etat.ouvert) return;
