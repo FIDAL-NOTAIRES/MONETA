@@ -130,6 +130,27 @@ table.file tr.ouvert td{background:#EAFAFB}
 #zone-cote label{font-size:.88rem;margin-bottom:4px;display:block}
 #zone-cote input{width:100%;max-width:520px;padding:6px 10px;margin-bottom:8px}
 
+/* ---------- 1.2 — mode lecture seule (teinte de consultation : cyan de la charte) ---------- */
+.onglets button.consulter{margin-left:auto;background:#E3F7F8;color:var(--nuit);border:1px solid var(--cyan);border-bottom:3px solid var(--cyan);border-radius:4px 4px 0 0}
+.onglets button.consulter:hover{background:#CFF1F3}
+#bandeau-lecture{display:none;background:#E3F7F8;border:1px solid var(--cyan);border-left:6px solid var(--cyan);border-radius:4px;padding:12px 16px;margin-bottom:18px;align-items:center;gap:14px;flex-wrap:wrap}
+#bandeau-lecture b{font-family:Georgia,serif;font-size:1.1rem;color:var(--nuit)}
+#bandeau-lecture span{color:var(--doux);font-size:.9rem}
+#bandeau-lecture button{margin-left:auto}
+body.lecture #bandeau-lecture{display:flex}
+body.lecture .onglets{display:none}
+body.lecture header{box-shadow:inset 0 -4px 0 var(--cyan)}
+body.lecture .cl-journal,body.lecture #cl-mot,body.lecture [data-retirer]{display:none}
+.clause .gestes label.panier-case{color:var(--nuit);font-weight:600}
+.clause.choisie{border-color:var(--cyan);box-shadow:inset 4px 0 0 var(--cyan)}
+#panier{display:none;position:sticky;bottom:0;z-index:5;background:var(--nuit);color:#fff;border-radius:6px 6px 0 0;padding:12px 18px;margin-top:16px;align-items:center;gap:14px;flex-wrap:wrap}
+body.lecture #panier.plein{display:flex}
+#panier .compte{font-family:Georgia,serif;font-size:1.05rem}
+#panier .liste{flex-basis:100%;font-size:.82rem;opacity:.8}
+#panier button{border-radius:4px;padding:7px 14px;border:1px solid #fff;background:transparent;color:#fff}
+#panier button.envoyer{background:var(--cyan);color:var(--nuit);border-color:var(--cyan);font-weight:600;margin-left:auto}
+#panier .note{flex-basis:100%;font-size:.85rem;color:var(--cyan)}
+
 /* ---------- 1.1 — traitement simultané ---------- */
 #simultane{display:none;margin-top:18px;border:1px solid var(--trait);border-radius:6px;padding:18px;background:#FBFCFD}
 #simultane h3{font-size:1.2rem;color:var(--nuit);margin-bottom:4px}
@@ -314,7 +335,7 @@ mark{background:var(--jaune-forme);color:inherit;padding:0 1px}
 <body>
 <header>
   <h1>MONETA</h1>
-  <small>Le clausier du cabinet, version 1.1</small>
+  <small>Le clausier du cabinet, version 1.2</small>
   <span id="etat-connexion">Connexion au Drive…</span>
   <button id="btn-connexion">Autoriser l'accès au Drive</button>
 </header>
@@ -326,7 +347,10 @@ mark{background:var(--jaune-forme);color:inherit;padding:0 1px}
     <button role="tab" aria-selected="true" data-onglet="verser">Verser</button>
     <button role="tab" aria-selected="false" data-onglet="traiter">À traiter <span class="compteur zero" id="compteur">0</span></button>
     <button role="tab" aria-selected="false" data-onglet="clausier">Clausier</button>
+    <button class="consulter" id="btn-consulter" title="Ouvrir le clausier en lecture seule">Consulter le clausier</button>
   </div>
+  <div id="bandeau-lecture" role="status"><b>Lecture seule</b><span>Consultation du clausier : rien ne peut y être modifié. Cochez des clauses pour les envoyer par mail.</span>
+    <button class="bouton secondaire" id="btn-travail">Passer en mode travail</button></div>
 
   <!-- ======== VERSER : on dépose, rien d'autre ======== -->
   <section class="panneau actif" id="panneau-verser" role="tabpanel">
@@ -391,12 +415,13 @@ mark{background:var(--jaune-forme);color:inherit;padding:0 1px}
   <!-- ======== CLAUSIER : un dossier par type d'acte, un sous-dossier par partie ======== -->
   <section class="panneau" id="panneau-clausier" role="tabpanel">
     <div id="clausier-contenu"><p class="vide">Chargement du clausier…</p></div>
+    <div id="panier" aria-live="polite"></div>
   </section>
 </main>
 
 <script>
 /* ============================================================
-   MONETA — version 1.1 du 09/10/2026 (TRAITEMENT SIMULTANÉ : tous les points restants des dépôts d'un même type d'acte regroupés par rubrique proposée, tranchés en bloc ou un à un ; bascule avec l'ordre d'arrivée) ; 1.0 du 09/10/2026 (file « À traiter » : tableau de bord de la file, avancement de chaque dépôt, bouton « Mettre de côté » et liste des dépôts en attente ; compteurs d'usage dissociés du classement des clauses) ; 0.9 du 09/10/2026 (couverture du clausier par rubrique et par article, fiche éditable de la clause, journal de relecture avec rangement défait seul ou par lot, signal d'un acte non numéroté versé dans un clausier pauvre) ; 0.8 du 09/10/2026 (ciseau : coupe manuelle d'un point entre paragraphes ou puces, partie détachée lettrée, phrase d'annonce reprise, coupes conservées à la redécoupe, recollage) ; 0.7 du 09/10/2026 (ergonomie : fil d'Ariane collant, clause étoile choisie à la main et épinglée, compteurs indicatifs d'actes versés et de reprises en rédaction, comparaison côte à côte de deux variantes, recherche plein texte et filtres par contexte, sens, nature et texte visé, étapes du versement) ; 0.6 du 08/10/2026 (rangement des points d'un dépôt dans le clausier : proposition et deuxième candidate, contexte coché, validation point par point ou en bloc, journal des mouvements) ; 0.5 du 08/10/2026 (module Clausier, première tranche : plans de référence PSV AKZO et PUV R3S, numéros permanents, page Clausier) ; 0.4 du 08/10/2026 (titres des PDF non numérotés déduits de la mise en forme) ; 0.3 du 08/10/2026 (lecture Word avec numérotation automatique, contrôles de vraisemblance) ; 0.2 : moteur de découpe en service ; squelette du 07/10/2026
+   MONETA — version 1.2 du 09/10/2026 (MODE LECTURE SEULE : onglet « Consulter le clausier » en teinte de consultation, adresse directe ?consulter, bandeau avec retour au mode travail, aucun geste de modification ; sélection de clauses et envoi par mail d'un fichier Word aux champs entre crochets colorisés) ; 1.1 du 09/10/2026 (TRAITEMENT SIMULTANÉ : tous les points restants des dépôts d'un même type d'acte regroupés par rubrique proposée, tranchés en bloc ou un à un ; bascule avec l'ordre d'arrivée) ; 1.0 du 09/10/2026 (file « À traiter » : tableau de bord de la file, avancement de chaque dépôt, bouton « Mettre de côté » et liste des dépôts en attente ; compteurs d'usage dissociés du classement des clauses) ; 0.9 du 09/10/2026 (couverture du clausier par rubrique et par article, fiche éditable de la clause, journal de relecture avec rangement défait seul ou par lot, signal d'un acte non numéroté versé dans un clausier pauvre) ; 0.8 du 09/10/2026 (ciseau : coupe manuelle d'un point entre paragraphes ou puces, partie détachée lettrée, phrase d'annonce reprise, coupes conservées à la redécoupe, recollage) ; 0.7 du 09/10/2026 (ergonomie : fil d'Ariane collant, clause étoile choisie à la main et épinglée, compteurs indicatifs d'actes versés et de reprises en rédaction, comparaison côte à côte de deux variantes, recherche plein texte et filtres par contexte, sens, nature et texte visé, étapes du versement) ; 0.6 du 08/10/2026 (rangement des points d'un dépôt dans le clausier : proposition et deuxième candidate, contexte coché, validation point par point ou en bloc, journal des mouvements) ; 0.5 du 08/10/2026 (module Clausier, première tranche : plans de référence PSV AKZO et PUV R3S, numéros permanents, page Clausier) ; 0.4 du 08/10/2026 (titres des PDF non numérotés déduits de la mise en forme) ; 0.3 du 08/10/2026 (lecture Word avec numérotation automatique, contrôles de vraisemblance) ; 0.2 : moteur de découpe en service ; squelette du 07/10/2026
    Arbitrages (fiche clausier) : une application, deux moteurs ;
    on VERSE d'un côté (file d'attente sur le Drive), on TRAITE quand on veut ;
    le DÉCOUPAGE (neutralisation en champs, coupe en clauses, destination
@@ -1550,8 +1575,9 @@ async function afficherType() {
   const corps = $("cl-corps");
   corps.innerHTML = `<p class="vide">Chargement du clausier…</p>`;
   try {
-    const r = await chargerType(cl.type);
+    const r = etat.lecture ? { fichier: null, donnees: await clausierExistant(cl.type) } : await chargerType(cl.type);
     cl.fichier = r.fichier; cl.donnees = r.donnees;
+    if (etat.lecture && !r.donnees && PLANS[cl.type]) { corps.innerHTML = `<p class="vide">Aucune clause n'a encore été rangée pour ce type d'acte.</p>`; return; }
     if (!r.donnees) { corps.innerHTML = `<p class="vide">Le plan de référence de ce type d'acte reste à construire. Les deux promesses sont prêtes.</p>`; return; }
     dessinerType();
   } catch (e) { corps.innerHTML = `<p class="vide">${echapper(e.message)}</p>`; }
@@ -1686,6 +1712,7 @@ function dessinerResultats() {
         <button data-aller="${r.id}">Ouvrir la rubrique</button></h4>
       ${trouvees.map(c => carteClause(c, c.id === idEtoile(r), { lecture: true, q: cl.filtre.q })).join("")}</div>`).join("")}
   </section>`;
+  brancherPanier($("cl-rubrique"));
   $("cl-rubrique").querySelectorAll("[data-aller]").forEach(b => b.addEventListener("click", () => {
     cl.surligne = cl.filtre.q; effacerFiltres(); ouvrirRubrique(b.dataset.aller);
   }));
@@ -1711,13 +1738,16 @@ function vignettes(c) {
 function carteClause(c, etoile, opts = {}) {
   const n = c.occurrences || 1, u = c.usages || 0, q = opts.q ?? cl.surligne;
   const compteurs = `présente dans ${n} acte${n > 1 ? "s" : ""} versé${n > 1 ? "s" : ""}, reprise ${u} fois en rédaction`;
-  return `<article class="clause${etoile ? " etoile" : ""}" data-clause="${echapper(c.id || "")}">
+  return `<article class="clause${etoile ? " etoile" : ""}${etat.lecture && cl.panier.has(c.id) ? " choisie" : ""}" data-clause="${echapper(c.id || "")}">
     ${etoile ? `<div class="marque-etoile">★ Clause étoile <span>${opts.choisieLe ? "choisie le " + echapper(new Date(opts.choisieLe).toLocaleDateString("fr-FR")) : "choisie par un collaborateur"}</span></div>` : ""}
     <div class="vignettes">${vignettes(c)}</div>
     <div class="texte">${surligner(c.texte, q)}</div>
     ${c.commentaire ? `<p class="commentaire">${echapper(c.commentaire)}</p>` : ""}
     <p class="source">${c.id ? echapper(c.id) + ", " : ""}${c.source?.nom ? "tirée de « " + echapper(c.source.nom) + " »" : ""}${c.source?.date ? ", " + echapper(c.source.date) : ""} ; ${compteurs}</p>
-    ${opts.lecture || !c.id ? "" : `<div class="gestes">
+    ${etat.lecture && c.id ? `<div class="gestes">
+      <label class="panier-case"><input type="checkbox" data-panier="${echapper(c.id)}"${cl.panier.has(c.id) ? " checked" : ""}> Sélectionner pour l'envoi</label>
+      ${opts.comparable ? `<label><input type="checkbox" data-comparer="${echapper(c.id)}"${opts.comparee ? " checked" : ""}> Comparer</label>` : ""}
+    </div>` : opts.lecture || !c.id ? "" : `<div class="gestes">
       <button data-etoile="${echapper(c.id)}">${etoile ? "Retirer l'étoile" : "Choisir comme clause étoile"}</button>
       ${opts.edition ? "" : `<button data-editer="${echapper(c.id)}">Modifier la fiche</button>`}
       ${opts.comparable ? `<label><input type="checkbox" data-comparer="${echapper(c.id)}"${opts.comparee ? " checked" : ""}> Comparer</label>` : ""}
@@ -1793,7 +1823,7 @@ function dessinerRubrique() {
       <div><h4>Clauses de la rubrique (${clauses.length})</h4>
         ${clauses.length > 1 && !(ca && cb) ? `<p class="aide" style="margin:-4px 0 8px">Cochez « Comparer » sur deux clauses pour voir leurs différences côte à côte.</p>` : ""}
         ${comparaison}
-        ${clauses.length ? clauses.map(c => carteClause(c, c.id === etoile, { comparable: clauses.length > 1, comparee: cl.comparer.includes(c.id), choisieLe: c.id === etoile ? r.etoile.choisie_le : null, edition: cl.edition === c.id })).join("")
+        ${clauses.length ? clauses.map(c => carteClause(c, c.id === etoile, { comparable: clauses.length > 1, comparee: cl.comparer.includes(c.id), choisieLe: c.id === etoile ? r.etoile.choisie_le : null, edition: !etat.lecture && cl.edition === c.id })).join("")
           : `<p class="vide" style="text-align:left;padding:10px 0">Aucune clause rangée ici pour l'instant. Les clauses arrivent par l'onglet « À traiter », une fois validées.</p>`}
       </div>
       <aside class="cl-ia"><h4>Propositions de l'IA</h4>
@@ -1815,6 +1845,7 @@ function dessinerRubrique() {
     if (cl.comparer.length === 2) $("cl-rubrique").querySelector(".cl-compare")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }));
   $("cl-fermer-compare")?.addEventListener("click", () => { cl.comparer = []; dessinerRubrique(); });
+  brancherPanier(zoneR);
   zoneR.querySelectorAll("[data-editer]").forEach(b => b.addEventListener("click", () => {
     cl.edition = b.dataset.editer; cl.ctxAjoutes = []; dessinerRubrique();
     zoneR.querySelector(".fiche-edit select")?.focus();
@@ -1830,6 +1861,7 @@ function dessinerRubrique() {
       aj.before(lbl); aj.value = ""; (cl.ctxAjoutes ||= []).push(v); void coches; });
   }
   const champ = $("cl-mot");
+  if (etat.lecture) return;
   champ.addEventListener("keydown", async e => {
     if (e.key !== "Enter") return;
     const mot = champ.value.trim().toLowerCase(); if (!mot) return;
@@ -1849,9 +1881,113 @@ function dessinerRubrique() {
   }));
 }
 
+/* ============================================================
+   MODE LECTURE SEULE (1.2) — piste retenue le 09/10/2026 au soir
+   Deux portes : l'onglet « Consulter le clausier » (teinte de consultation,
+   cyan de la charte) et l'adresse directe ?consulter (pour une tuile du
+   lanceur). Bandeau « Lecture seule » avec retour au mode travail, ouvert à
+   tous pour l'instant (arbitrage du 09/10 : la gestion des accès viendra avec
+   le module Clausier à plusieurs mains). Rien n'est écrit sur le Drive.
+   Sélection de clauses (panier) → fichier Word joint à un mail : texte tel que
+   rangé, champs entre crochets ([VENDEUR], [PRIX]…) colorisés, reste en noir.
+   ============================================================ */
+cl.panier = new Map();   // id de clause → { id, texte, rubrique, type }
+function passerEnLecture(oui) {
+  etat.lecture = oui;
+  document.body.classList.toggle("lecture", oui);
+  cl.edition = null;
+  document.querySelectorAll(".onglets [role=tab]").forEach(x => x.setAttribute("aria-selected", x.dataset.onglet === "clausier"));
+  document.querySelectorAll(".panneau").forEach(p => p.classList.toggle("actif", p.id === "panneau-clausier"));
+  chargerClausier(); dessinerPanier();
+}
+$("btn-consulter").addEventListener("click", () => passerEnLecture(true));
+$("btn-travail").addEventListener("click", () => passerEnLecture(false));
+function trouverClause(id) {
+  for (const r of Object.values(cl.donnees?.rubriques || {})) { const c = r.clauses.find(x => x.id === id); if (c) return { c, r }; }
+  return null;
+}
+function brancherPanier(zone) {
+  if (!etat.lecture || !zone) return;
+  zone.querySelectorAll("[data-panier]").forEach(b => b.addEventListener("change", () => {
+    const t = trouverClause(b.dataset.panier); if (!t) return;
+    if (b.checked) cl.panier.set(t.c.id, { id: t.c.id, texte: t.c.texte, rubrique: t.r.titre, type: cl.type });
+    else cl.panier.delete(t.c.id);
+    b.closest(".clause")?.classList.toggle("choisie", b.checked);
+    dessinerPanier();
+  }));
+}
+function dessinerPanier(note = "") {
+  const z = $("panier"), n = cl.panier.size;
+  z.classList.toggle("plein", n > 0 || !!note);
+  if (!n && !note) { z.innerHTML = ""; return; }
+  z.innerHTML = `<span class="compte">${n ? pl(n, "clause sélectionnée", "clauses sélectionnées") : "Sélection vide"}</span>
+    ${n ? `<button id="panier-vider">Vider la sélection</button><button class="envoyer" id="panier-envoyer">Envoyer par mail</button>
+    <span class="liste">${[...cl.panier.values()].map(x => echapper(`${x.id} · ${x.rubrique}`)).join(" ; ")}</span>` : ""}
+    ${note ? `<span class="note">${note}</span>` : ""}`;
+  $("panier-vider")?.addEventListener("click", () => { cl.panier.clear(); document.querySelectorAll(".clause.choisie").forEach(a => a.classList.remove("choisie"));
+    document.querySelectorAll("[data-panier]").forEach(b => b.checked = false); dessinerPanier(); });
+  $("panier-envoyer")?.addEventListener("click", envoyerPanier);
+}
+/* ---------- fichier Word (docx) fabriqué dans la page, sans bibliothèque de plus que JSZip ---------- */
+const xml = t => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+const COULEUR_CHAMP = "33838B";   // canard de la charte : les champs à compléter ressortent, le reste en noir
+function runsWord(ligne) {
+  return ligne.split(/(\[[^\]\n]{1,80}\])/).filter(Boolean).map(m => /^\[.*\]$/.test(m)
+    ? `<w:r><w:rPr><w:b/><w:color w:val="${COULEUR_CHAMP}"/></w:rPr><w:t xml:space="preserve">${xml(m)}</w:t></w:r>`
+    : `<w:r><w:t xml:space="preserve">${xml(m)}</w:t></w:r>`).join("");
+}
+function documentWord(clauses) {
+  const date = new Date().toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+  const types = [...new Set(clauses.map(c => c.type))];
+  const corps = [`<w:p><w:pPr><w:pStyle w:val="Titre"/></w:pPr><w:r><w:t>Clauses extraites du clausier</w:t></w:r></w:p>`,
+    `<w:p><w:pPr><w:pStyle w:val="Note"/></w:pPr><w:r><w:t xml:space="preserve">FIDAL Notaires — ${xml(types.map(libelleType).join(", "))} — ${xml(date)}. Les champs entre crochets, en couleur, sont à compléter.</w:t></w:r></w:p>`];
+  for (const c of clauses) {
+    corps.push(`<w:p><w:pPr><w:pStyle w:val="Rubrique"/></w:pPr><w:r><w:t xml:space="preserve">${xml(c.rubrique)}</w:t></w:r><w:r><w:rPr><w:b w:val="0"/><w:u w:val="none"/><w:color w:val="8A96A3"/><w:sz w:val="16"/></w:rPr><w:t xml:space="preserve">  (${xml(c.id)})</w:t></w:r></w:p>`);
+    for (const l of String(c.texte).replace(/\u200b/g, "").split(/\n+/).map(x => x.trim()).filter(Boolean))
+      corps.push(`<w:p>${runsWord(l)}</w:p>`);
+  }
+  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>${corps.join("")}
+<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1417" w:right="1417" w:bottom="1417" w:left="1417" w:header="708" w:footer="708" w:gutter="0"/></w:sectPr></w:body></w:document>`;
+}
+const STYLES_WORD = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+<w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" w:cs="Times New Roman"/><w:sz w:val="22"/><w:lang w:val="fr-FR"/></w:rPr></w:rPrDefault>
+<w:pPrDefault><w:pPr><w:spacing w:after="120" w:line="276" w:lineRule="auto"/><w:jc w:val="both"/></w:pPr></w:pPrDefault></w:docDefaults>
+<w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/></w:style>
+<w:style w:type="paragraph" w:styleId="Titre"><w:name w:val="Title"/><w:pPr><w:jc w:val="center"/><w:spacing w:after="60"/></w:pPr><w:rPr><w:b/><w:caps/><w:sz w:val="26"/></w:rPr></w:style>
+<w:style w:type="paragraph" w:styleId="Note"><w:name w:val="Note"/><w:pPr><w:jc w:val="center"/><w:spacing w:after="360"/></w:pPr><w:rPr><w:i/><w:color w:val="5B6B7B"/><w:sz w:val="18"/></w:rPr></w:style>
+<w:style w:type="paragraph" w:styleId="Rubrique"><w:name w:val="Rubrique"/><w:pPr><w:keepNext/><w:spacing w:before="240" w:after="120"/><w:jc w:val="left"/></w:pPr><w:rPr><w:b/><w:u w:val="single"/></w:rPr></w:style>
+</w:styles>`;
+async function fabriquerWord(clauses) {
+  const z = new JSZip();
+  z.file("[Content_Types].xml", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/></Types>`);
+  z.file("_rels/.rels", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>`);
+  z.file("word/_rels/document.xml.rels", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>`);
+  z.file("word/document.xml", documentWord(clauses));
+  z.file("word/styles.xml", STYLES_WORD);
+  return z.generateAsync({ type: "blob", mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
+}
+// Un navigateur ne peut pas joindre lui-même un fichier à un mail : le Word est téléchargé,
+// puis un nouveau message s'ouvre dans la messagerie, prêt à recevoir la pièce jointe.
+async function envoyerPanier() {
+  const clauses = [...cl.panier.values()]; if (!clauses.length) return;
+  const b = $("panier-envoyer"); b.disabled = true; b.textContent = "Préparation…";
+  try {
+    const blob = await fabriquerWord(clauses);
+    const nom = `Clauses MONETA ${new Date().toISOString().slice(0, 10)}.docx`;
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = nom; document.body.appendChild(a); a.click();
+    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 4000);
+    const sujet = `Clauses du clausier — ${[...new Set(clauses.map(c => libelleType(c.type)))].join(", ")}`;
+    const corps = `Bonjour,\n\nVous trouverez ci-joint ${clauses.length > 1 ? `${clauses.length} clauses extraites` : "une clause extraite"} du clausier du cabinet :\n${clauses.map(c => `- ${c.rubrique} (${c.id})`).join("\n")}\n\nLes champs entre crochets, en couleur, sont à compléter pour votre acte.\n\nBien cordialement,`;
+    setTimeout(() => { location.href = `mailto:?subject=${encodeURIComponent(sujet)}&body=${encodeURIComponent(corps)}`; }, 400);
+    dessinerPanier(`Fichier « ${echapper(nom)} » téléchargé : joignez-le au message qui vient de s'ouvrir dans votre messagerie.`);
+  } catch (e) { montrerErreur("Fichier Word non préparé : " + e.message); dessinerPanier(); }
+}
+
 /* ---------- démarrage ---------- */
 async function demarrer() {
-  try { await jeton(); majConnexion(true); await majCompteur(); }
+  try { await jeton(); majConnexion(true); await majCompteur(); if (new URLSearchParams(location.search).has("consulter")) passerEnLecture(true); }
   catch (e) { majConnexion(false); }
 }
 window.addEventListener("load", () => {
