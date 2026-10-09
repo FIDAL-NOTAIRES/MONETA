@@ -10,15 +10,17 @@
 // ============================================================
 import { decouper, VERSION_DECOUPE } from "./_decoupe.js";
 import { ranger, VERSION_RANGEMENT } from "./_rangement.js";
+import { lire, tarif, VERSION_LECTURE } from "./_lecture.js";
 
-const ACTIONS = { decouper: "découpe", ranger: "rangement", comparer: "comparaison" };
+const ACTIONS = { decouper: "découpe", ranger: "rangement", lire: "lecture des pages scannées", comparer: "comparaison" };
 const TAILLE_MAX = 3_000_000;   // caractères : un acte fait rarement plus de 300 000
 
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
-  if (req.method === "GET") return res.status(200).json({ moneta: { version: "0.6",
+  if (req.method === "GET") return res.status(200).json({ moneta: { version: "1.3",
     moteurs: { decouper: { etat: "en service", version: VERSION_DECOUPE },
                ranger: { etat: "en service", version: VERSION_RANGEMENT },
+               lire: { etat: tarif().disponible ? "en service" : "clé API absente", version: VERSION_LECTURE, ...tarif() },
                comparer: { etat: "à venir" } } } });
   if (req.method !== "POST") return res.status(405).json({ erreur: { code: "methode", message: "GET ou POST seulement." } });
   let corps = req.body;
@@ -39,6 +41,13 @@ export default async function handler(req, res) {
     if (!Array.isArray(rubriques) || !rubriques.length) return res.status(400).json({ erreur: { code: "rubriques", message: "Le plan du clausier est vide." } });
     try { return res.status(200).json({ rangement: ranger({ points, rubriques, texte_acte }) }); }
     catch (e) { return res.status(500).json({ erreur: { code: "rangement", message: "Rangement en échec : " + (e.message || e) } }); }
+  }
+  if (action === "lire") {
+    const { pages, nom } = corps;
+    if (!Array.isArray(pages) || !pages.length || pages.some(p => !p || typeof p.image !== "string")) return res.status(400).json({ erreur: { code: "pages", message: "Aucune page à lire." } });
+    if (pages.length > 6) return res.status(400).json({ erreur: { code: "lot", message: "Six pages au plus par lot." } });
+    try { return res.status(200).json({ lecture: await lire({ pages, nom }) }); }
+    catch (e) { return res.status(e.code === "cle" ? 503 : 502).json({ erreur: { code: e.code || "lecture", message: "Lecture par Claude en échec : " + (e.message || e) } }); }
   }
   return res.status(501).json({ erreur: { code: "moteur-a-venir", message: `Le moteur de ${ACTIONS[action]} n'est pas encore en service.` } });
 }
