@@ -142,6 +142,42 @@ table.file tr.ouvert td{background:#EAFAFB}
 .mot button{background:none;border:0;color:inherit;font-size:.9rem;line-height:1;padding:0 0 0 2px}
 .mots input{border:1px dashed var(--trait);border-radius:12px;padding:2px 10px;font-size:.83rem;width:12em}
 .cl-colonnes{display:grid;gap:18px}
+/* 0.7 — fil d'Ariane collant, recherche et filtres, comparaison de variantes, étoile manuelle */
+.cl-ariane{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid var(--trait);margin:0 -2px 12px;padding:8px 2px;display:flex;flex-wrap:wrap;gap:4px 8px;align-items:baseline;font-size:.9rem}
+.cl-ariane button{background:none;border:0;padding:0;color:var(--canard);text-decoration:underline;text-underline-offset:2px}
+.cl-ariane .sep{color:var(--doux)}
+.cl-ariane .ici{color:var(--nuit);font-weight:600}
+.cl-ariane .ici .id{font-weight:normal;color:var(--doux);margin-right:6px;font-variant-numeric:tabular-nums}
+.cl-cherche{display:grid;gap:10px;grid-template-columns:1fr;background:#fff;border:1px solid var(--trait);border-radius:4px;padding:12px 14px;margin-bottom:14px}
+@media(min-width:820px){.cl-cherche{grid-template-columns:2fr 1fr 1fr 1fr 1.3fr auto;align-items:end}}
+.cl-cherche label{font-size:.82rem;color:var(--doux);display:block;margin-bottom:3px}
+.cl-cherche input,.cl-cherche select{width:100%;padding:6px 9px;border:1px solid var(--trait);border-radius:3px;background:#fff}
+.cl-cherche .effacer{padding:7px 12px;font-size:.9rem}
+.cl-resultats > p.bilan{font-size:.92rem;color:var(--nuit);margin:4px 0 12px}
+.cl-groupe{margin-bottom:18px}
+.cl-groupe h4{font-family:"Segoe UI",system-ui,sans-serif;font-size:.95rem;font-weight:600;color:var(--nuit);display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;margin-bottom:6px}
+.cl-groupe h4 .id{font-weight:normal;color:var(--doux);font-size:.82rem}
+.cl-groupe h4 button{margin-left:auto;background:none;border:0;color:var(--canard);text-decoration:underline;font-size:.86rem}
+mark{background:var(--jaune-forme);color:inherit;padding:0 1px}
+.clause .gestes{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;margin-top:8px;font-size:.84rem}
+.clause .gestes button{background:none;border:0;padding:0;color:var(--canard);text-decoration:underline;text-underline-offset:2px}
+.clause .gestes label{display:inline-flex;gap:5px;align-items:center;color:var(--doux);margin:0}
+.clause .gestes input{width:auto;margin:0}
+.cl-compare{border:2px solid var(--canard);border-radius:4px;background:#fff;padding:12px 14px;margin-bottom:16px}
+.cl-compare .haut{display:flex;gap:12px;align-items:baseline;flex-wrap:wrap;margin-bottom:8px}
+.cl-compare .haut b{color:var(--nuit)}
+.cl-compare .haut .legende{font-size:.82rem;color:var(--doux)}
+.cl-compare .haut button{margin-left:auto;background:none;border:0;color:var(--canard);text-decoration:underline;font-size:.86rem}
+.cl-compare .cols{display:grid;gap:14px}
+@media(min-width:820px){.cl-compare .cols{grid-template-columns:1fr 1fr}}
+.cl-compare .col h5{font-size:.82rem;font-weight:600;color:var(--doux);margin-bottom:4px}
+.cl-compare .col .texte{font-family:Georgia,serif;font-size:.93rem;line-height:1.6;white-space:pre-wrap;text-align:left}
+.cl-compare del{background:#FBE0E8;color:#7A0C31;text-decoration:line-through;text-decoration-color:#A01040}
+.cl-compare ins{background:#DDF2E5;color:#1D5E3A;text-decoration:none;border-bottom:1px solid var(--vert)}
+#verses li.encours::before{content:"";display:inline-block;width:.75em;height:.75em;border-radius:50%;border:2px solid var(--canard);border-right-color:transparent;margin-right:8px;vertical-align:-1px;animation:tourne .9s linear infinite}
+#verses li.encours{border-left-color:var(--canard)}
+#verses li .etape{color:var(--canard);font-weight:600}
+@keyframes tourne{to{transform:rotate(360deg)}}
 @media(min-width:820px){.cl-colonnes{grid-template-columns:minmax(0,2fr) minmax(0,1fr)}}
 .cl-colonnes h4{font-family:"Segoe UI",system-ui,sans-serif;font-size:.95rem;font-weight:600;color:var(--nuit);margin-bottom:8px}
 .clause{border:1px solid var(--trait);border-radius:4px;padding:12px 14px;margin-bottom:10px;background:#fff}
@@ -191,7 +227,7 @@ table.file tr.ouvert td{background:#EAFAFB}
 <body>
 <header>
   <h1>MONETA</h1>
-  <small>Le clausier du cabinet, version 0.6</small>
+  <small>Le clausier du cabinet, version 0.7</small>
   <span id="etat-connexion">Connexion au Drive…</span>
   <button id="btn-connexion">Autoriser l'accès au Drive</button>
 </header>
@@ -266,7 +302,7 @@ table.file tr.ouvert td{background:#EAFAFB}
 
 <script>
 /* ============================================================
-   MONETA — version 0.6 du 08/10/2026 (rangement des points d'un dépôt dans le clausier : proposition et deuxième candidate, contexte coché, validation point par point ou en bloc, journal des mouvements) ; 0.5 du 08/10/2026 (module Clausier, première tranche : plans de référence PSV AKZO et PUV R3S, numéros permanents, page Clausier) ; 0.4 du 08/10/2026 (titres des PDF non numérotés déduits de la mise en forme) ; 0.3 du 08/10/2026 (lecture Word avec numérotation automatique, contrôles de vraisemblance) ; 0.2 : moteur de découpe en service ; squelette du 07/10/2026
+   MONETA — version 0.7 du 09/10/2026 (ergonomie : fil d'Ariane collant, clause étoile choisie à la main et épinglée, compteurs indicatifs d'actes versés et de reprises en rédaction, comparaison côte à côte de deux variantes, recherche plein texte et filtres par contexte, sens, nature et texte visé, étapes du versement) ; 0.6 du 08/10/2026 (rangement des points d'un dépôt dans le clausier : proposition et deuxième candidate, contexte coché, validation point par point ou en bloc, journal des mouvements) ; 0.5 du 08/10/2026 (module Clausier, première tranche : plans de référence PSV AKZO et PUV R3S, numéros permanents, page Clausier) ; 0.4 du 08/10/2026 (titres des PDF non numérotés déduits de la mise en forme) ; 0.3 du 08/10/2026 (lecture Word avec numérotation automatique, contrôles de vraisemblance) ; 0.2 : moteur de découpe en service ; squelette du 07/10/2026
    Arbitrages (fiche clausier) : une application, deux moteurs ;
    on VERSE d'un côté (file d'attente sur le Drive), on TRAITE quand on veut ;
    le DÉCOUPAGE (neutralisation en champs, coupe en clauses, destination
@@ -551,15 +587,21 @@ function noterVersement(txt, cls) {
   const li = document.createElement("li"); li.className = cls || ""; li.textContent = txt;
   $("verses").prepend(li); return li;
 }
-async function verser({ nom, origine, texte, html }) {
+// Indicateur d'avancement (0.7) : chaque ligne dit où en est son dépôt, jusqu'à l'arrivée dans la file
+function etapeVersement(li, nom) {
+  return quoi => { li.className = "encours"; li.innerHTML = `${echapper(nom)} : <span class="etape">${echapper(quoi)}…</span>`; };
+}
+async function verser({ nom, origine, texte, html }, etape = () => {}) {
   if (!texte || !texte.trim()) throw new Error(/\.pdf$/i.test(nom) ? "aucun texte lisible : le PDF est sans doute scanné en image" : "aucun texte lisible");
   const { file } = await arborescence();
   const id = (crypto.randomUUID?.() || String(Date.now()) + Math.random().toString(16).slice(2));
   const depot = { moneta: 1, id, nom, origine, type_acte: $("type-acte").value || null,
                   verse_le: new Date().toISOString(), statut: "attente-decoupage", texte, html, clauses: [] };
   // découpe tout de suite (règles fixes, côté serveur) ; en cas d'échec le dépôt part quand même, à redécouper
+  etape("découpe en cours");
   try { const r = await appelerMoteur("decouper", { texte }); depot.decoupe = r.decoupe; depot.statut = "decoupe"; }
   catch (e) { depot.erreur_decoupe = e.message; }
+  etape("enregistrement dans la file");
   const horodatage = depot.verse_le.slice(0, 19).replace(/[:T]/g, "-");
   await ecrireJson(`${horodatage} — ${nom.replace(/[\\/:*?"<>|]/g, " ").slice(0, 80)}.json`, depot, file);
   return depot;
@@ -567,10 +609,11 @@ async function verser({ nom, origine, texte, html }) {
 async function verserFichiers(liste) {
   cacherErreur();
   for (const f of liste) {
-    const li = noterVersement(`${f.name} : lecture…`);
+    const li = noterVersement(""), etape = etapeVersement(li, f.name);
+    etape("lecture du fichier");
     try {
       const { texte, html } = await extraireTexte(f);
-      const d = await verser({ nom: f.name, origine: "fichier", texte, html });
+      const d = await verser({ nom: f.name, origine: "fichier", texte, html }, etape);
       li.className = "ok"; li.textContent = `${f.name} : versé dans la file (${libelleType($("type-acte").value)})` +
         (d.decoupe ? ` — découpé en ${d.decoupe.points} points (${d.decoupe.articles} articles, ${d.decoupe.rubriques} rubriques)` +
           (d.decoupe.etat === "vert" ? "." : d.decoupe.etat === "carmin" ? " : DÉCOUPE IMPOSSIBLE, voir la fiche." : ` : ${d.decoupe.controles.length} alerte${d.decoupe.controles.length > 1 ? "s" : ""} à vérifier${d.decoupe.titres_deduits ? " (titres déduits de la mise en forme)" : ""}.`) : " — découpe à relancer.");
@@ -590,9 +633,10 @@ $("texte-colle").addEventListener("input", () => { $("btn-verser-texte").disable
 $("btn-verser-texte").addEventListener("click", async () => {
   cacherErreur();
   const texte = $("texte-colle").value.trim().replace(/⟦[GC]+⟧/gu, ""), debut = texte.replace(/\s+/g, " ").slice(0, 50);
-  const li = noterVersement(`Paragraphe collé : versement…`);
+  const li = noterVersement(""), etape = etapeVersement(li, "Paragraphe collé");
+  etape("versement");
   try {
-    await verser({ nom: `Paragraphe — ${debut}…`, origine: "collé", texte, html: null });
+    await verser({ nom: `Paragraphe — ${debut}…`, origine: "collé", texte, html: null }, etape);
     li.className = "ok"; li.textContent = `Paragraphe « ${debut}… » versé dans la file.`;
     $("texte-colle").value = ""; $("btn-verser-texte").disabled = true;
   } catch (e) { li.className = "ko"; li.textContent = `Paragraphe non versé — ${e.message}`; }
@@ -875,22 +919,28 @@ async function majCompteur(n) {
    - chaque rubrique est amorcée avec les MOTS DE SON TITRE ; les mots saisis
      à la main gardent leur origine et ne sont jamais effacés par le moteur ;
    - écran en DEUX COLONNES : à gauche toutes les clauses de la rubrique,
-     la CLAUSE ÉTOILE en tête (la plus utilisée, ou celle qui couvre le plus
-     de situations), chacune avec ses vignettes de contexte et un commentaire ;
+     la CLAUSE ÉTOILE épinglée en tête — CHOISIE À LA MAIN par un collaborateur
+     (arbitrage du 09/10/2026, qui remplace le calcul « la plus utilisée ») ;
+     le compteur d'actes versés et le compteur de reprises en rédaction restent
+     affichés à titre indicatif et ne désignent JAMAIS l'étoile ;
      à droite les PROPOSITIONS DE L'IA (à venir) ;
    - les propositions venues des dépôts restent dans l'onglet « À traiter ».
    Forme du fichier Clausier/<type d'acte>/clausier.json :
    { moneta: 1, type_acte, prefixe, reference, cree_le, modifie_le, prochain,
      articles: [{ num, titre, rubriques: [id…] }],
      rubriques: { id: { id, article, titre, option, mots_cles: [{ mot, origine }],
-                        clauses: [{ id, texte, occurrences, contextes: [], sens,
+                        etoile: { clause, choisie_le } | absent,
+                        clauses: [{ id, texte, occurrences, usages (reprises en rédaction), contextes: [], sens,
                                     nature, commentaire, source: { nom, date } }],
                         propositions: [] } } }
    ============================================================ */
 const MOTS_VIDES = new Set(["de","du","des","la","le","les","et","à","au","aux","en","d","l","un","une","sur","par","pour","ou","sans","avec","dans","son","sa","ses","qui","que","non"]);
 const motsDuTitre = t => [...new Set(t.toLowerCase().replace(/[’']/g, " ").split(/[^\p{L}\d.-]+/u)
   .map(m => m.replace(/^[.-]+|[.-]+$/g, "")).filter(m => m.length >= 3 && !MOTS_VIDES.has(m)))];
-const cl = { type: null, fichier: null, donnees: null, ouverte: null };
+const cl = { type: null, fichier: null, donnees: null, ouverte: null,
+             filtre: { q: "", contexte: "", sens: "", nature: "", texte: "" }, surligne: "", comparer: [] };
+const SENS_CONNUS = ["protège l'acquéreur", "protège le vendeur", "équilibrée"];
+const NATURES_CONNUES = ["mention légale", "déclaration", "stipulation négociée"];
 
 function creerClausier(code) {
   const p = PLANS[code]; let n = 0;
@@ -933,9 +983,57 @@ async function modifierClausier(changement, fichier = cl.fichier) {
   if (fichier === cl.fichier) cl.donnees = frais;
   return frais;
 }
-// Clause étoile : la plus utilisée (nombre d'actes où elle revient) ; à égalité, la plus récente
-function trierClauses(clauses) {
-  return [...clauses].sort((a, b) => (b.occurrences || 1) - (a.occurrences || 1) || String(b.source?.date || "").localeCompare(String(a.source?.date || "")));
+// Clause étoile : CHOISIE À LA MAIN (09/10/2026) et épinglée en tête ; les autres suivent,
+// la plus souvent rencontrée d'abord, à égalité la plus récente. Les compteurs n'élisent jamais l'étoile.
+const idEtoile = r => r?.etoile?.clause || null;
+function trierClauses(clauses, etoile = null) {
+  return [...clauses].sort((a, b) => (b.id === etoile) - (a.id === etoile)
+    || (b.occurrences || 1) - (a.occurrences || 1) || String(b.source?.date || "").localeCompare(String(a.source?.date || "")));
+}
+
+/* ---------- outils de lecture : sans accents, textes visés, surlignage, comparaison ---------- */
+const plat = t => String(t || "").normalize("NFC").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+// Textes cités par une clause, relevés à la lecture (sert au filtre « texte visé » et à la veille)
+function textesVises(texte) {
+  const t = String(texte || "").replace(/\s+/g, " "), vus = new Map();
+  const ajoute = x => { const k = plat(x).replace(/[\s.]+/g, " ").trim(); if (k && !vus.has(k)) vus.set(k, x.trim()); };
+  const PETITS = /\s+(et|ou|qui|que|le|la|les|du|de|des|dont|en|a|à|au|aux)$/i;
+  for (const m of t.matchAll(/\barticles?\s+((?:[LRDA]\s?\.?\s?)?\d+(?:[-‑–]\d+)*)(?:\s+(?:du|de la|de l['’])\s*(Code(?:\s+[\p{L}'’-]+){1,6}))?/giu)) {
+    let code = (m[2] || "").replace(/[,;.:)]+$/, ""); while (PETITS.test(code)) code = code.replace(PETITS, "");
+    ajoute(`article ${m[1].replace(/\s+/g, " ").replace(/^([LRDA])\s?\.?\s?/i, "$1. ")}${code ? " du " + code : ""}`);
+  }
+  for (const m of t.matchAll(/\bloi\s+(?:n°\s*[\d-]+\s+)?du\s+\d{1,2}(?:er)?\s+\p{L}+\s+\d{4}/giu)) ajoute(m[0]);
+  for (const m of t.matchAll(/\b(?:décret|ordonnance)\s+n°\s*[\d-]+/giu)) ajoute(m[0]);
+  return [...vus.values()];
+}
+// Surligne un mot cherché, sans tenir compte des accents ni des majuscules ; renvoie du HTML échappé
+function surligner(texte, q) {
+  const brut = String(texte || "").normalize("NFC");
+  const cible = plat(q).trim(); if (!cible) return echapper(brut);
+  const p = plat(brut); if (p.length !== brut.length) return echapper(brut);
+  let html = "", i = 0, j;
+  while ((j = p.indexOf(cible, i)) !== -1) { html += echapper(brut.slice(i, j)) + "<mark>" + echapper(brut.slice(j, j + cible.length)) + "</mark>"; i = j + cible.length; }
+  return html + echapper(brut.slice(i));
+}
+// Comparaison mot à mot de deux variantes (plus longue sous-suite commune) ; renvoie [gaucheHTML, droiteHTML]
+function comparerTextes(a, b) {
+  const morceaux = t => String(t || "").match(/[\p{L}\p{N}’'°-]+|\s+|[^\s\p{L}\p{N}]/gu) || [];
+  const ta = morceaux(a), tb = morceaux(b);
+  const ia = ta.map((x, i) => i).filter(i => /\S/.test(ta[i])), ib = tb.map((x, i) => i).filter(i => /\S/.test(tb[i]));
+  const n = ia.length, m = ib.length;
+  if (n * m > 6e6) return [echapper(a), echapper(b)];
+  const cle = x => plat(x).replace(/[’']/g, "'");
+  const A = ia.map(i => cle(ta[i])), B = ib.map(i => cle(tb[i]));
+  const L = new Uint32Array((n + 1) * (m + 1)), W = m + 1;
+  for (let x = n - 1; x >= 0; x--) for (let y = m - 1; y >= 0; y--)
+    L[x * W + y] = A[x] === B[y] ? L[(x + 1) * W + y + 1] + 1 : Math.max(L[(x + 1) * W + y], L[x * W + y + 1]);
+  const gardeA = new Set(), gardeB = new Set(); let x = 0, y = 0;
+  while (x < n && y < m) {
+    if (A[x] === B[y]) { gardeA.add(ia[x]); gardeB.add(ib[y]); x++; y++; }
+    else if (L[(x + 1) * W + y] >= L[x * W + y + 1]) x++; else y++;
+  }
+  const rendre = (toks, garde, balise) => toks.map((t, i) => /\S/.test(t) && !garde.has(i) ? `<${balise}>${echapper(t)}</${balise}>` : echapper(t)).join("").replace(new RegExp(`</${balise}>(\\s*)<${balise}>`, "g"), "$1");
+  return [rendre(ta, gardeA, "del"), rendre(tb, gardeB, "ins")];
 }
 
 async function chargerClausier() {
@@ -944,8 +1042,25 @@ async function chargerClausier() {
   if (!cl.type) cl.type = types[0]?.code;
   zone.innerHTML = `<div class="cl-tete"><div><label for="cl-type">Type d'acte</label>
       <select id="cl-type">${TYPES_ACTE.map(t => `<option value="${t.code}"${t.code === cl.type ? " selected" : ""}>${echapper(t.libelle)}${PLANS[t.code] ? "" : " (plan à construire)"}</option>`).join("")}</select></div></div>
+    <div class="cl-cherche" role="search">
+      <div><label for="cl-q">Rechercher dans les clauses</label><input id="cl-q" type="search" placeholder="un mot, une expression" autocomplete="off"></div>
+      <div><label for="cl-f-contexte">Contexte</label><select id="cl-f-contexte"><option value="">Tous</option>${CONTEXTES_CONNUS.map(c => `<option>${echapper(c)}</option>`).join("")}</select></div>
+      <div><label for="cl-f-sens">Sens</label><select id="cl-f-sens"><option value="">Tous</option>${SENS_CONNUS.map(c => `<option>${echapper(c)}</option>`).join("")}</select></div>
+      <div><label for="cl-f-nature">Nature</label><select id="cl-f-nature"><option value="">Toutes</option>${NATURES_CONNUES.map(c => `<option>${echapper(c)}</option>`).join("")}</select></div>
+      <div><label for="cl-f-texte">Texte visé</label><input id="cl-f-texte" list="cl-textes" placeholder="ex. article L. 290-1" autocomplete="off"><datalist id="cl-textes"></datalist></div>
+      <div><button class="bouton secondaire effacer" id="cl-effacer" hidden>Effacer</button></div>
+    </div>
     <div id="cl-corps"><p class="vide">Chargement du clausier…</p></div>`;
-  $("cl-type").addEventListener("change", e => { cl.type = e.target.value; cl.ouverte = null; afficherType(); });
+  $("cl-type").addEventListener("change", e => { cl.type = e.target.value; cl.ouverte = null; cl.comparer = []; afficherType(); });
+  const champs = { q: "cl-q", contexte: "cl-f-contexte", sens: "cl-f-sens", nature: "cl-f-nature", texte: "cl-f-texte" };
+  let minuterie = null;
+  for (const [cle, id] of Object.entries(champs)) {
+    $(id).value = cl.filtre[cle];
+    $(id).addEventListener($(id).tagName === "SELECT" ? "change" : "input", () => {
+      cl.filtre[cle] = $(id).value; clearTimeout(minuterie); minuterie = setTimeout(() => cl.donnees && dessinerType(), 180);
+    });
+  }
+  $("cl-effacer").addEventListener("click", () => { effacerFiltres(); dessinerType(); $("cl-q").focus(); });
   afficherType();
 }
 async function afficherType() {
@@ -971,11 +1086,55 @@ function dessinerType() {
           return `<li><button data-rubrique="${id}"${id === cl.ouverte ? ' aria-current="true"' : ""}><span class="id">${id}</span><span>${echapper(r.titre)}</span>${r.option ? '<span class="opt" title="Rubrique tirée d\'un autre acte que la référence">option</span>' : ""}<span class="nb">${r.clauses.length || ""}</span></button></li>`; }).join("")}</ul></details>`;
     }).join("")}</nav>
     <div id="cl-rubrique"></div>`;
-  $("cl-corps").querySelectorAll("[data-rubrique]").forEach(b => b.addEventListener("click", () => ouvrirRubrique(b.dataset.rubrique)));
-  if (cl.ouverte) dessinerRubrique();
+  $("cl-corps").querySelectorAll("[data-rubrique]").forEach(b => b.addEventListener("click", () => { effacerFiltres(); cl.surligne = ""; ouvrirRubrique(b.dataset.rubrique); }));
+  // textes visés présents dans ce clausier, proposés dans le champ du filtre
+  const tous = new Map(); rubs.forEach(r => r.clauses.forEach(c => textesVises(c.texte).forEach(x => tous.set(plat(x), x))));
+  if ($("cl-textes")) $("cl-textes").innerHTML = [...tous.values()].sort((a, b) => a.localeCompare(b, "fr")).map(x => `<option value="${echapper(x).replace(/"/g, "&quot;")}">`).join("");
+  if ($("cl-effacer")) $("cl-effacer").hidden = !filtreActif();
+  if (filtreActif()) dessinerResultats();
+  else if (cl.ouverte) dessinerRubrique();
+}
+const filtreActif = () => Object.values(cl.filtre).some(v => String(v).trim());
+function effacerFiltres() {
+  cl.filtre = { q: "", contexte: "", sens: "", nature: "", texte: "" };
+  ["cl-q", "cl-f-contexte", "cl-f-sens", "cl-f-nature", "cl-f-texte"].forEach(id => { if ($(id)) $(id).value = ""; });
+  if ($("cl-effacer")) $("cl-effacer").hidden = true;
+}
+function clauseRetenue(c) {
+  const f = cl.filtre;
+  if (f.q.trim() && !plat(c.texte).includes(plat(f.q).trim())) return false;
+  if (f.contexte && !(c.contextes || []).includes(f.contexte)) return false;
+  if (f.sens && c.sens !== f.sens) return false;
+  if (f.nature && c.nature !== f.nature) return false;
+  if (f.texte.trim()) { const cible = plat(f.texte).replace(/[\s.]+/g, " ").trim();
+    if (!textesVises(c.texte).some(x => plat(x).replace(/[\s.]+/g, " ").includes(cible))) return false; }
+  return true;
+}
+// Recherche plein texte et filtres : toutes les rubriques du type d'acte, groupées par rubrique dans l'ordre du plan
+function dessinerResultats() {
+  const d = cl.donnees, groupes = [];
+  for (const a of d.articles) for (const id of a.rubriques) {
+    const r = d.rubriques[id], trouvees = trierClauses(r.clauses.filter(clauseRetenue), idEtoile(r));
+    if (trouvees.length) groupes.push({ a, r, trouvees });
+  }
+  const n = groupes.reduce((s, g) => s + g.trouvees.length, 0);
+  const sansEtiquettes = (cl.filtre.sens || cl.filtre.nature) && !Object.values(d.rubriques).some(r => r.clauses.some(c => c.sens || c.nature));
+  $("cl-rubrique").innerHTML = `<section class="cl-resultats" aria-live="polite">
+    <p class="bilan">${n ? `${n} clause${n > 1 ? "s" : ""} trouvée${n > 1 ? "s" : ""} dans ${groupes.length} rubrique${groupes.length > 1 ? "s" : ""}.` : "Aucune clause ne répond à cette recherche dans ce type d'acte."}
+      ${sansEtiquettes ? " Aucune clause n'a encore reçu d'étiquette de sens ou de nature : ces filtres serviront une fois les fiches renseignées." : ""}</p>
+    ${groupes.map(({ a, r, trouvees }) => `<div class="cl-groupe"><h4><span class="id">${r.id}</span>${echapper(r.titre)}<span class="id">article ${a.num}, ${echapper(a.titre)}</span>
+        <button data-aller="${r.id}">Ouvrir la rubrique</button></h4>
+      ${trouvees.map(c => carteClause(c, c.id === idEtoile(r), { lecture: true, q: cl.filtre.q })).join("")}</div>`).join("")}
+  </section>`;
+  $("cl-rubrique").querySelectorAll("[data-aller]").forEach(b => b.addEventListener("click", () => {
+    cl.surligne = cl.filtre.q; effacerFiltres(); ouvrirRubrique(b.dataset.aller);
+  }));
 }
 function ouvrirRubrique(id) {
+  if (cl.ouverte !== id) cl.comparer = [];
   cl.ouverte = id;
+  if (filtreActif()) { effacerFiltres(); }
+  if (!$("cl-rubrique")) return;
   // le plan reste replié, sauf l'article de la rubrique ouverte
   const art = cl.donnees.rubriques[id].article;
   $("cl-corps").querySelectorAll(".cl-plan details").forEach((det, i) => { const ici = i + 1 === art; det.open = ici; det.classList.toggle("en-cours", ici); });
@@ -988,30 +1147,63 @@ function vignettes(c) {
           c.sens ? `<span class="vignette sens">${echapper(c.sens)}</span>` : "",
           c.nature ? `<span class="vignette nature">${echapper(c.nature)}</span>` : ""].join("");
 }
-function carteClause(c, etoile) {
-  const n = c.occurrences || 1;
-  return `<article class="clause${etoile ? " etoile" : ""}">
-    ${etoile ? `<div class="marque-etoile">★ Clause étoile <span>la plus utilisée, ${n} acte${n > 1 ? "s" : ""}</span></div>` : ""}
+// opts : { lecture: carte sans gestes (résultats de recherche), q: mot à surligner, comparable, comparee, choisieLe }
+function carteClause(c, etoile, opts = {}) {
+  const n = c.occurrences || 1, u = c.usages || 0, q = opts.q ?? cl.surligne;
+  const compteurs = `présente dans ${n} acte${n > 1 ? "s" : ""} versé${n > 1 ? "s" : ""}, reprise ${u} fois en rédaction`;
+  return `<article class="clause${etoile ? " etoile" : ""}" data-clause="${echapper(c.id || "")}">
+    ${etoile ? `<div class="marque-etoile">★ Clause étoile <span>${opts.choisieLe ? "choisie le " + echapper(new Date(opts.choisieLe).toLocaleDateString("fr-FR")) : "choisie par un collaborateur"}</span></div>` : ""}
     <div class="vignettes">${vignettes(c)}</div>
-    <div class="texte">${echapper(c.texte)}</div>
+    <div class="texte">${surligner(c.texte, q)}</div>
     ${c.commentaire ? `<p class="commentaire">${echapper(c.commentaire)}</p>` : ""}
-    <p class="source">${c.id ? echapper(c.id) + ", " : ""}${c.source?.nom ? "tirée de « " + echapper(c.source.nom) + " »" : ""}${c.source?.date ? ", " + echapper(c.source.date) : ""}${!etoile && n > 1 ? `, ${n} actes` : ""}</p>
+    <p class="source">${c.id ? echapper(c.id) + ", " : ""}${c.source?.nom ? "tirée de « " + echapper(c.source.nom) + " »" : ""}${c.source?.date ? ", " + echapper(c.source.date) : ""} ; ${compteurs}</p>
+    ${opts.lecture || !c.id ? "" : `<div class="gestes">
+      <button data-etoile="${echapper(c.id)}">${etoile ? "Retirer l'étoile" : "Choisir comme clause étoile"}</button>
+      ${opts.comparable ? `<label><input type="checkbox" data-comparer="${echapper(c.id)}"${opts.comparee ? " checked" : ""}> Comparer</label>` : ""}
+    </div>`}
   </article>`;
+}
+async function basculerEtoile(idClause) {
+  const rid = cl.ouverte;
+  try {
+    await modifierClausier(f => {
+      const r = f.rubriques[rid]; if (!r) throw new Error("rubrique " + rid + " introuvable");
+      const retirer = r.etoile?.clause === idClause;
+      if (retirer) delete r.etoile; else r.etoile = { clause: idClause, choisie_le: new Date().toISOString() };
+      (f.journal ||= []).push({ quand: new Date().toISOString(), quoi: retirer ? "retirer-etoile" : "choisir-etoile", rubrique: rid, clause: idClause });
+    });
+    dessinerRubrique();
+  } catch (e) { montrerErreur("Étoile non enregistrée : " + e.message); }
 }
 function dessinerRubrique() {
   const d = cl.donnees, r = d.rubriques[cl.ouverte]; if (!r) return;
   const art = d.articles.find(a => a.num === r.article);
-  const clauses = trierClauses(r.clauses);
+  const etoile = idEtoile(r), clauses = trierClauses(r.clauses, etoile);
+  cl.comparer = cl.comparer.filter(id => r.clauses.some(c => c.id === id));
+  const [ca, cb] = cl.comparer.map(id => r.clauses.find(c => c.id === id));
+  const libType = libelleType(cl.type);
+  let comparaison = "";
+  if (ca && cb) {
+    const [ga, gb] = comparerTextes(ca.texte, cb.texte);
+    comparaison = `<div class="cl-compare" aria-label="Comparaison de deux variantes">
+      <div class="haut"><b>Comparaison de ${echapper(ca.id)} et ${echapper(cb.id)}</b><span class="legende">barré : absent de la seconde ; souligné en vert : propre à la seconde</span><button id="cl-fermer-compare">Fermer la comparaison</button></div>
+      <div class="cols"><div class="col"><h5>${echapper(ca.id)}${ca.id === etoile ? " ★" : ""}</h5><div class="texte">${ga}</div></div>
+        <div class="col"><h5>${echapper(cb.id)}${cb.id === etoile ? " ★" : ""}</h5><div class="texte">${gb}</div></div></div></div>`;
+  }
   $("cl-rubrique").innerHTML = `<section class="cl-rubrique" aria-labelledby="cl-titre">
+    <nav class="cl-ariane" aria-label="Fil d'Ariane"><button data-ariane="type">${echapper(libType)}</button><span class="sep" aria-hidden="true">›</span>
+      <button data-ariane="article">Article ${art.num}, ${echapper(art.titre)}</button><span class="sep" aria-hidden="true">›</span>
+      <span class="ici" aria-current="page"><span class="id">${r.id}</span>${echapper(r.titre)}</span></nav>
     <h3 id="cl-titre"><span class="id">${r.id}</span>${echapper(r.titre)}${r.option ? ' <span class="opt">option</span>' : ""}</h3>
-    <p class="cl-chemin">Article ${art.num}, ${echapper(art.titre)}</p>
     <div class="mots" aria-label="Mots-clés de la rubrique"><span class="lib">Mots-clés</span>
       ${r.mots_cles.map((m, i) => `<span class="mot ${m.origine}" title="${m.origine === "titre" ? "tiré du titre" : m.origine === "auto" ? "tiré des clauses rangées" : "saisi à la main"}">${echapper(m.mot)}${m.origine === "main" ? `<button data-retirer="${i}" aria-label="Retirer le mot ${echapper(m.mot)}">×</button>` : ""}</span>`).join("")}
       <input id="cl-mot" placeholder="ajouter un mot-clé" aria-label="Ajouter un mot-clé">
     </div>
     <div class="cl-colonnes">
       <div><h4>Clauses de la rubrique (${clauses.length})</h4>
-        ${clauses.length ? clauses.map((c, i) => carteClause(c, i === 0)).join("")
+        ${clauses.length > 1 && !(ca && cb) ? `<p class="aide" style="margin:-4px 0 8px">Cochez « Comparer » sur deux clauses pour voir leurs différences côte à côte.</p>` : ""}
+        ${comparaison}
+        ${clauses.length ? clauses.map(c => carteClause(c, c.id === etoile, { comparable: clauses.length > 1, comparee: cl.comparer.includes(c.id), choisieLe: c.id === etoile ? r.etoile.choisie_le : null })).join("")
           : `<p class="vide" style="text-align:left;padding:10px 0">Aucune clause rangée ici pour l'instant. Les clauses arrivent par l'onglet « À traiter », une fois validées.</p>`}
       </div>
       <aside class="cl-ia"><h4>Propositions de l'IA</h4>
@@ -1019,6 +1211,20 @@ function dessinerRubrique() {
           : `<p class="vide">Ici viendront les rédactions que l'IA propose pour améliorer la clause étoile ou une variante, avec la doctrine ou la jurisprudence qui les fonde. Prochaine tranche.</p>`}
       </aside>
     </div></section>`;
+  const zoneR = $("cl-rubrique");
+  zoneR.querySelector('[data-ariane="type"]').addEventListener("click", () => { $("cl-type").scrollIntoView({ behavior: "smooth", block: "start" }); $("cl-type").focus(); });
+  zoneR.querySelector('[data-ariane="article"]').addEventListener("click", () => {
+    const det = $("cl-corps").querySelectorAll(".cl-plan details")[art.num - 1];
+    if (det) { det.open = true; det.scrollIntoView({ behavior: "smooth", block: "center" }); det.querySelector("summary").focus(); }
+  });
+  zoneR.querySelectorAll("[data-etoile]").forEach(b => b.addEventListener("click", () => { b.disabled = true; basculerEtoile(b.dataset.etoile); }));
+  zoneR.querySelectorAll("[data-comparer]").forEach(c => c.addEventListener("change", () => {
+    const id = c.dataset.comparer;
+    cl.comparer = c.checked ? [...cl.comparer.filter(x => x !== id), id].slice(-2) : cl.comparer.filter(x => x !== id);
+    dessinerRubrique();
+    if (cl.comparer.length === 2) $("cl-rubrique").querySelector(".cl-compare")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }));
+  $("cl-fermer-compare")?.addEventListener("click", () => { cl.comparer = []; dessinerRubrique(); });
   const champ = $("cl-mot");
   champ.addEventListener("keydown", async e => {
     if (e.key !== "Enter") return;
