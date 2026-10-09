@@ -16,7 +16,7 @@
 // Entrée : le texte de l'acte, ligne à ligne (lignes vides = séparations de paragraphes).
 // Le fichier commence par « _ » : Vercel ne le compte pas comme une fonction.
 // ============================================================
-export const VERSION_DECOUPE = "1.4";
+export const VERSION_DECOUPE = "1.5";
 
 const PUCE = /^\s*(?:[•▪\uf0b7\uf0a7\uf0d8\uf0d7\uf076\uf0fc]|o\s|-\s|–\s)/u;
 const TITRE = /^\s*(\d{1,2})((?:\.\d{1,2}){0,3})\.?\s{1,8}(\S.*)$/u;
@@ -82,18 +82,89 @@ const COUPE_TITRE = /^((?:[A-ZÉÈÀÂÎÔÛÇ0-9'’ ,\-–()/«».]|d’|l’|
 // 2) Titres et points
 // La page peut préfixer une ligne d'une marque de mise en forme : ⟦G⟧ gras, ⟦C⟧ centré, ⟦GC⟧ les deux.
 const MARQUE = /^⟦([GC]+)⟧/u;
+// 1.5 (09/10/2026) — la PARTIE FINALE (DONT ACTE, lecture, signatures) est VERSÉE au clausier comme
+// les autres clauses (JFD) : la découpe ne s'arrête plus à « DONT ACTE » ; un titre « Clôture et
+// signature » est posé devant, numéroté à la suite du dernier article, pour la ranger à part.
+const DONT_ACTE = /^\s*(?:⟦[GC]+⟧)?\s*DONT\s+ACTE\b/u;
+const TITRE_CLOTURE = "Clôture et signature";
 const debutFin = lignes => {
   const debut = lignes.findIndex(l => /^\s*(A PARIS|À PARIS|A reçu|L'AN DEUX MILLE|L’AN DEUX MILLE|PAR-DEVANT|PAR DEVANT)/u.test(l));
-  const fin = lignes.findIndex(l => /DONT ACTE/u.test(l));
-  return [debut >= 0 ? debut : 0, fin >= 0 ? fin + 1 : lignes.length];
+  return [debut >= 0 ? debut : 0, lignes.length];
 };
-export function decouper(texte) {
+function poserCloture(lignes, max = ARTICLE_MAX) {
+  let i = -1; for (let k = lignes.length - 1; k >= 0; k--) if (DONT_ACTE.test(lignes[k])) { i = k; break; }
+  if (i < 0) return lignes;
+  let dernier = 0;
+  for (const l of lignes.slice(0, i)) { const m = TITRE.exec(l); if (m && !m[2] && +m[1] <= max && +m[1] > dernier && majuscule(m[3][0])) dernier = +m[1]; }
+  if (!dernier) return lignes;
+  return [...lignes.slice(0, i), "", `${dernier + 1}. ${TITRE_CLOTURE}`, "", ...lignes.slice(i)];
+}
+
+// ============================================================
+// NETTOYAGE AVANT DÉCOUPE (1.5, 09/10/2026 — arbitrage JFD) : on retire les mentions propres
+// aux PDF signés électroniquement, pour qu'aucune ne se colle au début ou à la fin d'une clause :
+//  (1) lignes courtes RÉPÉTÉES en haut ou en bas de la plupart des pages (identifiant d'acte,
+//      bandeau de certification, numéro de page), chiffres neutralisés pour les reconnaître ;
+//  (2) mentions connues des plateformes de signature et numéros de page ;
+//  (3) CARTOUCHES de signature (« M. X … a signé / à LILLE / le 22 septembre 2017 »).
+// Le texte des clauses n'est jamais touché : seules des lignes courtes et isolées sont retirées.
+// ============================================================
+const MENTION_TECHNIQUE = [
+  /^DocuSign Envelope ID\b/iu, /^(?:document|acte|copie)?\s*sign[ée]{1,2}s?\s+(?:électroniquement|numériquement)\b.{0,80}$/iu,
+  /^(?:copie\s+)?(?:authentique\s+)?certifi[ée]{1,2}\s+conforme\b.{0,60}$/iu, /^copie\s+authentique\b.{0,60}$/iu,
+  /^(?:page\s*)?\d{1,3}\s*(?:\/|sur)\s*\d{1,3}$/iu, /^r[ée]f(?:[ée]rence)?\s*:\s*\S{1,30}$/iu,
+  /^(?:identifiant|n°\s*d['’]acte|num[ée]ro\s+d['’]acte)\s*:?\s*\S{1,40}$/iu, /^paraphes?\b.{0,40}$/iu,
+  /^acte\s+authentique\s+(?:sur\s+support\s+)?électronique$/iu,
+];
+const A_SIGNE = /\ba\s+sign[ée]\s*$/iu;
+const SUITE_CARTOUCHE = /^(?:à|a)\s+\S.{0,40}$|^le\s+\d{1,2}(?:er)?\s+\p{L}+\s+\d{4}$|^L['’]AN\s+[A-ZÉÈ -]+$|^LE\s+[A-ZÉÈ -]+$/u;
+export function nettoyer(texte) {
+  const pages = String(texte || "").split("\f");
+  const sans = l => l.replace(MARQUE, "").trim();
+  const forme = l => sans(l).toLowerCase().replace(/\d+/g, "#").replace(/\s+/g, " ");
+  // (1) repérage des lignes répétées aux bords des pages
+  const compte = new Map();
+  if (pages.length >= 3) for (const pg of pages) {
+    const ls = pg.split("\n").filter(l => sans(l));
+    const bords = new Set([...ls.slice(0, 3), ...ls.slice(-4)].map(forme).filter(f => f.length >= 2 && f.length <= 140));
+    for (const f of bords) compte.set(f, (compte.get(f) || 0) + 1);
+  }
+  const seuil = Math.max(3, Math.ceil(pages.length * 0.4));
+  const repetees = new Set([...compte].filter(([, n]) => n >= seuil).map(([f]) => f));
+  const retirees = [];
+  const sortie = pages.map(pg => {
+    const ls = pg.split("\n"), garde = ls.map(() => true);
+    ls.forEach((l, i) => {
+      const t = sans(l); if (!t) return;
+      if (TITRE.test(t) && t.length > 6) return;                       // un titre d'article n'est jamais retiré
+      if (repetees.has(forme(l)) || (t.length <= 140 && MENTION_TECHNIQUE.some(r => r.test(t)))) { garde[i] = false; retirees.push(t); }
+    });
+    // (3) cartouches : « … a signé » en ligne courte, avec les lignes courtes non ponctuées qui le précèdent
+    //     (nom, qualité, société) et les lignes de lieu et de date qui le suivent
+    ls.forEach((l, i) => {
+      const t = sans(l); if (!(t.length <= 90 && A_SIGNE.test(t))) return;
+      let a = i; while (a - 1 >= 0 && i - a < 6) { const u = sans(ls[a - 1]); if (!u || u.length > 60 || /[.;:]$/.test(u)) break; a--; }
+      let b = i; while (b + 1 < ls.length && b - i < 4) { const u = sans(ls[b + 1]); if (!u || !SUITE_CARTOUCHE.test(u)) break; b++; }
+      for (let k = a; k <= b; k++) if (garde[k]) { garde[k] = false; retirees.push(sans(ls[k])); }
+    });
+    return ls.filter((_, i) => garde[i]).join("\n");
+  });
+  const exemples = [...new Set(retirees)].slice(0, 8);
+  return { texte: sortie.join("\f"), nettoyage: { lignes: retirees.length, exemples } };
+}
+export function decouper(texteBrut) {
+  const { texte, nettoyage } = nettoyer(String(texteBrut || "").replace(/\r/g, ""));
+  const r0 = decouperNet(texte);
+  r0.nettoyage = nettoyage;
+  return r0;
+}
+function decouperNet(texte) {
   const brutes = String(texte || "").replace(/\r/g, "").split("\n");
   const marques = brutes.map(l => (MARQUE.exec(l) || [])[1] || "");
   const nettes = brutes.map(l => l.replace(MARQUE, ""));
   const [d, f] = debutFin(nettes);
   ARTICLE_MAX = 45;
-  const r = decouperLignes(nettes.slice(d, f));
+  const r = decouperLignes(poserCloture(nettes.slice(d, f)));
   const numerotes = r.structure.filter(e => e.t === "titre").length;
   if (numerotes >= 3 || !marques.some(m => m.includes("G"))) return r;
   // ---- ACTE SANS NUMÉROTATION : titres déduits de la mise en forme (08/10/2026) ----
@@ -140,7 +211,7 @@ export function decouper(texte) {
     lignes2.push(TITRE.test(zone[i]) ? "\u200b" + zone[i] : zone[i]);
   }
   ARTICLE_MAX = 300;
-  const r2 = decouperLignes(lignes2);
+  const r2 = decouperLignes(poserCloture(lignes2, 300));
   ARTICLE_MAX = 45;
   for (const e of r2.structure) if (e.t === "point") e.paras = e.paras.map(x => x.replace(/\u200b/g, ""));
   if (r2.articles < 3) return r;
