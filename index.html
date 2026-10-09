@@ -102,6 +102,9 @@ table.file tr.ouvert td{background:#EAFAFB}
 .bascule button{border:0;background:#fff;padding:6px 12px;font-size:.88rem;color:var(--nuit)}
 .bascule button[aria-pressed="true"]{background:var(--canard);color:#fff}
 #fiche-texte{max-height:340px;overflow:auto;white-space:pre-wrap;font-family:Georgia,serif;font-size:.95rem;line-height:1.65;background:#fff;border:1px solid var(--trait);border-radius:4px;padding:14px 16px;margin-top:10px}
+.fiche-type{display:flex;gap:10px;align-items:center;margin:8px 0 4px}
+.fiche-type label{margin:0;font-size:.88rem}
+.fiche-type select{width:auto;padding:6px 10px}
 .note-moteur{background:#FFF3C4;border-left:4px solid var(--jaune-texte);padding:9px 12px;border-radius:3px;margin-top:12px;font-size:.92rem}
 
 /* ---------- clausier (0.5) : plan en tête, rubrique en deux colonnes ---------- */
@@ -236,6 +239,7 @@ table.file tr.ouvert td{background:#EAFAFB}
     <div id="fiche-depot">
       <h3 id="fiche-titre"></h3>
       <p class="aide" id="fiche-meta"></p>
+      <div class="fiche-type"><label for="fiche-type">Type d'acte du dépôt</label><select id="fiche-type"></select></div>
       <div id="fiche-controles"></div>
       <div class="bascule" role="group" aria-label="Affichage du dépôt">
         <button id="vue-decoupe" aria-pressed="true">Vue découpée</button>
@@ -666,6 +670,7 @@ $("vue-decoupe").addEventListener("click", () => afficherVue(true));
 $("vue-texte").addEventListener("click", () => afficherVue(false));
 function remplirFiche(d) {
   const dec = d.decoupe;
+  $("fiche-type").innerHTML = `<option value="">À reconnaître</option>` + TYPES_ACTE.map(t => `<option value="${t.code}"${t.code === d.type_acte ? " selected" : ""}>${t.libelle}</option>`).join("");
   $("fiche-titre").textContent = d.nom;
   $("fiche-meta").textContent = `Versé le ${dateCourte(d.verse_le)}, ${libelleType(d.type_acte)}, ${sansMarques(d.texte).length.toLocaleString("fr-FR")} caractères`
     + (dec ? ` — découpé en ${dec.points} points, ${dec.articles} articles, ${dec.rubriques} rubriques (règles ${dec.version})` : " — pas encore découpé");
@@ -677,7 +682,7 @@ function remplirFiche(d) {
   const lu = sansMarques(d.texte);
   $("fiche-texte").textContent = lu.slice(0, 40000) + (lu.length > 40000 ? "\n\n[…]" : "");
   $("fiche-note").textContent = dec
-    ? "Découpe faite. La comparaison avec le clausier n'est pas encore en service : le dépôt reste dans la file en attendant."
+    ? (d.type_acte && PLANS[d.type_acte] ? "Découpe faite. Cliquez « Ranger dans le clausier » pour classer les points dans les rubriques." : "Découpe faite. Choisissez le type d'acte ci-dessus (une des deux promesses) pour pouvoir ranger les points dans le clausier.")
     : (d.erreur_decoupe ? `La découpe a échoué au versement (${d.erreur_decoupe}) : cliquez « Redécouper ».` : "Ce dépôt n'a pas encore été découpé : cliquez « Redécouper ».");
   afficherVue(true);
 }
@@ -832,6 +837,16 @@ async function validerTout() {
   dessinerRangement();
 }
 $("btn-ranger").addEventListener("click", ouvrirRangement);
+// Type d'acte choisi dans la fiche : enregistré sur le dépôt (un dépôt versé « à reconnaître » peut ainsi être rangé)
+$("fiche-type").addEventListener("change", async e => {
+  const f = etat.ouvert; if (!f?.depot) return;
+  const avant = f.depot.type_acte; f.depot.type_acte = e.target.value || null;
+  e.target.disabled = true;
+  try { await reecrireJson(f.id, f.depot); remplirFiche(f.depot); $("fiche-ranger").innerHTML = "";
+        const tr = document.querySelector(`table.file tr.ouvert .t-type`); if (tr) tr.textContent = libelleType(f.depot.type_acte); }
+  catch (err) { f.depot.type_acte = avant; e.target.value = avant || ""; montrerErreur("Type d'acte non enregistré : " + err.message); }
+  finally { e.target.disabled = false; }
+});
 // Retirer = mettre à la corbeille du Drive (récupérable), jamais effacer définitivement
 $("btn-retirer").addEventListener("click", async () => {
   const f = etat.ouvert; if (!f) return;
