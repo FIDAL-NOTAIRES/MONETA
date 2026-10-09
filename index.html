@@ -368,7 +368,7 @@ mark{background:var(--jaune-forme);color:inherit;padding:0 1px}
 <body>
 <header>
   <h1>MONETA</h1>
-  <small>Le clausier du cabinet, version 1.5</small>
+  <small>Le clausier du cabinet, version 1.6</small>
   <span id="etat-connexion">Connexion au Drive…</span>
   <button id="btn-connexion">Autoriser l'accès au Drive</button>
 </header>
@@ -454,7 +454,7 @@ mark{background:var(--jaune-forme);color:inherit;padding:0 1px}
 
 <script>
 /* ============================================================
-   MONETA — version 1.5 du 09/10/2026 (MOTEUR DE COMPARAISON, première passe mot à mot : verdict doublon / variante / nouvelle pour chaque point, AFFICHAGE CÔTE À CÔTE avec la clause de référence et ses différences, toutes les candidates proches quand le moteur hésite, doublon confirmé = une occurrence de plus sur la clause existante, verdict en couleur dans la file après première consultation) ; 1.4 du 09/10/2026 (article « Clôture et signature » ajouté aux deux plans, y compris aux clausiers déjà créés ; partie finale de l'acte versée ; mentions techniques de signature électronique et pieds de page répétés retirés avant découpe ; reconnaissance gratuite lancée d'office sur un scan, lecture par Claude proposée seulement pour les pages mal reconnues, avec le détail de ce qui manque) ; 1.3 du 09/10/2026 (DOUBLE PASSE SUR LES ACTES SCANNÉS, méthode reprise de TRENTE : pages sans texte détectées une à une, reconnaissance gratuite Tesseract dans le navigateur, puis lecture par Claude pour compléter, sur validation et après estimatif de coût ; texte reconnu signalé à relire dans la fiche) ; 1.2 du 09/10/2026 (MODE LECTURE SEULE : onglet « Consulter le clausier » en teinte de consultation, adresse directe ?consulter, bandeau avec retour au mode travail, aucun geste de modification ; sélection de clauses et envoi par mail d'un fichier Word aux champs entre crochets colorisés) ; 1.1 du 09/10/2026 (TRAITEMENT SIMULTANÉ : tous les points restants des dépôts d'un même type d'acte regroupés par rubrique proposée, tranchés en bloc ou un à un ; bascule avec l'ordre d'arrivée) ; 1.0 du 09/10/2026 (file « À traiter » : tableau de bord de la file, avancement de chaque dépôt, bouton « Mettre de côté » et liste des dépôts en attente ; compteurs d'usage dissociés du classement des clauses) ; 0.9 du 09/10/2026 (couverture du clausier par rubrique et par article, fiche éditable de la clause, journal de relecture avec rangement défait seul ou par lot, signal d'un acte non numéroté versé dans un clausier pauvre) ; 0.8 du 09/10/2026 (ciseau : coupe manuelle d'un point entre paragraphes ou puces, partie détachée lettrée, phrase d'annonce reprise, coupes conservées à la redécoupe, recollage) ; 0.7 du 09/10/2026 (ergonomie : fil d'Ariane collant, clause étoile choisie à la main et épinglée, compteurs indicatifs d'actes versés et de reprises en rédaction, comparaison côte à côte de deux variantes, recherche plein texte et filtres par contexte, sens, nature et texte visé, étapes du versement) ; 0.6 du 08/10/2026 (rangement des points d'un dépôt dans le clausier : proposition et deuxième candidate, contexte coché, validation point par point ou en bloc, journal des mouvements) ; 0.5 du 08/10/2026 (module Clausier, première tranche : plans de référence PSV AKZO et PUV R3S, numéros permanents, page Clausier) ; 0.4 du 08/10/2026 (titres des PDF non numérotés déduits de la mise en forme) ; 0.3 du 08/10/2026 (lecture Word avec numérotation automatique, contrôles de vraisemblance) ; 0.2 : moteur de découpe en service ; squelette du 07/10/2026
+   MONETA — version 1.6 du 10/10/2026 (SECONDE PASSE DE COMPARAISON, PAR LE SENS : empreintes fabriquées par un seul petit modèle dans le navigateur, gardées par type d'acte sur le Drive, appliquées aux seuls points que la première passe n'a pas tranchés) ; 1.5 du 09/10/2026 (MOTEUR DE COMPARAISON, première passe mot à mot : verdict doublon / variante / nouvelle pour chaque point, AFFICHAGE CÔTE À CÔTE avec la clause de référence et ses différences, toutes les candidates proches quand le moteur hésite, doublon confirmé = une occurrence de plus sur la clause existante, verdict en couleur dans la file après première consultation) ; 1.4 du 09/10/2026 (article « Clôture et signature » ajouté aux deux plans, y compris aux clausiers déjà créés ; partie finale de l'acte versée ; mentions techniques de signature électronique et pieds de page répétés retirés avant découpe ; reconnaissance gratuite lancée d'office sur un scan, lecture par Claude proposée seulement pour les pages mal reconnues, avec le détail de ce qui manque) ; 1.3 du 09/10/2026 (DOUBLE PASSE SUR LES ACTES SCANNÉS, méthode reprise de TRENTE : pages sans texte détectées une à une, reconnaissance gratuite Tesseract dans le navigateur, puis lecture par Claude pour compléter, sur validation et après estimatif de coût ; texte reconnu signalé à relire dans la fiche) ; 1.2 du 09/10/2026 (MODE LECTURE SEULE : onglet « Consulter le clausier » en teinte de consultation, adresse directe ?consulter, bandeau avec retour au mode travail, aucun geste de modification ; sélection de clauses et envoi par mail d'un fichier Word aux champs entre crochets colorisés) ; 1.1 du 09/10/2026 (TRAITEMENT SIMULTANÉ : tous les points restants des dépôts d'un même type d'acte regroupés par rubrique proposée, tranchés en bloc ou un à un ; bascule avec l'ordre d'arrivée) ; 1.0 du 09/10/2026 (file « À traiter » : tableau de bord de la file, avancement de chaque dépôt, bouton « Mettre de côté » et liste des dépôts en attente ; compteurs d'usage dissociés du classement des clauses) ; 0.9 du 09/10/2026 (couverture du clausier par rubrique et par article, fiche éditable de la clause, journal de relecture avec rangement défait seul ou par lot, signal d'un acte non numéroté versé dans un clausier pauvre) ; 0.8 du 09/10/2026 (ciseau : coupe manuelle d'un point entre paragraphes ou puces, partie détachée lettrée, phrase d'annonce reprise, coupes conservées à la redécoupe, recollage) ; 0.7 du 09/10/2026 (ergonomie : fil d'Ariane collant, clause étoile choisie à la main et épinglée, compteurs indicatifs d'actes versés et de reprises en rédaction, comparaison côte à côte de deux variantes, recherche plein texte et filtres par contexte, sens, nature et texte visé, étapes du versement) ; 0.6 du 08/10/2026 (rangement des points d'un dépôt dans le clausier : proposition et deuxième candidate, contexte coché, validation point par point ou en bloc, journal des mouvements) ; 0.5 du 08/10/2026 (module Clausier, première tranche : plans de référence PSV AKZO et PUV R3S, numéros permanents, page Clausier) ; 0.4 du 08/10/2026 (titres des PDF non numérotés déduits de la mise en forme) ; 0.3 du 08/10/2026 (lecture Word avec numérotation automatique, contrôles de vraisemblance) ; 0.2 : moteur de découpe en service ; squelette du 07/10/2026
    Arbitrages (fiche clausier) : une application, deux moteurs ;
    on VERSE d'un côté (file d'attente sur le Drive), on TRAITE quand on veut ;
    le DÉCOUPAGE (neutralisation en champs, coupe en clauses, destination
@@ -1395,15 +1395,20 @@ function comparerPoint(texte, clausier) {
 }
 const LIB_VERDICT = { doublon: "doublon", variante: "variante probable", nouvelle: "nouvelle" };
 function blocComparaison(cmp, texte, choisi = 0) {
-  const pc = x => Math.round(x * 100) + " %";
-  if (!cmp.proches.length) return `<div class="cmp"><div class="cmp-tete"><span class="pastille-v v-nouvelle">nouvelle</span>
-      Aucune clause ressemblante dans le clausier de ce type : rédaction nouvelle, à ranger.</div></div>`;
+  const pc = x => Math.min(100, Math.round(x * 100)) + " %";
+  if (!cmp.proches.length) return `<div class="cmp"><div class="cmp-tete"><span class="pastille-v v-nouvelle">nouvelle${cmp.passe === 2 ? " · sens" : ""}</span>
+      ${cmp.passe === 2 ? "Aucune clause de même sens dans le clausier de ce type : rédaction nouvelle, à ranger." : "Aucune clause ressemblante mot à mot dans le clausier de ce type."}</div></div>`;
   const ref = cmp.proches[Math.min(choisi, cmp.proches.length - 1)], [ga, gb] = comparerTextes(texte, ref.clause.texte);
-  const phrase = cmp.verdict === "doublon" ? `couvert par ${echapper(ref.clause.id)} (${pc(ref.sim)} identique) : suppression proposée`
+  const sens = cmp.passe === 2;
+  const phrase = sens
+    ? (cmp.verdict === "doublon" ? `même sens que ${echapper(ref.clause.id)} (${pc(ref.sim)}), avec d'autres mots : suppression proposée`
+      : cmp.verdict === "variante" ? `même sujet que ${echapper(ref.clause.id)} (${pc(ref.sim)}) : autre rédaction, ou vraie variante à garder ?`
+      : `aucune clause de même sens ; la plus proche, ${echapper(ref.clause.id)}, n'est qu'à ${pc(ref.sim)}`)
+    : cmp.verdict === "doublon" ? `couvert par ${echapper(ref.clause.id)} (${pc(ref.sim)} identique) : suppression proposée`
     : cmp.verdict === "variante" ? `proche de ${echapper(ref.clause.id)} (${pc(ref.sim)}) : autre rédaction de la même clause, ou vraie variante à garder ?`
     : `la plus proche, ${echapper(ref.clause.id)}, n'est qu'à ${pc(ref.sim)} : rédaction sans doute nouvelle`;
   return `<div class="cmp" data-cmp>
-    <div class="cmp-tete"><span class="pastille-v v-${cmp.verdict}">${LIB_VERDICT[cmp.verdict]}</span><span>${phrase}${cmp.hesite ? " — le moteur hésite entre plusieurs clauses" : ""}</span>
+    <div class="cmp-tete"><span class="pastille-v v-${cmp.verdict}">${LIB_VERDICT[cmp.verdict]}${sens ? " · sens" : ""}</span><span>${phrase}${cmp.hesite ? " — le moteur hésite entre plusieurs clauses" : ""}</span>
       ${cmp.proches.length > 1 ? `<span class="proches">${cmp.proches.map((x, i) => `<button data-proche="${i}" aria-pressed="${i === choisi}" title="${echapper(x.rubrique.id + " · " + x.rubrique.titre)}">${echapper(x.clause.id)} · ${pc(x.sim)}</button>`).join("")}</span>` : ""}</div>
     <div class="cmp-cols"><div><h6>Ce point (barré : absent de la clause existante)</h6>${ga}</div>
       <div><h6>${echapper(ref.clause.id)} · ${echapper(ref.rubrique.id)} ${echapper(ref.rubrique.titre)}${ref.clause.source?.nom ? ` — tirée de « ${echapper(ref.clause.source.nom)} »` : ""} (souligné : propre à elle)</h6>${gb}</div></div>
@@ -1428,6 +1433,76 @@ function brancherComparaison(bloc, cmp, texte, { doublon, variante }) {
   z.querySelector("[data-doublon]")?.addEventListener("click", e => { e.target.disabled = true; doublon(e.target.dataset.doublon); });
   z.querySelector("[data-variante]")?.addEventListener("click", e => { e.target.disabled = true; variante(e.target.dataset.variante); });
 }
+/* ============================================================
+   SECONDE PASSE, PAR LE SENS (1.6) — arbitrage du 09/10/2026 (nuit)
+   UN SEUL FABRICANT D'EMPREINTES pour tout le clausier, socle et régime
+   courant : un petit modèle multilingue qui tourne DANS LE NAVIGATEUR
+   (gratuit). Deux empreintes ne se comparent que si elles sortent du même
+   modèle : le nom du modèle est gardé avec les empreintes, et un
+   changement de modèle les fait toutes recalculer.
+   Les empreintes des clauses sont calculées une fois et gardées sur le
+   Drive (Clausier/<type>/empreintes.json) ; celles des points d'un dépôt
+   sont calculées à la volée. La passe ne porte que sur les points que la
+   première passe n'a pas tranchés (tout sauf les doublons mot à mot).
+   ============================================================ */
+const MODELE_SENS = "Xenova/multilingual-e5-small", VERSION_SENS = "1.0";
+const SENS_DOUBLON = 0.95, SENS_VARIANTE = 0.88, SENS_PROCHE = 0.84;   // seuils provisoires, à caler sur DUVAL
+const NOM_EMPREINTES = "empreintes.json";
+let extracteurSens = null;
+async function chargerSens(progres) {
+  if (window.__fauxSens) return window.__fauxSens;           // banc d'essai
+  if (extracteurSens) return extracteurSens;
+  const T = await import("https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.5.1");
+  T.env.allowLocalModels = false;
+  const vus = {};
+  const pipe = await T.pipeline("feature-extraction", MODELE_SENS, { dtype: "q8",
+    progress_callback: x => { if (x.status === "progress" && x.total) { vus[x.file] = [x.loaded, x.total];
+      const [a, b] = Object.values(vus).reduce((s2, [l, t]) => [s2[0] + l, s2[1] + t], [0, 0]); progres?.(`Téléchargement du modèle : ${Math.round(100 * a / b)} % de ${Math.round(b / 1048576)} Mo (une fois seulement)`); } } });
+  extracteurSens = async textes => { const o = await pipe(textes.map(t => "passage: " + String(t).slice(0, 1500)), { pooling: "mean", normalize: true }); return o.tolist(); };
+  return extracteurSens;
+}
+const versOctets = v => { const q = new Int8Array(v.length); v.forEach((x, i) => q[i] = Math.max(-127, Math.min(127, Math.round(x * 127)))); let s2 = ""; new Uint8Array(q.buffer).forEach(b => s2 += String.fromCharCode(b)); return btoa(s2); };
+const depuisOctets = b => { const s2 = atob(b), u = new Uint8Array(s2.length); for (let i = 0; i < s2.length; i++) u[i] = s2.charCodeAt(i); return new Int8Array(u.buffer); };
+const cosQ = (a, b) => { let d = 0; for (let i = 0; i < a.length; i++) d += a[i] * b[i]; return d / (127 * 127); };
+async function fichierEmpreintes(code) {
+  const idType = await dossierType(code);
+  const f = (await lister(idType, ` and name = '${NOM_EMPREINTES}'`))[0];
+  if (f) { const d = await lireJson(f.id); if (d?.modele === MODELE_SENS) return { id: f.id, d }; return { id: f.id, d: { moneta: 1, modele: MODELE_SENS, version: VERSION_SENS, vecteurs: {} } }; }
+  const d = { moneta: 1, modele: MODELE_SENS, version: VERSION_SENS, vecteurs: {} };
+  const cree = await ecrireJson(NOM_EMPREINTES, d, idType); return { id: cree.id, d };
+}
+async function calculer(textes, progres, libelle) {
+  const ext = await chargerSens(progres), sortie = [];
+  for (let i = 0; i < textes.length; i += 16) {
+    progres?.(`${libelle} : ${Math.min(i + 16, textes.length)} sur ${textes.length}…`);
+    sortie.push(...(await ext(textes.slice(i, i + 16))).map(versOctets));
+  }
+  return sortie;
+}
+// Passe de sens sur les points non tranchés : renvoie { num: cmp } à fusionner avec la première passe
+async function passeSens({ code, clausier, depotId, points, progres }) {
+  const E = await fichierEmpreintes(code);
+  const clauses = Object.values(clausier.rubriques).flatMap(r => r.clauses.map(c => ({ c, r }))).filter(x => x.c.source?.depot !== depotId);
+  const manquent = clauses.filter(x => !E.d.vecteurs[x.c.id]);
+  if (manquent.length) {
+    const v = await calculer(manquent.map(x => x.c.texte), progres, "Empreintes des clauses du clausier");
+    manquent.forEach((x, i) => E.d.vecteurs[x.c.id] = v[i]);
+    E.d.modifie_le = new Date().toISOString();
+    try { await reecrireJson(E.id, E.d); } catch { }
+  }
+  const vp = await calculer(points.map(p => p.texte), progres, "Empreintes des points du dépôt");
+  const vecs = clauses.map(x => ({ ...x, v: depuisOctets(E.d.vecteurs[x.c.id]) }));
+  const res = {};
+  points.forEach((p, i) => {
+    const a = depuisOctets(vp[i]);
+    const proches = vecs.map(x => ({ clause: x.c, rubrique: x.r, sim: cosQ(a, x.v) })).filter(x => x.sim >= SENS_PROCHE).sort((x, y) => y.sim - x.sim);
+    const best = proches[0];
+    const verdict = !best ? "nouvelle" : best.sim >= SENS_DOUBLON ? "doublon" : best.sim >= SENS_VARIANTE ? "variante" : "nouvelle";
+    const hesite = best && proches.filter(x => best.sim - x.sim <= 0.015).length > 1;
+    res[p.num] = { verdict, proches: proches.slice(0, MAX_PROCHES), hesite, passe: 2 };
+  });
+  return res;
+}
 // Bilan des verdicts, gardé dans le dépôt pour l'afficher en couleur dans la file (après première consultation)
 function bilanComparaison(cmps) {
   const b = { doublon: 0, variante: 0, nouvelle: 0 }; for (const c of cmps) b[c.verdict]++;
@@ -1442,7 +1517,7 @@ async function ouvrirRangement() {
   zone.innerHTML = `<p class="note-moteur">Lecture du clausier et rangement des points…</p>`;
   try {
     const r = await chargerType(d.type_acte);
-    rg.depot = d; rg.clausier = r.donnees; rg.fichier = r.fichier; rg.choix = {};
+    rg.depot = d; rg.clausier = r.donnees; rg.fichier = r.fichier; rg.choix = {}; rg.sensEtat = null;
     rg.points = d.decoupe.structure.filter(e => e.t === "point")
       .map(e => ({ num: e.num, texte: e.paras.join("\n").replace(/\u200b/g, ""), titres: titresDuPoint(d.decoupe, e.num) }));
     const rubriques = Object.values(rg.clausier.rubriques).map(x => ({ id: x.id, titre: x.titre, article: x.article,
@@ -1462,6 +1537,7 @@ async function ouvrirRangement() {
       d.comparaison = bilan; reecrireJson(etat.ouvert.id, d).catch(() => {});
     }
     dessinerRangement();
+    if (sensDejaUtilise() && aTrancherSens().length && nbClausesAutres()) lancerSens();   // modèle déjà en réserve : seconde passe d'office
   } catch (e) { zone.innerHTML = `<p class="note-moteur">Rangement impossible : ${echapper(e.message)}</p>`; }
 }
 function dessinerRangement() {
@@ -1475,6 +1551,7 @@ function dessinerRangement() {
   zone.innerHTML = `
     <div class="cl-ctx"><div class="lib">Contexte du dépôt — proposé d'après l'acte, à corriger ; il sera porté par chaque clause rangée</div>
       <div id="rg-ctx">${ctx}<input class="ajout" id="rg-ctx-ajout" placeholder="autre contexte" aria-label="Ajouter un contexte"></div></div>
+    ${barreSens()}
     <div class="cl-ranger-tete"><b>Ranger les points</b><span class="avance" id="rg-avance">${faits} sur ${total} classés</span>
       <button class="bouton secondaire" id="rg-tout">Valider toutes les propositions</button></div>
     <div id="rg-liste">${rg.points.map(p => {
@@ -1498,6 +1575,7 @@ function dessinerRangement() {
       </div>`;
     }).join("")}</div>`;
   brancherRangement();
+  $("rg-sens")?.addEventListener("click", lancerSens);
   zone.querySelectorAll(".ranger-point:not(.classee)").forEach(bloc => {
     const num = bloc.dataset.point, p = rg.points.find(x => x.num === num);
     if (rg.cmp?.[num]) brancherComparaison(bloc, rg.cmp[num], p.texte, { doublon: id => confirmerDoublon(num, id), variante: rid => validerPoint(num, rid) });
@@ -1549,6 +1627,32 @@ async function validerPoint(num, rubriqueId) {
   bloc?.querySelectorAll("button,select").forEach(b => b.disabled = true);
   try { await enregistrerClause(num, rubriqueId); rg.choix[num] = rubriqueId; rg.dejaRanges.add(num); dessinerRangement(); }
   catch (e) { montrerErreur("Point non rangé : " + e.message); dessinerRangement(); }
+}
+// Barre de la seconde passe : lancée à la main la première fois (téléchargement du modèle), d'office ensuite
+function aTrancherSens() { return rg.points.filter(p => !rg.dejaRanges.has(p.num) && rg.choix[p.num] === undefined && rg.cmp?.[p.num] && rg.cmp[p.num].verdict !== "doublon" && rg.cmp[p.num].passe !== 2 && !rg.cmp[p.num].sensVu); }
+const nbClausesAutres = () => Object.values(rg.clausier.rubriques).reduce((n, r) => n + r.clauses.filter(c => c.source?.depot !== rg.depot.id).length, 0);
+function barreSens() {
+  if (rg.sensEtat) return `<div class="note-moteur" id="rg-sens-etat">${rg.sensEtat}</div>`;
+  const n = aTrancherSens().length; if (!n || !nbClausesAutres()) return "";
+  return `<div class="note-moteur">Première passe (mot à mot) faite. ${pl(n, "point reste", "points restent")} sans doublon évident : la <b>seconde passe, par le sens</b>, cherche les clauses qui disent la même chose avec d'autres mots. Gratuite, dans votre navigateur${sensDejaUtilise() ? "" : " ; la première fois, le modèle (environ 120 Mo) se télécharge, puis il reste en réserve"}.
+    <button class="bouton secondaire" id="rg-sens" style="margin-left:8px">Comparer le sens</button></div>`;
+}
+const sensDejaUtilise = () => { try { return localStorage.getItem("moneta-sens") === MODELE_SENS; } catch { return false; } };
+async function lancerSens() {
+  const pts = aTrancherSens(); if (!pts.length) return;
+  const maj = t => { rg.sensEtat = t; const z = $("rg-sens-etat"); if (z) z.textContent = t; else dessinerRangement(); };
+  maj("Seconde passe : préparation du modèle…");
+  try {
+    const res = await passeSens({ code: rg.depot.type_acte, clausier: rg.clausier, depotId: rg.depot.id, points: pts, progres: maj });
+    // fusion des deux passes : le verdict le plus fort l'emporte (doublon > variante > nouvelle) ; la passe de sens n'efface jamais une ressemblance mot à mot
+    const rang = { nouvelle: 0, variante: 1, doublon: 2 };
+    for (const [num, x] of Object.entries(res)) { const avant = rg.cmp[num];
+      rg.cmp[num] = !avant || rang[x.verdict] >= rang[avant.verdict] ? x : { ...avant, sensVu: true }; }
+    try { localStorage.setItem("moneta-sens", MODELE_SENS); } catch { }
+    const b = bilanComparaison(Object.values(rg.cmp)); rg.depot.comparaison = { ...b, sens: true }; reecrireJson(etat.ouvert.id, rg.depot).catch(() => {});
+    const v = Object.values(res); rg.sensEtat = `Seconde passe faite sur ${pl(v.length, "point")} : ${v.filter(x => x.verdict === "doublon").length} même sens, ${v.filter(x => x.verdict === "variante").length} même sujet, ${v.filter(x => x.verdict === "nouvelle").length} sans équivalent.`;
+  } catch (e) { rg.sensEtat = `Seconde passe impossible : ${echapper(e.message)}. La première passe reste valable.`; }
+  dessinerRangement();
 }
 async function confirmerDoublon(num, clauseId) {
   try { rg.clausier = await modifierClausier(f => noterDoublon(f, { depot: rg.depot, num, clauseId }), rg.fichier); rg.choix[num] = { doublon: clauseId }; }
