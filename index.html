@@ -130,6 +130,26 @@ table.file tr.ouvert td{background:#EAFAFB}
 #zone-cote label{font-size:.88rem;margin-bottom:4px;display:block}
 #zone-cote input{width:100%;max-width:520px;padding:6px 10px;margin-bottom:8px}
 
+/* ---------- 1.5 — comparaison : verdict et côte à côte ---------- */
+.cmp{margin:8px 0 6px;border:1px solid var(--trait);border-radius:4px;background:#FBFCFD}
+.cmp-tete{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;padding:8px 10px;border-bottom:1px solid var(--trait);font-size:.86rem}
+.cmp-tete .pastille-v{font-weight:700;padding:2px 8px;border-radius:10px;color:#fff;font-size:.78rem}
+.v-doublon{background:var(--orange)} .v-variante{background:var(--canard)} .v-nouvelle{background:var(--vert)}
+.cmp-tete .proches{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}
+.cmp-tete .proches button{font-size:.78rem;padding:2px 8px;border:1px solid var(--trait);background:#fff;border-radius:10px;color:var(--nuit)}
+.cmp-tete .proches button[aria-pressed=true]{border-color:var(--canard);background:var(--canard);color:#fff}
+.cmp-cols{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.cmp-cols>div{padding:8px 10px;font-family:Georgia,serif;font-size:.86rem;line-height:1.5;max-height:240px;overflow:auto}
+.cmp-cols>div+div{border-left:1px solid var(--trait)}
+.cmp-cols h6{font-family:"Segoe UI",system-ui,sans-serif;font-size:.74rem;color:var(--doux);font-weight:600;margin-bottom:4px;text-transform:none}
+.cmp-cols del{background:#FDE3D6;text-decoration:line-through;text-decoration-color:var(--carmin)}
+.cmp-cols ins{background:#DDF1E6;text-decoration:underline;text-decoration-color:var(--vert)}
+.cmp-actions{display:flex;gap:8px;flex-wrap:wrap;padding:8px 10px;border-top:1px solid var(--trait)}
+.cmp-actions .bouton{font-size:.84rem;padding:5px 11px}
+@media (max-width:700px){.cmp-cols{grid-template-columns:1fr}.cmp-cols>div+div{border-left:0;border-top:1px solid var(--trait)}}
+.statut .vpuces{display:inline-flex;gap:4px;margin-left:6px;vertical-align:middle}
+.statut .vpuces span{font-size:.72rem;color:#fff;border-radius:8px;padding:0 6px;font-weight:600}
+
 /* ---------- 1.3 — actes scannés : double passe ---------- */
 #verses li.scan{border-left-color:var(--carmin);background:#fff;border:1px solid var(--trait);border-left:4px solid var(--carmin);padding:12px 14px}
 #verses li.scan .sc-titre{font-weight:600;color:var(--nuit)}
@@ -348,7 +368,7 @@ mark{background:var(--jaune-forme);color:inherit;padding:0 1px}
 <body>
 <header>
   <h1>MONETA</h1>
-  <small>Le clausier du cabinet, version 1.4</small>
+  <small>Le clausier du cabinet, version 1.5</small>
   <span id="etat-connexion">Connexion au Drive…</span>
   <button id="btn-connexion">Autoriser l'accès au Drive</button>
 </header>
@@ -434,7 +454,7 @@ mark{background:var(--jaune-forme);color:inherit;padding:0 1px}
 
 <script>
 /* ============================================================
-   MONETA — version 1.4 du 09/10/2026 (article « Clôture et signature » ajouté aux deux plans, y compris aux clausiers déjà créés ; partie finale de l'acte versée ; mentions techniques de signature électronique et pieds de page répétés retirés avant découpe ; reconnaissance gratuite lancée d'office sur un scan, lecture par Claude proposée seulement pour les pages mal reconnues, avec le détail de ce qui manque) ; 1.3 du 09/10/2026 (DOUBLE PASSE SUR LES ACTES SCANNÉS, méthode reprise de TRENTE : pages sans texte détectées une à une, reconnaissance gratuite Tesseract dans le navigateur, puis lecture par Claude pour compléter, sur validation et après estimatif de coût ; texte reconnu signalé à relire dans la fiche) ; 1.2 du 09/10/2026 (MODE LECTURE SEULE : onglet « Consulter le clausier » en teinte de consultation, adresse directe ?consulter, bandeau avec retour au mode travail, aucun geste de modification ; sélection de clauses et envoi par mail d'un fichier Word aux champs entre crochets colorisés) ; 1.1 du 09/10/2026 (TRAITEMENT SIMULTANÉ : tous les points restants des dépôts d'un même type d'acte regroupés par rubrique proposée, tranchés en bloc ou un à un ; bascule avec l'ordre d'arrivée) ; 1.0 du 09/10/2026 (file « À traiter » : tableau de bord de la file, avancement de chaque dépôt, bouton « Mettre de côté » et liste des dépôts en attente ; compteurs d'usage dissociés du classement des clauses) ; 0.9 du 09/10/2026 (couverture du clausier par rubrique et par article, fiche éditable de la clause, journal de relecture avec rangement défait seul ou par lot, signal d'un acte non numéroté versé dans un clausier pauvre) ; 0.8 du 09/10/2026 (ciseau : coupe manuelle d'un point entre paragraphes ou puces, partie détachée lettrée, phrase d'annonce reprise, coupes conservées à la redécoupe, recollage) ; 0.7 du 09/10/2026 (ergonomie : fil d'Ariane collant, clause étoile choisie à la main et épinglée, compteurs indicatifs d'actes versés et de reprises en rédaction, comparaison côte à côte de deux variantes, recherche plein texte et filtres par contexte, sens, nature et texte visé, étapes du versement) ; 0.6 du 08/10/2026 (rangement des points d'un dépôt dans le clausier : proposition et deuxième candidate, contexte coché, validation point par point ou en bloc, journal des mouvements) ; 0.5 du 08/10/2026 (module Clausier, première tranche : plans de référence PSV AKZO et PUV R3S, numéros permanents, page Clausier) ; 0.4 du 08/10/2026 (titres des PDF non numérotés déduits de la mise en forme) ; 0.3 du 08/10/2026 (lecture Word avec numérotation automatique, contrôles de vraisemblance) ; 0.2 : moteur de découpe en service ; squelette du 07/10/2026
+   MONETA — version 1.5 du 09/10/2026 (MOTEUR DE COMPARAISON, première passe mot à mot : verdict doublon / variante / nouvelle pour chaque point, AFFICHAGE CÔTE À CÔTE avec la clause de référence et ses différences, toutes les candidates proches quand le moteur hésite, doublon confirmé = une occurrence de plus sur la clause existante, verdict en couleur dans la file après première consultation) ; 1.4 du 09/10/2026 (article « Clôture et signature » ajouté aux deux plans, y compris aux clausiers déjà créés ; partie finale de l'acte versée ; mentions techniques de signature électronique et pieds de page répétés retirés avant découpe ; reconnaissance gratuite lancée d'office sur un scan, lecture par Claude proposée seulement pour les pages mal reconnues, avec le détail de ce qui manque) ; 1.3 du 09/10/2026 (DOUBLE PASSE SUR LES ACTES SCANNÉS, méthode reprise de TRENTE : pages sans texte détectées une à une, reconnaissance gratuite Tesseract dans le navigateur, puis lecture par Claude pour compléter, sur validation et après estimatif de coût ; texte reconnu signalé à relire dans la fiche) ; 1.2 du 09/10/2026 (MODE LECTURE SEULE : onglet « Consulter le clausier » en teinte de consultation, adresse directe ?consulter, bandeau avec retour au mode travail, aucun geste de modification ; sélection de clauses et envoi par mail d'un fichier Word aux champs entre crochets colorisés) ; 1.1 du 09/10/2026 (TRAITEMENT SIMULTANÉ : tous les points restants des dépôts d'un même type d'acte regroupés par rubrique proposée, tranchés en bloc ou un à un ; bascule avec l'ordre d'arrivée) ; 1.0 du 09/10/2026 (file « À traiter » : tableau de bord de la file, avancement de chaque dépôt, bouton « Mettre de côté » et liste des dépôts en attente ; compteurs d'usage dissociés du classement des clauses) ; 0.9 du 09/10/2026 (couverture du clausier par rubrique et par article, fiche éditable de la clause, journal de relecture avec rangement défait seul ou par lot, signal d'un acte non numéroté versé dans un clausier pauvre) ; 0.8 du 09/10/2026 (ciseau : coupe manuelle d'un point entre paragraphes ou puces, partie détachée lettrée, phrase d'annonce reprise, coupes conservées à la redécoupe, recollage) ; 0.7 du 09/10/2026 (ergonomie : fil d'Ariane collant, clause étoile choisie à la main et épinglée, compteurs indicatifs d'actes versés et de reprises en rédaction, comparaison côte à côte de deux variantes, recherche plein texte et filtres par contexte, sens, nature et texte visé, étapes du versement) ; 0.6 du 08/10/2026 (rangement des points d'un dépôt dans le clausier : proposition et deuxième candidate, contexte coché, validation point par point ou en bloc, journal des mouvements) ; 0.5 du 08/10/2026 (module Clausier, première tranche : plans de référence PSV AKZO et PUV R3S, numéros permanents, page Clausier) ; 0.4 du 08/10/2026 (titres des PDF non numérotés déduits de la mise en forme) ; 0.3 du 08/10/2026 (lecture Word avec numérotation automatique, contrôles de vraisemblance) ; 0.2 : moteur de découpe en service ; squelette du 07/10/2026
    Arbitrages (fiche clausier) : une application, deux moteurs ;
    on VERSE d'un côté (file d'attente sur le Drive), on TRAITE quand on veut ;
    le DÉCOUPAGE (neutralisation en champs, coupe en clauses, destination
@@ -971,7 +991,7 @@ function pointsTraites(d, clausier) {
   if (!clausier || !d?.id) return 0;
   const faits = new Set();
   for (const r of Object.values(clausier.rubriques || {})) for (const c of r.clauses || []) if (c.source?.depot === d.id) faits.add(c.point);
-  for (const e of clausier.journal || []) if (e.quoi === "ecarter" && e.depot === d.id) faits.add(e.point);
+  for (const e of clausier.journal || []) if ((e.quoi === "ecarter" || e.quoi === "doublon") && e.depot === d.id) faits.add(e.point);
   return faits.size;
 }
 const nb = n => n.toLocaleString("fr-FR");
@@ -1051,7 +1071,8 @@ async function chargerFile() {
       const st = tr.querySelector(".statut"); st.className = `statut ${cls}`;
       const e = d.decoupe?.etat;
       st.innerHTML = (e ? `<span class="pastille ${e}" title="${e === "vert" ? "sans anomalie" : e === "jaune" ? "à vérifier" : "découpe impossible"}"></span>` : "")
-        + echapper(txt + (d.decoupe ? ` (${d.decoupe.points} points${e === "jaune" ? ", à vérifier" : e === "carmin" ? ", impossible" : ""})` : ""));
+        + echapper(txt + (d.decoupe ? ` (${d.decoupe.points} points${e === "jaune" ? ", à vérifier" : e === "carmin" ? ", impossible" : ""})` : ""))
+        + (d.comparaison ? `<span class="vpuces" title="Verdict de la comparaison mot à mot, à la première consultation">${d.comparaison.doublon ? `<span class="v-doublon">${d.comparaison.doublon} doublon${d.comparaison.doublon > 1 ? "s" : ""}</span>` : ""}${d.comparaison.variante ? `<span class="v-variante">${d.comparaison.variante} variante${d.comparaison.variante > 1 ? "s" : ""}</span>` : ""}${d.comparaison.nouvelle ? `<span class="v-nouvelle">${d.comparaison.nouvelle} nouvelle${d.comparaison.nouvelle > 1 ? "s" : ""}</span>` : ""}</span>` : "");
       dessinerTableauBord(fichiers, mis);
     }).catch(() => {}));
     // avancement : une seule lecture du clausier par type d'acte présent dans la file
@@ -1333,6 +1354,86 @@ function titresDuPoint(dec, num) {
   const base = num.split(".").slice(0, -1).join(".");
   return dec.structure.filter(e => e.t === "titre" && (base === e.num || base.startsWith(e.num + "."))).map(e => e.texte);
 }
+/* ============================================================
+   MOTEUR DE COMPARAISON — PREMIÈRE PASSE, MOT À MOT (1.5, gratuite)
+   Arbitrage du 09/10/2026 : verdict en trois états, l'humain tranche.
+   Chaque point est comparé, dans le navigateur, à TOUTES les clauses du
+   clausier de son type (suites de trois mots, chiffres et champs [ ]
+   neutralisés). Au-dessus de SEUIL_DOUBLON : doublon (suppression proposée,
+   la clause existante gagne une occurrence) ; entre les deux seuils :
+   variante probable ; en dessous : nouvelle. La seconde passe, DE SENS
+   (empreintes calculées par un seul et même petit modèle dans le
+   navigateur), reprendra ce que celle-ci ne tranche pas.
+   ============================================================ */
+const VERSION_COMPARAISON = "1.0 (mot à mot)";
+const SEUIL_DOUBLON = 0.9, SEUIL_VARIANTE = 0.5, SEUIL_PROCHE = 0.3, MAX_PROCHES = 4;
+const cacheEmpreintes = new Map();
+function empreinteMots(t) {
+  const k = String(t || ""); if (cacheEmpreintes.has(k)) return cacheEmpreintes.get(k);
+  const mots = plat(k).replace(/\[[^\]\n]{1,80}\]/g, " # ").replace(/\d+(?:[ .,]\d+)*/g, " # ").match(/[\p{L}#]+/gu) || [];
+  const tri = new Set(); for (let i = 0; i + 2 < mots.length; i++) tri.add(mots[i] + " " + mots[i + 1] + " " + mots[i + 2]);
+  const e = { tri: tri.size ? tri : new Set(mots), n: mots.length };
+  if (cacheEmpreintes.size > 20000) cacheEmpreintes.clear();
+  cacheEmpreintes.set(k, e); return e;
+}
+function ressemblance(a, b) {
+  const A = empreinteMots(a).tri, B = empreinteMots(b).tri; if (!A.size || !B.size) return 0;
+  let c = 0; const [p, g] = A.size < B.size ? [A, B] : [B, A]; for (const x of p) if (g.has(x)) c++;
+  return 2 * c / (A.size + B.size);
+}
+function comparerPoint(texte, clausier) {
+  const proches = [];
+  for (const r of Object.values(clausier?.rubriques || {})) for (const c of r.clauses) {
+    const sim = ressemblance(texte, c.texte); if (sim >= SEUIL_PROCHE) proches.push({ clause: c, rubrique: r, sim });
+  }
+  proches.sort((x, y) => y.sim - x.sim);
+  const best = proches[0];
+  const verdict = !best ? "nouvelle" : best.sim >= SEUIL_DOUBLON ? "doublon" : best.sim >= SEUIL_VARIANTE ? "variante" : "nouvelle";
+  // le moteur HÉSITE quand plusieurs clauses sont presque aussi proches que la meilleure : on les montre toutes
+  const hesite = best && proches.filter(x => best.sim - x.sim <= 0.1).length > 1;
+  return { verdict, proches: proches.slice(0, verdict === "doublon" && !hesite ? 1 : MAX_PROCHES), hesite };
+}
+const LIB_VERDICT = { doublon: "doublon", variante: "variante probable", nouvelle: "nouvelle" };
+function blocComparaison(cmp, texte, choisi = 0) {
+  const pc = x => Math.round(x * 100) + " %";
+  if (!cmp.proches.length) return `<div class="cmp"><div class="cmp-tete"><span class="pastille-v v-nouvelle">nouvelle</span>
+      Aucune clause ressemblante dans le clausier de ce type : rédaction nouvelle, à ranger.</div></div>`;
+  const ref = cmp.proches[Math.min(choisi, cmp.proches.length - 1)], [ga, gb] = comparerTextes(texte, ref.clause.texte);
+  const phrase = cmp.verdict === "doublon" ? `couvert par ${echapper(ref.clause.id)} (${pc(ref.sim)} identique) : suppression proposée`
+    : cmp.verdict === "variante" ? `proche de ${echapper(ref.clause.id)} (${pc(ref.sim)}) : autre rédaction de la même clause, ou vraie variante à garder ?`
+    : `la plus proche, ${echapper(ref.clause.id)}, n'est qu'à ${pc(ref.sim)} : rédaction sans doute nouvelle`;
+  return `<div class="cmp" data-cmp>
+    <div class="cmp-tete"><span class="pastille-v v-${cmp.verdict}">${LIB_VERDICT[cmp.verdict]}</span><span>${phrase}${cmp.hesite ? " — le moteur hésite entre plusieurs clauses" : ""}</span>
+      ${cmp.proches.length > 1 ? `<span class="proches">${cmp.proches.map((x, i) => `<button data-proche="${i}" aria-pressed="${i === choisi}" title="${echapper(x.rubrique.id + " · " + x.rubrique.titre)}">${echapper(x.clause.id)} · ${pc(x.sim)}</button>`).join("")}</span>` : ""}</div>
+    <div class="cmp-cols"><div><h6>Ce point (barré : absent de la clause existante)</h6>${ga}</div>
+      <div><h6>${echapper(ref.clause.id)} · ${echapper(ref.rubrique.id)} ${echapper(ref.rubrique.titre)}${ref.clause.source?.nom ? ` — tirée de « ${echapper(ref.clause.source.nom)} »` : ""} (souligné : propre à elle)</h6>${gb}</div></div>
+    <div class="cmp-actions">
+      <button class="bouton secondaire" data-doublon="${echapper(ref.clause.id)}" title="Le point n'apporte rien : il n'entre pas au clausier, et ${echapper(ref.clause.id)} gagne une occurrence">C'est un doublon de ${echapper(ref.clause.id)}</button>
+      <button class="bouton secondaire" data-variante="${echapper(ref.rubrique.id)}">Garder comme variante dans ${echapper(ref.rubrique.id)}</button>
+    </div></div>`;
+}
+// Doublon confirmé : le point n'entre pas au clausier ; la clause existante compte une occurrence de plus
+function noterDoublon(f, { depot, num, clauseId }) {
+  for (const r of Object.values(f.rubriques)) { const c = r.clauses.find(x => x.id === clauseId);
+    if (c) { c.occurrences = (c.occurrences || 1) + 1; (c.doublons ||= []).push({ depot: depot.id, nom: depot.nom, point: num, le: new Date().toISOString() }); break; } }
+  (f.journal ||= []).push({ quand: new Date().toISOString(), quoi: "doublon", point: num, clause: clauseId, depot: depot.id, depot_nom: depot.nom });
+}
+// Brancher les gestes d'un bloc de comparaison : changer de clause de référence, doublon, variante
+function brancherComparaison(bloc, cmp, texte, { doublon, variante }) {
+  const z = bloc.querySelector("[data-cmp]"); if (!z) return;
+  z.querySelectorAll("[data-proche]").forEach(b => b.addEventListener("click", () => {
+    const tmp = document.createElement("div"); tmp.innerHTML = blocComparaison(cmp, texte, +b.dataset.proche);
+    z.replaceWith(tmp.firstElementChild); brancherComparaison(bloc, cmp, texte, { doublon, variante });
+  }));
+  z.querySelector("[data-doublon]")?.addEventListener("click", e => { e.target.disabled = true; doublon(e.target.dataset.doublon); });
+  z.querySelector("[data-variante]")?.addEventListener("click", e => { e.target.disabled = true; variante(e.target.dataset.variante); });
+}
+// Bilan des verdicts, gardé dans le dépôt pour l'afficher en couleur dans la file (après première consultation)
+function bilanComparaison(cmps) {
+  const b = { doublon: 0, variante: 0, nouvelle: 0 }; for (const c of cmps) b[c.verdict]++;
+  return { ...b, version: VERSION_COMPARAISON, le: new Date().toISOString() };
+}
+
 async function ouvrirRangement() {
   const d = etat.ouvert?.depot, zone = $("fiche-ranger");
   if (!d) return;
@@ -1350,6 +1451,16 @@ async function ouvrirRangement() {
     rg.propositions = rep.rangement.propositions;
     rg.contextes = (d.contextes && d.contextes.length) ? d.contextes : (rep.rangement.contextes || []);
     rg.dejaRanges = new Set(Object.values(rg.clausier.rubriques).flatMap(x => x.clauses).filter(c => c.source?.depot === d.id).map(c => c.point));
+    for (const e of rg.clausier.journal || []) if (e.depot === d.id && !rg.dejaRanges.has(e.point)) {
+      if (e.quoi === "ecarter") rg.choix[e.point] = null; else if (e.quoi === "doublon") rg.choix[e.point] = { doublon: e.clause };
+    }
+    // 1.5 — première passe de comparaison : chaque point contre tout le clausier du type (sans ses propres clauses)
+    const autres = { rubriques: Object.fromEntries(Object.entries(rg.clausier.rubriques).map(([k, r]) => [k, { ...r, clauses: r.clauses.filter(c => c.source?.depot !== d.id) }])) };
+    rg.cmp = Object.fromEntries(rg.points.map(p => [p.num, comparerPoint(p.texte, autres)]));
+    const bilan = bilanComparaison(Object.values(rg.cmp));
+    if (JSON.stringify({ ...bilan, le: 0 }) !== JSON.stringify({ ...(d.comparaison || {}), le: 0 })) {
+      d.comparaison = bilan; reecrireJson(etat.ouvert.id, d).catch(() => {});
+    }
     dessinerRangement();
   } catch (e) { zone.innerHTML = `<p class="note-moteur">Rangement impossible : ${echapper(e.message)}</p>`; }
 }
@@ -1371,11 +1482,12 @@ function dessinerRangement() {
       const classee = deja || choix !== undefined;
       const verdict = deja ? '<span class="verdict ok">déjà rangé</span>'
         : choix === null ? '<span class="verdict">écarté</span>'
+        : choix?.doublon ? `<span class="verdict">doublon de ${echapper(choix.doublon)}</span>`
         : choix ? `<span class="verdict ok">→ ${echapper(libRub(choix))}</span>`
         : cand.length ? "" : '<span class="verdict">aucune rubrique évidente</span>';
       return `<div class="ranger-point${classee ? " classee" : ""}" data-point="${echapper(p.num)}">
         <div class="rp-haut"><span class="num">Point ${echapper(p.num)}</span>${verdict}</div>
-        <div class="rp-texte">${echapper(p.texte.slice(0, 600))}${p.texte.length > 600 ? "…" : ""}</div>
+        ${classee || !rg.cmp?.[p.num] ? `<div class="rp-texte">${echapper(p.texte.slice(0, 600))}${p.texte.length > 600 ? "…" : ""}</div>` : blocComparaison(rg.cmp[p.num], p.texte)}
         ${classee ? "" : `<div class="rp-prop">
           <div class="rp-choix">${cand.map((c, i) => `<button data-choisir="${echapper(c.id)}" class="${i ? "second" : ""}" aria-pressed="false">${i ? "2ᵉ candidate" : "Proposée"}<span class="r-id">${echapper(libRub(c.id))}</span>${c.mots?.length ? `<span class="r-mots">${echapper(c.mots.slice(0, 4).join(", "))}</span>` : ""}</button>`).join("")}</div>
           <div class="rp-actions">
@@ -1386,6 +1498,10 @@ function dessinerRangement() {
       </div>`;
     }).join("")}</div>`;
   brancherRangement();
+  zone.querySelectorAll(".ranger-point:not(.classee)").forEach(bloc => {
+    const num = bloc.dataset.point, p = rg.points.find(x => x.num === num);
+    if (rg.cmp?.[num]) brancherComparaison(bloc, rg.cmp[num], p.texte, { doublon: id => confirmerDoublon(num, id), variante: rid => validerPoint(num, rid) });
+  });
 }
 function brancherRangement() {
   const zone = $("fiche-ranger");
@@ -1434,6 +1550,11 @@ async function validerPoint(num, rubriqueId) {
   try { await enregistrerClause(num, rubriqueId); rg.choix[num] = rubriqueId; rg.dejaRanges.add(num); dessinerRangement(); }
   catch (e) { montrerErreur("Point non rangé : " + e.message); dessinerRangement(); }
 }
+async function confirmerDoublon(num, clauseId) {
+  try { rg.clausier = await modifierClausier(f => noterDoublon(f, { depot: rg.depot, num, clauseId }), rg.fichier); rg.choix[num] = { doublon: clauseId }; }
+  catch (e) { montrerErreur("Doublon non enregistré : " + e.message); }
+  dessinerRangement();
+}
 async function ecarterPoint(num) {
   try { rg.clausier = await modifierClausier(f => { (f.journal ||= []).push({ quand: new Date().toISOString(), quoi: "ecarter", point: num, depot: rg.depot.id }); }, rg.fichier); } catch (e) { montrerErreur("Écart non enregistré : " + e.message); }
   rg.choix[num] = null; dessinerRangement();
@@ -1442,6 +1563,7 @@ async function validerTout() {
   const b = $("rg-tout"); if (b) { b.disabled = true; b.textContent = "Rangement…"; }
   for (const p of rg.propositions) {
     if (rg.dejaRanges.has(p.num) || rg.choix[p.num] !== undefined || !p.candidats[0]) continue;
+    if (rg.cmp?.[p.num]?.verdict === "doublon") continue;   // 1.5 — un doublon n'entre jamais au clausier sans décision
     try { await enregistrerClause(p.num, p.candidats[0].id); rg.choix[p.num] = p.candidats[0].id; rg.dejaRanges.add(p.num); } catch {}
   }
   dessinerRangement();
@@ -1470,14 +1592,15 @@ async function ouvrirSimultane(type) {
     for (const [n, d] of depots.entries()) {
       $("ts-etat").textContent = `Rangement des points : dépôt ${n + 1} sur ${depots.length} (${d.nom})…`;
       const faits = new Set(Object.values(ts.clausier.rubriques).flatMap(x => x.clauses).filter(c => c.source?.depot === d.id).map(c => c.point));
-      (ts.clausier.journal || []).forEach(e => { if (e.quoi === "ecarter" && e.depot === d.id) faits.add(e.point); });
+      (ts.clausier.journal || []).forEach(e => { if ((e.quoi === "ecarter" || e.quoi === "doublon") && e.depot === d.id) faits.add(e.point); });
       const points = d.decoupe.structure.filter(e => e.t === "point" && !faits.has(e.num))
         .map(e => ({ num: e.num, texte: e.paras.join("\n").replace(/\u200b/g, ""), titres: titresDuPoint(d.decoupe, e.num) }));
       if (!points.length) continue;
       const rep = await appelerMoteur("ranger", { points, rubriques, texte_acte: sansMarques(d.texte) });
       const contextes = (d.contextes && d.contextes.length) ? d.contextes : (rep.rangement.contextes || []);
       const propo = new Map(rep.rangement.propositions.map(p => [p.num, p.candidats]));
-      for (const p of points) ts.items.push({ depot: d, num: p.num, texte: p.texte, contextes, candidats: propo.get(p.num) || [], etat: undefined });
+      for (const p of points) ts.items.push({ depot: d, num: p.num, texte: p.texte, contextes, candidats: propo.get(p.num) || [], etat: undefined,
+        cmp: comparerPoint(p.texte, { rubriques: Object.fromEntries(Object.entries(ts.clausier.rubriques).map(([k, r]) => [k, { ...r, clauses: r.clauses.filter(c => c.source?.depot !== d.id) }])) }) });
     }
     const premier = groupesSimultane()[0]; if (premier) ts.ouverts.add(premier.cle);
     dessinerSimultane();
@@ -1512,11 +1635,11 @@ function dessinerSimultane() {
           ${g.cle && reste > 1 ? `<div class="ts-actions-groupe"><button class="bouton secondaire" data-tout="${echapper(g.cle)}">Valider les ${reste} points dans cette rubrique</button></div>` : ""}
           ${g.items.map((it, j) => {
             const fait = it.etat !== undefined;
-            const verdict = it.etat === null ? '<span class="verdict">écarté</span>' : it.etat ? `<span class="verdict ok">→ ${echapper(libRub(it.etat))}</span>` : it.candidats.length ? "" : '<span class="verdict">aucune rubrique évidente</span>';
+            const verdict = it.etat === null ? '<span class="verdict">écarté</span>' : it.etat?.doublon ? `<span class="verdict">doublon de ${echapper(it.etat.doublon)}</span>` : it.etat ? `<span class="verdict ok">→ ${echapper(libRub(it.etat))}</span>` : it.candidats.length ? "" : '<span class="verdict">aucune rubrique évidente</span>';
             return `<div class="ranger-point${fait ? " classee" : ""}" data-item="${ts.items.indexOf(it)}">
               <div class="rp-haut"><span class="source">${echapper(it.depot.nom)}</span><span class="num">Point ${echapper(it.num)}</span>${verdict}
                 ${it.contextes.length ? `<span class="ctx">${echapper(it.contextes.join(", "))}</span>` : ""}</div>
-              <div class="rp-texte">${echapper(it.texte.slice(0, 600))}${it.texte.length > 600 ? "…" : ""}</div>
+              ${fait || !it.cmp ? `<div class="rp-texte">${echapper(it.texte.slice(0, 600))}${it.texte.length > 600 ? "…" : ""}</div>` : blocComparaison(it.cmp, it.texte)}
               ${fait ? "" : `<div class="rp-prop">
                 <div class="rp-choix">${it.candidats.map((c, i) => `<button data-choisir="${echapper(c.id)}" class="${i ? "second" : ""}" aria-pressed="false">${i ? "2ᵉ candidate" : "Proposée"}<span class="r-id">${echapper(libRub(c.id))}</span>${c.mots?.length ? `<span class="r-mots">${echapper(c.mots.slice(0, 4).join(", "))}</span>` : ""}</button>`).join("")}</div>
                 <div class="rp-actions">
@@ -1544,6 +1667,7 @@ function brancherSimultane() {
     bloc.querySelectorAll("[data-choisir]").forEach(b => b.addEventListener("click", () => { if (sel) sel.value = ""; poser(b.dataset.choisir); }));
     sel?.addEventListener("change", () => { bloc.querySelectorAll("[data-choisir]").forEach(b => b.setAttribute("aria-pressed", "false")); poser(sel.value); });
     valider?.addEventListener("click", () => choisi && trancherSimultane([it], choisi, bloc));
+    if (it.cmp && it.etat === undefined) brancherComparaison(bloc, it.cmp, it.texte, { doublon: id => trancherSimultane([it], { doublon: id }, bloc), variante: rid => trancherSimultane([it], rid, bloc) });
     bloc.querySelector(".ecarter")?.addEventListener("click", () => trancherSimultane([it], null, bloc));
   });
 }
@@ -1553,7 +1677,8 @@ async function trancherSimultane(items, rubriqueId, bloc) {
   try {
     ts.clausier = await modifierClausier(f => {
       for (const it of items) {
-        if (rubriqueId) ajouterClause(f, { depot: it.depot, num: it.num, texte: it.texte, contextes: it.contextes, rubriqueId });
+        if (rubriqueId?.doublon) noterDoublon(f, { depot: it.depot, num: it.num, clauseId: rubriqueId.doublon });
+        else if (rubriqueId) ajouterClause(f, { depot: it.depot, num: it.num, texte: it.texte, contextes: it.contextes, rubriqueId });
         else (f.journal ||= []).push({ quand: new Date().toISOString(), quoi: "ecarter", point: it.num, depot: it.depot.id });
       }
     }, ts.fichier);
@@ -1562,7 +1687,7 @@ async function trancherSimultane(items, rubriqueId, bloc) {
   dessinerSimultane();
 }
 function validerGroupe(cle) {
-  const items = ts.items.filter(x => x.etat === undefined && x.candidats[0]?.id === cle);
+  const items = ts.items.filter(x => x.etat === undefined && x.candidats[0]?.id === cle && x.cmp?.verdict !== "doublon");
   return trancherSimultane(items, cle);
 }
 
@@ -1825,7 +1950,7 @@ function dessinerType() {
    posée sur elle est retirée ; les numéros de clauses ne sont jamais réutilisés.
    Le point redevient rangeable depuis « À traiter ». Tout va au journal.
    ============================================================ */
-const LIB_MOUVEMENT = { ranger: "rangé", ecarter: "écarté", "choisir-etoile": "étoile choisie", "retirer-etoile": "étoile retirée", fiche: "fiche modifiée", annuler: "rangement défait" };
+const LIB_MOUVEMENT = { ranger: "rangé", ecarter: "écarté", doublon: "doublon confirmé", "choisir-etoile": "étoile choisie", "retirer-etoile": "étoile retirée", fiche: "fiche modifiée", annuler: "rangement défait" };
 function dessinerJournal(d) {
   const j = d.journal || []; if (!j.length) return `<details class="cl-journal"><summary>Journal des mouvements (aucun pour l'instant)</summary></details>`;
   const vivantes = new Set(Object.values(d.rubriques).flatMap(r => r.clauses).map(c => `${c.source?.depot}|${c.point}`));
