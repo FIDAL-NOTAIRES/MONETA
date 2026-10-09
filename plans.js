@@ -9,7 +9,8 @@
 // IMPORTANT : ce fichier sert seulement à CRÉER le clausier d'un type
 // d'acte la première fois. Ensuite, le clausier enregistré sur le Drive
 // fait foi (numéros permanents) : modifier ce fichier ne change rien
-// à un clausier déjà créé.
+// à un clausier déjà créé, SAUF les articles listés dans « ajouts »,
+// ajoutés une fois en fin de plan (09/10/2026 : « Clôture et signature »).
 // ============================================================
 window.PLANS = {
   "promesse-synallagmatique": {
@@ -53,7 +54,11 @@ window.PLANS = {
       ["Données personnelles", ["Données personnelles"]],
       ["Certification d'identité", ["Certification d'identité"]],
       ["Formalisme des annexes", ["Formalisme des annexes"]],
+      ["Clôture et signature", ["Mention de lecture et d'approbation", "Partie ne comprenant pas le français", "Signature électronique ou à distance", "Signature des parties", "Signature du notaire, date et lieu"]],
     ],
+    // Articles ajoutés après la création du clausier : MONETA les ajoute en fin de plan, une seule fois,
+    // à un clausier déjà enregistré qui ne les a pas encore (numéros nouveaux, rien d'existant ne bouge).
+    ajouts: ["Clôture et signature"],   // 09/10/2026 — partie finale versée au clausier (JFD)
   },
   "promesse-unilaterale": {
     prefixe: "PUV",
@@ -99,6 +104,10 @@ window.PLANS = {
       ["Données personnelles", ["Données personnelles"]],
       ["Certification d'identité", ["Certification d'identité"]],
       ["Formalisme des annexes", ["Formalisme des annexes"]],
+      ["Clôture et signature", ["Mention de lecture et d'approbation", "Partie ne comprenant pas le français", "Signature électronique ou à distance", "Signature des parties", "Signature du notaire, date et lieu"]],
     ],
+    // Articles ajoutés après la création du clausier : MONETA les ajoute en fin de plan, une seule fois,
+    // à un clausier déjà enregistré qui ne les a pas encore (numéros nouveaux, rien d'existant ne bouge).
+    ajouts: ["Clôture et signature"],   // 09/10/2026 — partie finale versée au clausier (JFD)
   },
 };
