@@ -107,6 +107,29 @@ table.file tr.ouvert td{background:#EAFAFB}
 .fiche-type select{width:auto;padding:6px 10px}
 .note-moteur{background:#FFF3C4;border-left:4px solid var(--jaune-texte);padding:9px 12px;border-radius:3px;margin-top:12px;font-size:.92rem}
 
+/* ---------- 1.0 — tableau de bord de la file, dépôts mis de côté ---------- */
+#tableau-bord{border:1px solid var(--trait);border-radius:6px;padding:14px 18px;margin-bottom:16px;background:#fff}
+#tableau-bord .tb-tete{display:flex;flex-wrap:wrap;gap:6px 28px;align-items:baseline}
+#tableau-bord .tb-chiffre{font-family:Georgia,serif;color:var(--nuit)}
+#tableau-bord .tb-chiffre b{font-size:1.5rem;font-weight:bold;margin-right:6px}
+#tableau-bord .tb-chiffre span{color:var(--doux);font-size:.9rem}
+.tb-barre{height:8px;background:var(--gris);border-radius:4px;overflow:hidden;margin:10px 0 4px}
+.tb-barre i{display:block;height:100%;background:var(--canard)}
+#tableau-bord table{width:100%;border-collapse:collapse;margin-top:12px;font-size:.9rem}
+#tableau-bord th,#tableau-bord td{text-align:left;padding:5px 8px;border-bottom:1px solid var(--trait);vertical-align:middle}
+#tableau-bord th{color:var(--doux);font-weight:600}
+#tableau-bord .nb{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+#tableau-bord .tb-av{width:30%}
+#tableau-bord .tb-av .tb-barre{margin:0}
+#tableau-bord .tb-note{color:var(--doux);font-size:.85rem;margin-top:8px}
+.t-avance{white-space:nowrap;font-variant-numeric:tabular-nums;font-size:.9rem}
+.cote{margin-top:22px;border-top:2px solid var(--trait);padding-top:12px}
+.cote h3{font-size:1.05rem;color:var(--nuit);margin-bottom:4px}
+.cote .motif{font-style:italic;color:var(--doux)}
+#zone-cote{display:none;margin-top:10px;padding:10px 12px;background:var(--gris);border-radius:4px}
+#zone-cote label{font-size:.88rem;margin-bottom:4px;display:block}
+#zone-cote input{width:100%;max-width:520px;padding:6px 10px;margin-bottom:8px}
+
 /* ---------- clausier (0.5) : plan en tête, rubrique en deux colonnes ---------- */
 .cl-tete{display:flex;gap:14px;align-items:end;flex-wrap:wrap;margin-bottom:14px}
 .cl-tete > div{flex:1 1 260px}
@@ -271,7 +294,7 @@ mark{background:var(--jaune-forme);color:inherit;padding:0 1px}
 <body>
 <header>
   <h1>MONETA</h1>
-  <small>Le clausier du cabinet, version 0.9</small>
+  <small>Le clausier du cabinet, version 1.0</small>
   <span id="etat-connexion">Connexion au Drive…</span>
   <button id="btn-connexion">Autoriser l'accès au Drive</button>
 </header>
@@ -332,8 +355,14 @@ mark{background:var(--jaune-forme);color:inherit;padding:0 1px}
       <div class="actions">
         <button class="bouton" id="btn-ranger">Ranger dans le clausier</button>
         <button class="bouton secondaire" id="btn-redecouper">Redécouper</button>
+        <button class="bouton secondaire" id="btn-cote">Mettre de côté</button>
         <button class="bouton secondaire" id="btn-fermer">Fermer</button>
         <button class="bouton discret" id="btn-retirer">Retirer de la file</button>
+      </div>
+      <div id="zone-cote">
+        <label for="cote-motif">Pourquoi ce dépôt attend-il ? (facultatif : information manquante, avis d'un confrère…)</label>
+        <input id="cote-motif" type="text" maxlength="200">
+        <div class="actions"><button class="bouton" id="cote-ok">Mettre en attente</button><button class="bouton secondaire" id="cote-annuler">Annuler</button></div>
       </div>
     </div>
   </section>
@@ -346,7 +375,7 @@ mark{background:var(--jaune-forme);color:inherit;padding:0 1px}
 
 <script>
 /* ============================================================
-   MONETA — version 0.9 du 09/10/2026 (couverture du clausier par rubrique et par article, fiche éditable de la clause, journal de relecture avec rangement défait seul ou par lot, signal d'un acte non numéroté versé dans un clausier pauvre) ; 0.8 du 09/10/2026 (ciseau : coupe manuelle d'un point entre paragraphes ou puces, partie détachée lettrée, phrase d'annonce reprise, coupes conservées à la redécoupe, recollage) ; 0.7 du 09/10/2026 (ergonomie : fil d'Ariane collant, clause étoile choisie à la main et épinglée, compteurs indicatifs d'actes versés et de reprises en rédaction, comparaison côte à côte de deux variantes, recherche plein texte et filtres par contexte, sens, nature et texte visé, étapes du versement) ; 0.6 du 08/10/2026 (rangement des points d'un dépôt dans le clausier : proposition et deuxième candidate, contexte coché, validation point par point ou en bloc, journal des mouvements) ; 0.5 du 08/10/2026 (module Clausier, première tranche : plans de référence PSV AKZO et PUV R3S, numéros permanents, page Clausier) ; 0.4 du 08/10/2026 (titres des PDF non numérotés déduits de la mise en forme) ; 0.3 du 08/10/2026 (lecture Word avec numérotation automatique, contrôles de vraisemblance) ; 0.2 : moteur de découpe en service ; squelette du 07/10/2026
+   MONETA — version 1.0 du 09/10/2026 (file « À traiter » : tableau de bord de la file, avancement de chaque dépôt, bouton « Mettre de côté » et liste des dépôts en attente ; compteurs d'usage dissociés du classement des clauses) ; 0.9 du 09/10/2026 (couverture du clausier par rubrique et par article, fiche éditable de la clause, journal de relecture avec rangement défait seul ou par lot, signal d'un acte non numéroté versé dans un clausier pauvre) ; 0.8 du 09/10/2026 (ciseau : coupe manuelle d'un point entre paragraphes ou puces, partie détachée lettrée, phrase d'annonce reprise, coupes conservées à la redécoupe, recollage) ; 0.7 du 09/10/2026 (ergonomie : fil d'Ariane collant, clause étoile choisie à la main et épinglée, compteurs indicatifs d'actes versés et de reprises en rédaction, comparaison côte à côte de deux variantes, recherche plein texte et filtres par contexte, sens, nature et texte visé, étapes du versement) ; 0.6 du 08/10/2026 (rangement des points d'un dépôt dans le clausier : proposition et deuxième candidate, contexte coché, validation point par point ou en bloc, journal des mouvements) ; 0.5 du 08/10/2026 (module Clausier, première tranche : plans de référence PSV AKZO et PUV R3S, numéros permanents, page Clausier) ; 0.4 du 08/10/2026 (titres des PDF non numérotés déduits de la mise en forme) ; 0.3 du 08/10/2026 (lecture Word avec numérotation automatique, contrôles de vraisemblance) ; 0.2 : moteur de découpe en service ; squelette du 07/10/2026
    Arbitrages (fiche clausier) : une application, deux moteurs ;
    on VERSE d'un côté (file d'attente sur le Drive), on TRAITE quand on veut ;
    le DÉCOUPAGE (neutralisation en champs, coupe en clauses, destination
@@ -382,6 +411,7 @@ const CLIENT_ID = "82507767087-kr2q7r67r2m4llj6ftldgr4rc2n24gbu.apps.googleuserc
 const PORTEE = "https://www.googleapis.com/auth/drive.file";
 const DOSSIER_RACINE = "MONETA";
 const DOSSIER_FILE = "File d'attente";
+const DOSSIER_COTE = "Mis de côté";   // 1.0 — sous-dossier de la file : dépôts en attente, hors file active
 const DOSSIER_CLAUSIER = "Clausier";
 const MOTEURS = "/api/moteurs";           // fonction serveur unique, à actions (limite Vercel Hobby)
 const DRIVE = "https://www.googleapis.com/drive/v3/files";
@@ -711,23 +741,90 @@ async function reecrireJson(id, objet) {
    (règle commune de la suite : ce qui traîne remonte en tête)
    ============================================================ */
 const STATUTS = { "attente-decoupage": ["attente", "à découper"], "decoupe": ["decoupe", "découpé, à comparer"], "erreur": ["erreur", "découpe en échec"] };
+// 1.0 — clausier d'un type lu SANS être créé (le tableau de bord ne doit rien écrire sur le Drive)
+async function clausierExistant(code) {
+  const { clausier } = await arborescence();
+  const dos = (await lister(clausier, ` and name = '${echapperQ(libelleType(code))}' and mimeType = 'application/vnd.google-apps.folder'`))[0];
+  if (!dos) return null;
+  const f = (await lister(dos.id, ` and name = '${NOM_CLAUSIER}'`))[0];
+  return f ? lireJson(f.id) : null;
+}
+// Points traités d'un dépôt = rangés (clause encore présente au clausier) ou écartés (journal)
+function pointsTraites(d, clausier) {
+  if (!clausier || !d?.id) return 0;
+  const faits = new Set();
+  for (const r of Object.values(clausier.rubriques || {})) for (const c of r.clauses || []) if (c.source?.depot === d.id) faits.add(c.point);
+  for (const e of clausier.journal || []) if (e.quoi === "ecarter" && e.depot === d.id) faits.add(e.point);
+  return faits.size;
+}
+const nb = n => n.toLocaleString("fr-FR");
+const pc = (a, b) => b ? Math.round(100 * a / b) : 0;
+const pl = (n, mot, motPl = mot + "s") => `${nb(n)} ${n > 1 ? motPl : mot}`;
+function dessinerTableauBord(fichiers, cote) {
+  const zone = $("tableau-bord"); if (!zone) return;
+  const lus = fichiers.filter(f => f.depot);
+  let total = 0, faits = 0; const parType = new Map();
+  for (const f of lus) {
+    const t = f.depot.decoupe?.points || 0, x = Math.min(f.traites || 0, t);
+    total += t; faits += x;
+    const k = f.depot.type_acte && PLANS[f.depot.type_acte] ? f.depot.type_acte : (f.depot.type_acte || "");
+    const g = parType.get(k) || { depots: 0, total: 0, faits: 0 }; g.depots++; g.total += t; g.faits += x; parType.set(k, g);
+  }
+  const reste = total - faits;
+  const lignes = [...parType.entries()].sort((a, b) => (b[1].total - b[1].faits) - (a[1].total - a[1].faits));
+  zone.innerHTML = `<div class="tb-tete">
+      <div class="tb-chiffre"><b>${nb(fichiers.length)}</b><span>${fichiers.length > 1 ? "dépôts à traiter" : "dépôt à traiter"}</span></div>
+      <div class="tb-chiffre"><b>${nb(reste)}</b><span>${reste > 1 ? "points restants" : "point restant"} sur ${nb(total)}</span></div>
+      <div class="tb-chiffre"><b>${pc(faits, total)} %</b><span>traité${faits ? ` (${pl(faits, "point")})` : ""}</span></div>
+      <div class="tb-chiffre"><b>${nb(cote.length)}</b><span>mis de côté</span></div>
+    </div>
+    <div class="tb-barre" title="${pc(faits, total)} % des points traités"><i style="width:${pc(faits, total)}%"></i></div>
+    ${lignes.length ? `<table><thead><tr><th>Type d'acte</th><th class="nb">Dépôts</th><th class="nb">Restants</th><th class="nb">Traités</th><th class="tb-av">Avancement</th></tr></thead><tbody>
+      ${lignes.map(([k, g]) => `<tr><td>${echapper(libelleType(k || null))}</td><td class="nb">${nb(g.depots)}</td><td class="nb">${nb(g.total - g.faits)}</td><td class="nb">${nb(g.faits)}</td>
+        <td class="tb-av"><div class="tb-barre"><i style="width:${pc(g.faits, g.total)}%"></i></div></td></tr>`).join("")}
+    </tbody></table>` : ""}
+    ${lus.length < fichiers.length ? `<p class="tb-note">Lecture des dépôts en cours (${lus.length} sur ${fichiers.length})…</p>` : `<p class="tb-note">Types d'actes classés du plus chargé au moins chargé : commencez par le haut. Un point compte comme traité une fois rangé ou écarté.</p>`}`;
+}
+function dessinerCote(cote) {
+  const zone = $("liste-cote"); if (!zone) return;
+  if (!cote.length) { zone.innerHTML = ""; return; }
+  zone.innerHTML = `<div class="cote"><h3>En attente — ${pl(cote.length, "dépôt mis de côté", "dépôts mis de côté")}</h3>
+    <p class="aide">Hors de la file active ; rien n'est perdu. « Reprendre » le remet dans la file et l'ouvre.</p>
+    <table class="file"><thead><tr><th>Mis de côté le</th><th>Dépôt</th><th>Type d'acte</th><th>Motif</th><th></th></tr></thead><tbody>
+    ${cote.map((f, i) => `<tr data-c="${i}"><td class="c-le">…</td><td>${echapper(f.name.replace(/^[\d-]+ — /, "").replace(/\.json$/, ""))}</td><td class="c-type">…</td><td class="c-motif motif"></td>
+      <td><button class="bouton secondaire" data-reprendre="${i}">Reprendre</button></td></tr>`).join("")}
+    </tbody></table></div>`;
+  zone.querySelectorAll("[data-reprendre]").forEach(b => b.addEventListener("click", () => { b.disabled = true; reprendreDepot(cote[+b.dataset.reprendre]); }));
+  cote.forEach((f, i) => lireJson(f.id).then(d => {
+    f.depot = d; const tr = zone.querySelector(`tr[data-c="${i}"]`); if (!tr) return;
+    tr.querySelector(".c-le").textContent = d.de_cote?.le ? dateCourte(d.de_cote.le) : "—";
+    tr.querySelector(".c-type").textContent = libelleType(d.type_acte);
+    tr.querySelector(".c-motif").textContent = d.de_cote?.motif || "";
+  }).catch(() => {}));
+}
 async function chargerFile() {
   const zone = $("file-contenu");
   try {
     const { file } = await arborescence();
-    const fichiers = (await lister(file)).filter(f => f.name.endsWith(".json"));
-    etat.file = fichiers;
+    const idCote = await dossier(DOSSIER_COTE, file);
+    const [tous, cote] = await Promise.all([lister(file), lister(idCote)]);
+    const fichiers = tous.filter(f => f.name.endsWith(".json"));
+    const mis = cote.filter(f => f.name.endsWith(".json"));
+    etat.file = fichiers; etat.cote = mis; etat.idFile = file; etat.idCote = idCote;
     majCompteur(fichiers.length);
-    if (!fichiers.length) { zone.innerHTML = `<p class="vide">La file est vide. Versez un acte ou un paragraphe dans l'onglet « Verser ».</p>`; return; }
-    zone.innerHTML = `<table class="file"><thead><tr><th>Versé le</th><th>Dépôt</th><th>Type d'acte</th><th>État</th></tr></thead><tbody>
-      ${fichiers.map((f, i) => `<tr data-i="${i}" tabindex="0" style="cursor:pointer"><td>${dateCourte(f.createdTime)}</td><td>${echapper(f.name.replace(/^[\d-]+ — /, "").replace(/\.json$/, ""))}</td><td class="t-type">…</td><td class="statut attente">…</td></tr>`).join("")}
-    </tbody></table>`;
+    zone.innerHTML = `<div id="tableau-bord"></div>
+      ${fichiers.length ? `<table class="file"><thead><tr><th>Versé le</th><th>Dépôt</th><th>Type d'acte</th><th>État</th><th>Traités</th></tr></thead><tbody>
+      ${fichiers.map((f, i) => `<tr data-i="${i}" tabindex="0" style="cursor:pointer"><td>${dateCourte(f.createdTime)}</td><td>${echapper(f.name.replace(/^[\d-]+ — /, "").replace(/\.json$/, ""))}</td><td class="t-type">…</td><td class="statut attente">…</td><td class="t-avance">…</td></tr>`).join("")}
+      </tbody></table>` : `<p class="vide">La file active est vide. Versez un acte ou un paragraphe dans l'onglet « Verser »${mis.length ? ", ou reprenez un dépôt mis de côté ci-dessous" : ""}.</p>`}
+      <div id="liste-cote"></div>`;
+    dessinerTableauBord(fichiers, mis);
+    dessinerCote(mis);
     zone.querySelectorAll("tr[data-i]").forEach(tr => {
       const ouvrir = () => ouvrirDepot(+tr.dataset.i);
       tr.addEventListener("click", ouvrir); tr.addEventListener("keydown", e => { if (e.key === "Enter") ouvrir(); });
     });
     // type et état lus dans chaque dépôt, sans bloquer l'affichage de la liste
-    fichiers.forEach((f, i) => lireJson(f.id).then(d => {
+    const lectures = fichiers.map((f, i) => lireJson(f.id).then(d => {
       f.depot = d;
       const tr = zone.querySelector(`tr[data-i="${i}"]`); if (!tr) return;
       tr.querySelector(".t-type").textContent = libelleType(d.type_acte);
@@ -736,9 +833,51 @@ async function chargerFile() {
       const e = d.decoupe?.etat;
       st.innerHTML = (e ? `<span class="pastille ${e}" title="${e === "vert" ? "sans anomalie" : e === "jaune" ? "à vérifier" : "découpe impossible"}"></span>` : "")
         + echapper(txt + (d.decoupe ? ` (${d.decoupe.points} points${e === "jaune" ? ", à vérifier" : e === "carmin" ? ", impossible" : ""})` : ""));
+      dessinerTableauBord(fichiers, mis);
     }).catch(() => {}));
+    // avancement : une seule lecture du clausier par type d'acte présent dans la file
+    await Promise.all(lectures);
+    const types = [...new Set(fichiers.map(f => f.depot?.type_acte).filter(t => t && PLANS[t]))];
+    const clausiers = Object.fromEntries(await Promise.all(types.map(async t => [t, await clausierExistant(t).catch(() => null)])));
+    fichiers.forEach((f, i) => {
+      const t = f.depot?.decoupe?.points || 0;
+      f.traites = pointsTraites(f.depot, clausiers[f.depot?.type_acte]);
+      const c = zone.querySelector(`tr[data-i="${i}"] .t-avance`);
+      if (c) c.textContent = t ? `${nb(Math.min(f.traites, t))} / ${nb(t)}` : "—";
+    });
+    dessinerTableauBord(fichiers, mis);
   } catch (e) { zone.innerHTML = `<p class="vide">${echapper(e.message)}</p>`; }
 }
+// 1.0 — Mettre de côté : le dépôt sort de la file active vers « Mis de côté », avec la date et le motif
+async function deplacer(id, vers, depuis) {
+  return drive(`${DRIVE}/${id}?addParents=${vers}&removeParents=${depuis}&fields=id`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: "{}" });
+}
+async function mettreDeCote() {
+  const f = etat.ouvert; if (!f?.depot) return;
+  const b = $("cote-ok"); b.disabled = true; b.textContent = "Mise en attente…";
+  try {
+    f.depot.de_cote = { le: new Date().toISOString(), motif: $("cote-motif").value.trim() };
+    await reecrireJson(f.id, f.depot);
+    await deplacer(f.id, etat.idCote, etat.idFile);
+    $("zone-cote").style.display = "none"; $("fiche-depot").style.display = "none"; etat.ouvert = null;
+    await chargerFile();
+  } catch (e) { montrerErreur("Mise de côté impossible : " + e.message); }
+  finally { b.disabled = false; b.textContent = "Mettre en attente"; }
+}
+async function reprendreDepot(f) {
+  try {
+    const d = f.depot || await lireJson(f.id);
+    delete d.de_cote; await reecrireJson(f.id, d);
+    await deplacer(f.id, etat.idFile, etat.idCote);
+    await chargerFile();
+    const i = etat.file.findIndex(x => x.id === f.id);
+    if (i >= 0) ouvrirDepot(i);
+  } catch (e) { montrerErreur("Reprise impossible : " + e.message); chargerFile(); }
+}
+$("btn-cote").addEventListener("click", () => { $("cote-motif").value = ""; $("zone-cote").style.display = "block"; $("cote-motif").focus(); });
+$("cote-annuler").addEventListener("click", () => { $("zone-cote").style.display = "none"; });
+$("cote-ok").addEventListener("click", mettreDeCote);
+$("cote-motif").addEventListener("keydown", e => { if (e.key === "Enter") mettreDeCote(); });
 const PUCE_AFFICHAGE = /^\s*(?:[•▪\uf0b7\uf0a7\uf0d8\uf0d7\uf076\uf0fc]|o\s|-\s|–\s)\s*/u;
 const estIntertitre = p => p.length < 90 && !/[.;:!?»”"]\s*$/.test(p) && /^\p{Lu}/u.test(p) && !PUCE_AFFICHAGE.test(p) && !p.startsWith("Annexe");
 function dessinerDecoupe(dec) {
@@ -900,7 +1039,7 @@ function remplirFiche(d) {
 }
 async function ouvrirDepot(i) {
   const f = etat.file[i]; if (!f) return;
-  etat.ouvert = f; etat.coupe = null;
+  etat.ouvert = f; etat.coupe = null; $("zone-cote").style.display = "none";
   document.querySelectorAll("table.file tr").forEach(tr => tr.classList.toggle("ouvert", tr.dataset.i === String(i)));
   const d = f.depot || (f.depot = await lireJson(f.id));
   remplirFiche(d);
@@ -1179,9 +1318,12 @@ async function modifierClausier(changement, fichier = cl.fichier) {
 // Clause étoile : CHOISIE À LA MAIN (09/10/2026) et épinglée en tête ; les autres suivent,
 // la plus souvent rencontrée d'abord, à égalité la plus récente. Les compteurs n'élisent jamais l'étoile.
 const idEtoile = r => r?.etoile?.clause || null;
+// 1.0 — le compteur d'usage est PUREMENT INFORMATIF et DISSOCIÉ DU CLASSEMENT (arbitrage du 09/10/2026 au soir) :
+// l'ordre ne dépend que de l'étoile, puis de la rédaction la plus récente (date de l'acte source), puis du numéro.
 function trierClauses(clauses, etoile = null) {
   return [...clauses].sort((a, b) => (b.id === etoile) - (a.id === etoile)
-    || (b.occurrences || 1) - (a.occurrences || 1) || String(b.source?.date || "").localeCompare(String(a.source?.date || "")));
+    || String(b.source?.date || "").localeCompare(String(a.source?.date || ""))
+    || String(a.id || "").localeCompare(String(b.id || "")));
 }
 
 /* ---------- outils de lecture : sans accents, textes visés, surlignage, comparaison ---------- */
