@@ -189,6 +189,38 @@ mark{background:var(--jaune-forme);color:inherit;padding:0 1px}
 #fiche-decoupe .ligne-coupe:hover,#fiche-decoupe .ligne-coupe:focus-visible{border-top-color:var(--carmin);color:var(--carmin)}
 #fiche-decoupe .motif .ciseau-texte{margin-left:8px;background:#fff;border:1px solid var(--jaune-texte);border-radius:3px;font-size:.78rem;padding:0 6px;color:var(--nuit)}
 #verses li .etape{color:var(--canard);font-weight:600}
+/* 0.9 — couverture, fiche éditable, journal de relecture */
+.cv{width:10px;height:10px;border-radius:50%;flex:none;align-self:center;display:inline-block}
+.cv.cv0{border:1.5px solid #9AA6B2;background:#fff}.cv.cv1{background:var(--jaune-texte)}.cv.cv2{background:var(--vert)}
+.cl-legende{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.84rem;color:var(--doux);margin:-6px 0 12px;align-items:center}
+.cl-legende span{display:inline-flex;gap:6px;align-items:center}
+.jauge{display:inline-block;width:64px;height:6px;border-radius:3px;background:var(--trait);overflow:hidden;vertical-align:middle;margin-left:8px}
+.jauge i{display:block;height:100%;background:var(--vert)}
+.fiche-edit{border-top:1px dashed var(--trait);margin-top:10px;padding-top:10px;display:grid;gap:10px}
+.fiche-edit .lib{font-size:.82rem;color:var(--doux);margin-bottom:3px}
+.fiche-edit .ctx label{display:inline-flex;gap:5px;align-items:center;margin:0 12px 4px 0;font-size:.86rem;color:var(--texte)}
+.fiche-edit .ctx input[type=checkbox]{width:auto;margin:0}
+.fiche-edit .ctx .ajout{border:1px dashed var(--trait);border-radius:12px;padding:2px 10px;font-size:.83rem;width:11em}
+.fiche-edit .deux{display:grid;gap:10px}
+@media(min-width:640px){.fiche-edit .deux{grid-template-columns:1fr 1fr}}
+.fiche-edit select,.fiche-edit textarea{padding:6px 9px;font-size:.9rem}
+.fiche-edit textarea{min-height:64px}
+.fiche-edit .boutons{display:flex;gap:8px}
+.fiche-edit .boutons .bouton{padding:7px 14px;font-size:.9rem}
+.cl-journal{border:1px solid var(--trait);border-radius:4px;background:#fff;margin-top:12px}
+.cl-journal > summary{cursor:pointer;padding:9px 12px;color:var(--nuit);font-weight:600;font-size:.93rem}
+.cl-journal .corps{padding:0 12px 12px;max-height:50vh;overflow:auto}
+.cl-lot{border-top:1px solid var(--trait);padding:10px 0}
+.cl-lot .tete{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.cl-lot .tete b{color:var(--nuit)}
+.cl-lot .tete .doux{font-size:.84rem;color:var(--doux)}
+.cl-lot .tete button{margin-left:auto}
+.cl-lot ul{list-style:none;margin:6px 0 0;font-size:.86rem}
+.cl-lot li{display:flex;gap:10px;align-items:baseline;padding:2px 0}
+.cl-lot li .q{color:var(--doux);font-variant-numeric:tabular-nums;min-width:8.5em}
+.cl-lot li .annule{color:var(--doux);text-decoration:line-through}
+.cl-lot li button{margin-left:auto;background:none;border:0;padding:0;color:var(--carmin);text-decoration:underline;font-size:.82rem}
+.cl-lot .bouton{padding:5px 12px;font-size:.86rem}
 @keyframes tourne{to{transform:rotate(360deg)}}
 @media(min-width:820px){.cl-colonnes{grid-template-columns:minmax(0,2fr) minmax(0,1fr)}}
 .cl-colonnes h4{font-family:"Segoe UI",system-ui,sans-serif;font-size:.95rem;font-weight:600;color:var(--nuit);margin-bottom:8px}
@@ -239,7 +271,7 @@ mark{background:var(--jaune-forme);color:inherit;padding:0 1px}
 <body>
 <header>
   <h1>MONETA</h1>
-  <small>Le clausier du cabinet, version 0.8</small>
+  <small>Le clausier du cabinet, version 0.9</small>
   <span id="etat-connexion">Connexion au Drive…</span>
   <button id="btn-connexion">Autoriser l'accès au Drive</button>
 </header>
@@ -314,7 +346,7 @@ mark{background:var(--jaune-forme);color:inherit;padding:0 1px}
 
 <script>
 /* ============================================================
-   MONETA — version 0.8 du 09/10/2026 (ciseau : coupe manuelle d'un point entre paragraphes ou puces, partie détachée lettrée, phrase d'annonce reprise, coupes conservées à la redécoupe, recollage) ; 0.7 du 09/10/2026 (ergonomie : fil d'Ariane collant, clause étoile choisie à la main et épinglée, compteurs indicatifs d'actes versés et de reprises en rédaction, comparaison côte à côte de deux variantes, recherche plein texte et filtres par contexte, sens, nature et texte visé, étapes du versement) ; 0.6 du 08/10/2026 (rangement des points d'un dépôt dans le clausier : proposition et deuxième candidate, contexte coché, validation point par point ou en bloc, journal des mouvements) ; 0.5 du 08/10/2026 (module Clausier, première tranche : plans de référence PSV AKZO et PUV R3S, numéros permanents, page Clausier) ; 0.4 du 08/10/2026 (titres des PDF non numérotés déduits de la mise en forme) ; 0.3 du 08/10/2026 (lecture Word avec numérotation automatique, contrôles de vraisemblance) ; 0.2 : moteur de découpe en service ; squelette du 07/10/2026
+   MONETA — version 0.9 du 09/10/2026 (couverture du clausier par rubrique et par article, fiche éditable de la clause, journal de relecture avec rangement défait seul ou par lot, signal d'un acte non numéroté versé dans un clausier pauvre) ; 0.8 du 09/10/2026 (ciseau : coupe manuelle d'un point entre paragraphes ou puces, partie détachée lettrée, phrase d'annonce reprise, coupes conservées à la redécoupe, recollage) ; 0.7 du 09/10/2026 (ergonomie : fil d'Ariane collant, clause étoile choisie à la main et épinglée, compteurs indicatifs d'actes versés et de reprises en rédaction, comparaison côte à côte de deux variantes, recherche plein texte et filtres par contexte, sens, nature et texte visé, étapes du versement) ; 0.6 du 08/10/2026 (rangement des points d'un dépôt dans le clausier : proposition et deuxième candidate, contexte coché, validation point par point ou en bloc, journal des mouvements) ; 0.5 du 08/10/2026 (module Clausier, première tranche : plans de référence PSV AKZO et PUV R3S, numéros permanents, page Clausier) ; 0.4 du 08/10/2026 (titres des PDF non numérotés déduits de la mise en forme) ; 0.3 du 08/10/2026 (lecture Word avec numérotation automatique, contrôles de vraisemblance) ; 0.2 : moteur de découpe en service ; squelette du 07/10/2026
    Arbitrages (fiche clausier) : une application, deux moteurs ;
    on VERSE d'un côté (file d'attente sur le Drive), on TRAITE quand on veut ;
    le DÉCOUPAGE (neutralisation en champs, coupe en clauses, destination
@@ -630,6 +662,9 @@ async function verserFichiers(liste) {
         (d.decoupe ? ` — découpé en ${d.decoupe.points} points (${d.decoupe.articles} articles, ${d.decoupe.rubriques} rubriques)` +
           (d.decoupe.etat === "vert" ? "." : d.decoupe.etat === "carmin" ? " : DÉCOUPE IMPOSSIBLE, voir la fiche." : ` : ${d.decoupe.controles.length} alerte${d.decoupe.controles.length > 1 ? "s" : ""} à vérifier${d.decoupe.titres_deduits ? " (titres déduits de la mise en forme)" : ""}.`) : " — découpe à relancer.");
       if (d.decoupe?.etat === "jaune") li.className = "ok jaune"; if (d.decoupe?.etat === "carmin") li.className = "ko";
+      if (d.decoupe?.titres_deduits && d.type_acte && PLANS[d.type_acte]) {
+        try { const n = await actesValides(d.type_acte); if (n < SEUIL_ACTES_VALIDES) { li.className = "ok jaune"; li.textContent += ` Attention : ${phrasePauvre(n)}.`; } } catch { }
+      }
     } catch (e) { li.className = "ko"; li.textContent = `${f.name} : non versé — ${e.message}`; }
   }
   majCompteur();
@@ -861,6 +896,7 @@ function remplirFiche(d) {
     ? (d.type_acte && PLANS[d.type_acte] ? "Découpe faite. Cliquez « Ranger dans le clausier » pour classer les points dans les rubriques." : "Découpe faite. Choisissez le type d'acte ci-dessus (une des deux promesses) pour pouvoir ranger les points dans le clausier.")
     : (d.erreur_decoupe ? `La découpe a échoué au versement (${d.erreur_decoupe}) : cliquez « Redécouper ».` : "Ce dépôt n'a pas encore été découpé : cliquez « Redécouper ».");
   afficherVue(true);
+  signalerPauvrete(d);
 }
 async function ouvrirDepot(i) {
   const f = etat.file[i]; if (!f) return;
@@ -902,6 +938,26 @@ function motsAuto(texte) {
   const freq = {};
   for (const m of normMot(texte).split(/[^a-z0-9]+/)) if (m.length >= 5 && !STOP_AUTO.has(m)) freq[m] = (freq[m] || 0) + 1;
   return Object.entries(freq).filter(([, n]) => n >= 2).sort((a, b) => b[1] - a[1]).slice(0, 4).map(([m]) => m);
+}
+/* Signal (arbitrage du 08/10/2026) : un acte NON numéroté versé dans un type d'acte encore « pauvre »,
+   c'est-à-dire qui compte moins de DEUX actes de référence validés. Un acte compte comme validé dès
+   qu'au moins un de ses points a été rangé à la main dans le clausier de ce type. */
+const SEUIL_ACTES_VALIDES = 2;
+async function actesValides(type) {
+  const r = await chargerType(type), vus = new Set();
+  Object.values(r.donnees?.rubriques || {}).forEach(x => x.clauses.forEach(c => c.source?.depot && vus.add(c.source.depot)));
+  return vus.size;
+}
+const phrasePauvre = n => `acte sans numérotation, alors que ce clausier ne compte que ${n} acte${n > 1 ? "s" : ""} de référence validé${n > 1 ? "s" : ""} (il en faut ${SEUIL_ACTES_VALIDES}) : la découpe repose sur la seule mise en forme, relisez-la de près ou versez d'abord des actes numérotés de ce type`;
+async function signalerPauvrete(d) {
+  if (!d?.decoupe?.titres_deduits || !d.type_acte || !PLANS[d.type_acte]) return;
+  try {
+    const n = await actesValides(d.type_acte);
+    if (n >= SEUIL_ACTES_VALIDES || etat.ouvert?.depot !== d) return;
+    const b = document.createElement("div"); b.className = "bandeau jaune";
+    b.innerHTML = `<span class="pastille jaune"></span><b>Clausier encore pauvre</b> — ${echapper(phrasePauvre(n))}.`;
+    $("fiche-controles").prepend(b);
+  } catch { }
 }
 const CONTEXTES_CONNUS = ["habitation","bien professionnel ou industriel","copropriété","lotissement","cession d'activité","terrain","entre sociétés","entre particuliers"];
 function titresDuPoint(dec, num) {
@@ -989,12 +1045,14 @@ async function enregistrerClause(num, rubriqueId) {
     const r = f.rubriques[rubriqueId]; if (!r) throw new Error("rubrique " + rubriqueId + " introuvable");
     if (!r.clauses.some(c => c.source?.depot === rg.depot.id && c.point === num)) {
       f.prochaine_clause = (f.prochaine_clause || 0) + 1;
+      const ajoutes = [];
+      for (const m of motsAuto(texte)) if (!r.mots_cles.some(k => normMot(k.mot) === normMot(m))) { r.mots_cles.push({ mot: m, origine: "auto" }); ajoutes.push(m); }
       r.clauses.push({ id: `${f.prefixe}-C${String(f.prochaine_clause).padStart(4, "0")}`, point: num, texte,
         occurrences: 1, contextes: [...rg.contextes], sens: null, nature: null, commentaire: "",
-        source: { depot: rg.depot.id, nom: rg.depot.nom, date: rg.depot.verse_le.slice(0, 10) }, admise_le: new Date().toISOString() });
-      for (const m of motsAuto(texte)) if (!r.mots_cles.some(k => normMot(k.mot) === normMot(m))) r.mots_cles.push({ mot: m, origine: "auto" });
+        source: { depot: rg.depot.id, nom: rg.depot.nom, date: rg.depot.verse_le.slice(0, 10) }, admise_le: new Date().toISOString(),
+        mots_ajoutes: ajoutes });   // retenus pour pouvoir défaire proprement un rangement (journal de relecture)
     }
-    (f.journal ||= []).push({ quand: new Date().toISOString(), quoi: "ranger", point: num, rubrique: rubriqueId, depot: rg.depot.id });
+    (f.journal ||= []).push({ quand: new Date().toISOString(), quoi: "ranger", point: num, rubrique: rubriqueId, depot: rg.depot.id, depot_nom: rg.depot.nom });
   }, rg.fichier);
 }
 async function validerPoint(num, rubriqueId) {
@@ -1211,23 +1269,100 @@ async function afficherType() {
 function dessinerType() {
   const d = cl.donnees, rubs = Object.values(d.rubriques);
   const nClauses = rubs.reduce((a, r) => a + r.clauses.length, 0), vides = rubs.filter(r => !r.clauses.length).length;
+  const unes = rubs.filter(r => r.clauses.length === 1).length, plus = rubs.length - vides - unes;
+  const cv = r => r.clauses.length === 0 ? ["cv0", "vide"] : r.clauses.length === 1 ? ["cv1", "une seule clause"] : ["cv2", `${r.clauses.length} clauses`];
   const artOuvert = cl.ouverte ? d.rubriques[cl.ouverte]?.article : null;
   $("cl-corps").innerHTML = `
     <p class="cl-bilan">${d.articles.length} articles, ${rubs.length} rubriques, ${nClauses} clause${nClauses > 1 ? "s" : ""} rangée${nClauses > 1 ? "s" : ""}, ${vides} rubrique${vides > 1 ? "s" : ""} encore vide${vides > 1 ? "s" : ""}. Plan de référence : ${echapper(d.reference)}.</p>
+    <p class="cl-legende" aria-label="Couverture du clausier"><span><i class="cv cv0"></i>${vides} vide${vides > 1 ? "s" : ""}</span><span><i class="cv cv1"></i>${unes} à une seule clause</span><span><i class="cv cv2"></i>${plus} à plusieurs clauses</span></p>
     <nav class="cl-plan" aria-label="Plan de classement">${d.articles.map(a => {
       const n = a.rubriques.reduce((s, id) => s + d.rubriques[id].clauses.length, 0);
-      return `<details${a.num === artOuvert ? " open class=\"en-cours\"" : ""}><summary><span class="num">${a.num}.</span>${echapper(a.titre)}<span class="nb">${a.rubriques.length} rubrique${a.rubriques.length > 1 ? "s" : ""}${n ? `, ${n} clause${n > 1 ? "s" : ""}` : ""}</span></summary>
-        <ul class="cl-rubriques">${a.rubriques.map(id => { const r = d.rubriques[id];
-          return `<li><button data-rubrique="${id}"${id === cl.ouverte ? ' aria-current="true"' : ""}><span class="id">${id}</span><span>${echapper(r.titre)}</span>${r.option ? '<span class="opt" title="Rubrique tirée d\'un autre acte que la référence">option</span>' : ""}<span class="nb">${r.clauses.length || ""}</span></button></li>`; }).join("")}</ul></details>`;
+      const garnies = a.rubriques.filter(id => d.rubriques[id].clauses.length).length, pc = Math.round(100 * garnies / a.rubriques.length);
+      return `<details${a.num === artOuvert ? " open class=\"en-cours\"" : ""}><summary><span class="num">${a.num}.</span>${echapper(a.titre)}<span class="nb">${garnies} sur ${a.rubriques.length} rubrique${a.rubriques.length > 1 ? "s" : ""} garnie${a.rubriques.length > 1 ? "s" : ""}${n ? `, ${n} clause${n > 1 ? "s" : ""}` : ""}<span class="jauge" aria-hidden="true"><i style="width:${pc}%"></i></span></span></summary>
+        <ul class="cl-rubriques">${a.rubriques.map(id => { const r = d.rubriques[id], [k, t] = cv(r);
+          return `<li><button data-rubrique="${id}"${id === cl.ouverte ? ' aria-current="true"' : ""}><i class="cv ${k}" title="${t}" aria-label="${t}"></i><span class="id">${id}</span><span>${echapper(r.titre)}</span>${r.option ? '<span class="opt" title="Rubrique tirée d\'un autre acte que la référence">option</span>' : ""}<span class="nb">${r.clauses.length || ""}</span></button></li>`; }).join("")}</ul></details>`;
     }).join("")}</nav>
+    ${dessinerJournal(d)}
     <div id="cl-rubrique"></div>`;
   $("cl-corps").querySelectorAll("[data-rubrique]").forEach(b => b.addEventListener("click", () => { effacerFiltres(); cl.surligne = ""; ouvrirRubrique(b.dataset.rubrique); }));
+  brancherJournal();
   // textes visés présents dans ce clausier, proposés dans le champ du filtre
   const tous = new Map(); rubs.forEach(r => r.clauses.forEach(c => textesVises(c.texte).forEach(x => tous.set(plat(x), x))));
   if ($("cl-textes")) $("cl-textes").innerHTML = [...tous.values()].sort((a, b) => a.localeCompare(b, "fr")).map(x => `<option value="${echapper(x).replace(/"/g, "&quot;")}">`).join("");
   if ($("cl-effacer")) $("cl-effacer").hidden = !filtreActif();
   if (filtreActif()) dessinerResultats();
   else if (cl.ouverte) dessinerRubrique();
+}
+/* ============================================================
+   JOURNAL DE RELECTURE (0.9) — piste retenue le 08/10/2026 au soir
+   Les rangements sont regroupés par dépôt (un lot = les points d'un acte rangés
+   dans ce clausier). On peut défaire un rangement seul ou le lot entier : la
+   clause sort de sa rubrique, les mots-clés automatiques qu'elle avait apportés
+   partent avec elle (sauf si une autre clause les a aussi apportés), une étoile
+   posée sur elle est retirée ; les numéros de clauses ne sont jamais réutilisés.
+   Le point redevient rangeable depuis « À traiter ». Tout va au journal.
+   ============================================================ */
+const LIB_MOUVEMENT = { ranger: "rangé", ecarter: "écarté", "choisir-etoile": "étoile choisie", "retirer-etoile": "étoile retirée", fiche: "fiche modifiée", annuler: "rangement défait" };
+function dessinerJournal(d) {
+  const j = d.journal || []; if (!j.length) return `<details class="cl-journal"><summary>Journal des mouvements (aucun pour l'instant)</summary></details>`;
+  const vivantes = new Set(Object.values(d.rubriques).flatMap(r => r.clauses).map(c => `${c.source?.depot}|${c.point}`));
+  const noms = {}; Object.values(d.rubriques).forEach(r => r.clauses.forEach(c => { if (c.source?.depot) noms[c.source.depot] = c.source.nom; }));
+  const lots = new Map(), autres = [];
+  for (const e of j) {
+    if (e.depot && (e.quoi === "ranger" || e.quoi === "ecarter")) {
+      if (!lots.has(e.depot)) lots.set(e.depot, []); lots.get(e.depot).push(e);
+      if (e.depot_nom) noms[e.depot] = e.depot_nom;
+    } else autres.push(e);
+  }
+  const q = iso => dateCourte(iso);
+  const ordre = [...lots.entries()].sort((a, b) => b[1].at(-1).quand.localeCompare(a[1].at(-1).quand));
+  return `<details class="cl-journal"${cl.journalOuvert ? " open" : ""}><summary>Journal des mouvements (${j.length})</summary><div class="corps">
+    ${ordre.map(([depot, es]) => {
+      const ranges = es.filter(e => e.quoi === "ranger"), encore = ranges.filter(e => vivantes.has(`${depot}|${e.point}`)).length;
+      return `<div class="cl-lot"><div class="tete"><b>${echapper(noms[depot] || "dépôt " + depot.slice(0, 8))}</b>
+        <span class="doux">${ranges.length} rangement${ranges.length > 1 ? "s" : ""}${ranges.length !== encore ? `, dont ${ranges.length - encore} défait${ranges.length - encore > 1 ? "s" : ""}` : ""}, du ${q(es[0].quand)} au ${q(es.at(-1).quand)}</span>
+        ${encore ? `<button class="bouton discret" data-annuler-lot="${echapper(depot)}">${encore > 1 ? `Défaire les ${encore} rangements de ce lot` : "Défaire le rangement de ce lot"}</button>` : ""}</div>
+        <ul>${[...es].reverse().slice(0, 300).map(e => {
+          const r = d.rubriques[e.rubrique], vivant = e.quoi === "ranger" && vivantes.has(`${depot}|${e.point}`);
+          return `<li><span class="q">${q(e.quand)}</span><span class="${e.quoi === "ranger" && !vivant ? "annule" : ""}">Point ${echapper(e.point)} ${LIB_MOUVEMENT[e.quoi] || e.quoi}${r ? ` dans ${echapper(r.id)}, ${echapper(r.titre)}` : ""}</span>
+            ${vivant ? `<button data-annuler-un="${echapper(depot)}" data-point="${echapper(e.point)}">défaire</button>` : ""}</li>`;
+        }).join("")}</ul></div>`;
+    }).join("")}
+    ${autres.length ? `<div class="cl-lot"><div class="tete"><b>Autres mouvements</b></div><ul>${[...autres].reverse().slice(0, 200).map(e => {
+      const r = d.rubriques[e.rubrique];
+      return `<li><span class="q">${q(e.quand)}</span><span>${LIB_MOUVEMENT[e.quoi] || echapper(e.quoi)}${e.clause ? ` : ${echapper(e.clause)}` : ""}${e.nb ? ` : ${e.nb} clause${e.nb > 1 ? "s" : ""} de « ${echapper(noms[e.depot] || "dépôt")} »` : ""}${r ? `, ${echapper(r.id)} ${echapper(r.titre)}` : ""}</span></li>`;
+    }).join("")}</ul></div>` : ""}
+  </div></details>`;
+}
+function brancherJournal() {
+  const z = $("cl-corps"), det = z.querySelector(".cl-journal");
+  det?.addEventListener("toggle", () => { cl.journalOuvert = det.open; });
+  z.querySelectorAll("[data-annuler-lot]").forEach(b => b.addEventListener("click", () => defaireRangements(b.dataset.annulerLot, null)));
+  z.querySelectorAll("[data-annuler-un]").forEach(b => b.addEventListener("click", () => defaireRangements(b.dataset.annulerUn, [b.dataset.point])));
+}
+async function defaireRangements(depot, points) {
+  const d = cl.donnees, cibles = Object.values(d.rubriques).flatMap(r => r.clauses).filter(c => c.source?.depot === depot && (!points || points.includes(c.point)));
+  if (!cibles.length) return;
+  const nom = cibles[0].source?.nom || "ce dépôt";
+  if (!confirm(points ? `Défaire le rangement du point ${points[0]} (${cibles[0].id}) ? La clause sort de sa rubrique ; le point redeviendra rangeable depuis « À traiter ».`
+                      : `Défaire les ${cibles.length} rangements de « ${nom} » ? Les clauses sortent de leurs rubriques ; les points redeviendront rangeables depuis « À traiter ».`)) return;
+  try {
+    await modifierClausier(f => {
+      let nb = 0;
+      for (const r of Object.values(f.rubriques)) {
+        const partent = r.clauses.filter(c => c.source?.depot === depot && (!points || points.includes(c.point)));
+        if (!partent.length) continue;
+        r.clauses = r.clauses.filter(c => !partent.includes(c)); nb += partent.length;
+        if (r.etoile && partent.some(c => c.id === r.etoile.clause)) delete r.etoile;
+        const encore = new Set(r.clauses.flatMap(c => c.mots_ajoutes || []).map(normMot));
+        const aRetirer = new Set(partent.flatMap(c => c.mots_ajoutes || []).map(normMot).filter(m => !encore.has(m)));
+        r.mots_cles = r.mots_cles.filter(k => !(k.origine === "auto" && aRetirer.has(normMot(k.mot))));
+      }
+      (f.journal ||= []).push({ quand: new Date().toISOString(), quoi: "annuler", depot, depot_nom: nom, points: points || "tous", nb });
+    });
+    if (cl.ouverte && !cl.donnees.rubriques[cl.ouverte]) cl.ouverte = null;
+    cl.journalOuvert = true; dessinerType();
+  } catch (e) { montrerErreur("Rangement non défait : " + e.message); }
 }
 const filtreActif = () => Object.values(cl.filtre).some(v => String(v).trim());
 function effacerFiltres() {
@@ -1266,7 +1401,7 @@ function dessinerResultats() {
   }));
 }
 function ouvrirRubrique(id) {
-  if (cl.ouverte !== id) cl.comparer = [];
+  if (cl.ouverte !== id) { cl.comparer = []; cl.edition = null; }
   cl.ouverte = id;
   if (filtreActif()) { effacerFiltres(); }
   if (!$("cl-rubrique")) return;
@@ -1294,9 +1429,39 @@ function carteClause(c, etoile, opts = {}) {
     <p class="source">${c.id ? echapper(c.id) + ", " : ""}${c.source?.nom ? "tirée de « " + echapper(c.source.nom) + " »" : ""}${c.source?.date ? ", " + echapper(c.source.date) : ""} ; ${compteurs}</p>
     ${opts.lecture || !c.id ? "" : `<div class="gestes">
       <button data-etoile="${echapper(c.id)}">${etoile ? "Retirer l'étoile" : "Choisir comme clause étoile"}</button>
+      ${opts.edition ? "" : `<button data-editer="${echapper(c.id)}">Modifier la fiche</button>`}
       ${opts.comparable ? `<label><input type="checkbox" data-comparer="${echapper(c.id)}"${opts.comparee ? " checked" : ""}> Comparer</label>` : ""}
     </div>`}
+    ${opts.edition ? ficheEdition(c) : ""}
   </article>`;
+}
+// Fiche éditable (0.9) : contextes, sens, nature, commentaire — sans elle, les filtres sens et nature restent vides
+function ficheEdition(c) {
+  const ctx = [...new Set([...CONTEXTES_CONNUS, ...(c.contextes || []), ...(cl.ctxAjoutes || [])])];
+  const opt = (liste, v, vide) => `<option value="">${vide}</option>` + liste.map(x => `<option${x === v ? " selected" : ""}>${echapper(x)}</option>`).join("");
+  return `<div class="fiche-edit" data-fiche="${echapper(c.id)}">
+    <div class="ctx"><div class="lib">Contextes</div>${ctx.map(x => `<label><input type="checkbox" value="${echapper(x).replace(/"/g, "&quot;")}"${(c.contextes || []).includes(x) ? " checked" : ""}> ${echapper(x)}</label>`).join("")}
+      <input class="ajout" placeholder="autre contexte" aria-label="Ajouter un contexte"></div>
+    <div class="deux"><div><div class="lib">Sens</div><select data-champ="sens" aria-label="Sens">${opt(SENS_CONNUS, c.sens, "non renseigné")}</select></div>
+      <div><div class="lib">Nature</div><select data-champ="nature" aria-label="Nature">${opt(NATURES_CONNUES, c.nature, "non renseignée")}</select></div></div>
+    <div><div class="lib">Commentaire (situation où la clause a servi, précaution d'emploi…)</div><textarea data-champ="commentaire" aria-label="Commentaire">${echapper(c.commentaire || "")}</textarea></div>
+    <div class="boutons"><button class="bouton" data-enregistrer-fiche>Enregistrer</button><button class="bouton secondaire" data-annuler-fiche>Annuler</button></div>
+  </div>`;
+}
+async function enregistrerFiche(zone, idClause) {
+  const rid = cl.ouverte;
+  const contextes = [...zone.querySelectorAll(".ctx input[type=checkbox]:checked")].map(x => x.value);
+  const sens = zone.querySelector('[data-champ="sens"]').value || null, nature = zone.querySelector('[data-champ="nature"]').value || null;
+  const commentaire = zone.querySelector('[data-champ="commentaire"]').value.trim();
+  zone.querySelectorAll("button,input,select,textarea").forEach(x => x.disabled = true);
+  try {
+    await modifierClausier(f => {
+      const c = f.rubriques[rid]?.clauses.find(x => x.id === idClause); if (!c) throw new Error("clause " + idClause + " introuvable");
+      c.contextes = contextes; c.sens = sens; c.nature = nature; c.commentaire = commentaire; c.fiche_modifiee_le = new Date().toISOString();
+      (f.journal ||= []).push({ quand: new Date().toISOString(), quoi: "fiche", rubrique: rid, clause: idClause });
+    });
+    cl.edition = null; cl.ctxAjoutes = []; dessinerRubrique();
+  } catch (e) { montrerErreur("Fiche non enregistrée : " + e.message); zone.querySelectorAll("button,input,select,textarea").forEach(x => x.disabled = false); }
 }
 async function basculerEtoile(idClause) {
   const rid = cl.ouverte;
@@ -1338,7 +1503,7 @@ function dessinerRubrique() {
       <div><h4>Clauses de la rubrique (${clauses.length})</h4>
         ${clauses.length > 1 && !(ca && cb) ? `<p class="aide" style="margin:-4px 0 8px">Cochez « Comparer » sur deux clauses pour voir leurs différences côte à côte.</p>` : ""}
         ${comparaison}
-        ${clauses.length ? clauses.map(c => carteClause(c, c.id === etoile, { comparable: clauses.length > 1, comparee: cl.comparer.includes(c.id), choisieLe: c.id === etoile ? r.etoile.choisie_le : null })).join("")
+        ${clauses.length ? clauses.map(c => carteClause(c, c.id === etoile, { comparable: clauses.length > 1, comparee: cl.comparer.includes(c.id), choisieLe: c.id === etoile ? r.etoile.choisie_le : null, edition: cl.edition === c.id })).join("")
           : `<p class="vide" style="text-align:left;padding:10px 0">Aucune clause rangée ici pour l'instant. Les clauses arrivent par l'onglet « À traiter », une fois validées.</p>`}
       </div>
       <aside class="cl-ia"><h4>Propositions de l'IA</h4>
@@ -1360,6 +1525,20 @@ function dessinerRubrique() {
     if (cl.comparer.length === 2) $("cl-rubrique").querySelector(".cl-compare")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }));
   $("cl-fermer-compare")?.addEventListener("click", () => { cl.comparer = []; dessinerRubrique(); });
+  zoneR.querySelectorAll("[data-editer]").forEach(b => b.addEventListener("click", () => {
+    cl.edition = b.dataset.editer; cl.ctxAjoutes = []; dessinerRubrique();
+    zoneR.querySelector(".fiche-edit select")?.focus();
+  }));
+  const fe = zoneR.querySelector(".fiche-edit");
+  if (fe) {
+    fe.querySelector("[data-annuler-fiche]").addEventListener("click", () => { cl.edition = null; cl.ctxAjoutes = []; dessinerRubrique(); });
+    fe.querySelector("[data-enregistrer-fiche]").addEventListener("click", () => enregistrerFiche(fe, fe.dataset.fiche));
+    const aj = fe.querySelector(".ajout");
+    aj.addEventListener("keydown", e => { if (e.key !== "Enter") return; const v = aj.value.trim(); if (!v) return;
+      const coches = [...fe.querySelectorAll(".ctx input[type=checkbox]:checked")].map(x => x.value);
+      const lbl = document.createElement("label"); lbl.innerHTML = `<input type="checkbox" checked> ${echapper(v)}`; lbl.querySelector("input").value = v;
+      aj.before(lbl); aj.value = ""; (cl.ctxAjoutes ||= []).push(v); void coches; });
+  }
   const champ = $("cl-mot");
   champ.addEventListener("keydown", async e => {
     if (e.key !== "Enter") return;
