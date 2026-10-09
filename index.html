@@ -176,6 +176,18 @@ mark{background:var(--jaune-forme);color:inherit;padding:0 1px}
 .cl-compare ins{background:#DDF2E5;color:#1D5E3A;text-decoration:none;border-bottom:1px solid var(--vert)}
 #verses li.encours::before{content:"";display:inline-block;width:.75em;height:.75em;border-radius:50%;border:2px solid var(--canard);border-right-color:transparent;margin-right:8px;vertical-align:-1px;animation:tourne .9s linear infinite}
 #verses li.encours{border-left-color:var(--canard)}
+/* 0.8 — ciseau de coupe manuelle dans la vue découpée */
+#fiche-decoupe .reperage{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+#fiche-decoupe .ciseau{background:none;border:1px solid transparent;border-radius:3px;padding:0 5px;font-size:.9rem;line-height:1.3;color:var(--doux)}
+#fiche-decoupe .ciseau:hover{border-color:var(--trait);color:var(--nuit)}
+#fiche-decoupe .ciseau.signale{background:var(--jaune-forme);color:var(--nuit)}
+#fiche-decoupe .ciseau[aria-pressed="true"]{background:var(--canard);color:#fff}
+#fiche-decoupe .recoller{background:none;border:0;padding:0;color:var(--canard);text-decoration:underline;font-size:.75rem;font-weight:normal}
+#fiche-decoupe .mode-coupe{font-weight:normal;color:var(--canard)}
+#fiche-decoupe .point.en-coupe{background:#F2FAFB;box-shadow:inset 4px 0 0 var(--canard);padding-left:10px}
+#fiche-decoupe .ligne-coupe{display:block;width:100%;background:none;border:0;border-top:2px dashed var(--canard);color:var(--canard);font-family:"Segoe UI",system-ui,sans-serif;font-size:.75rem;text-align:left;padding:2px 0 3px;margin:4px 0 6px}
+#fiche-decoupe .ligne-coupe:hover,#fiche-decoupe .ligne-coupe:focus-visible{border-top-color:var(--carmin);color:var(--carmin)}
+#fiche-decoupe .motif .ciseau-texte{margin-left:8px;background:#fff;border:1px solid var(--jaune-texte);border-radius:3px;font-size:.78rem;padding:0 6px;color:var(--nuit)}
 #verses li .etape{color:var(--canard);font-weight:600}
 @keyframes tourne{to{transform:rotate(360deg)}}
 @media(min-width:820px){.cl-colonnes{grid-template-columns:minmax(0,2fr) minmax(0,1fr)}}
@@ -227,7 +239,7 @@ mark{background:var(--jaune-forme);color:inherit;padding:0 1px}
 <body>
 <header>
   <h1>MONETA</h1>
-  <small>Le clausier du cabinet, version 0.7</small>
+  <small>Le clausier du cabinet, version 0.8</small>
   <span id="etat-connexion">Connexion au Drive…</span>
   <button id="btn-connexion">Autoriser l'accès au Drive</button>
 </header>
@@ -302,7 +314,7 @@ mark{background:var(--jaune-forme);color:inherit;padding:0 1px}
 
 <script>
 /* ============================================================
-   MONETA — version 0.7 du 09/10/2026 (ergonomie : fil d'Ariane collant, clause étoile choisie à la main et épinglée, compteurs indicatifs d'actes versés et de reprises en rédaction, comparaison côte à côte de deux variantes, recherche plein texte et filtres par contexte, sens, nature et texte visé, étapes du versement) ; 0.6 du 08/10/2026 (rangement des points d'un dépôt dans le clausier : proposition et deuxième candidate, contexte coché, validation point par point ou en bloc, journal des mouvements) ; 0.5 du 08/10/2026 (module Clausier, première tranche : plans de référence PSV AKZO et PUV R3S, numéros permanents, page Clausier) ; 0.4 du 08/10/2026 (titres des PDF non numérotés déduits de la mise en forme) ; 0.3 du 08/10/2026 (lecture Word avec numérotation automatique, contrôles de vraisemblance) ; 0.2 : moteur de découpe en service ; squelette du 07/10/2026
+   MONETA — version 0.8 du 09/10/2026 (ciseau : coupe manuelle d'un point entre paragraphes ou puces, partie détachée lettrée, phrase d'annonce reprise, coupes conservées à la redécoupe, recollage) ; 0.7 du 09/10/2026 (ergonomie : fil d'Ariane collant, clause étoile choisie à la main et épinglée, compteurs indicatifs d'actes versés et de reprises en rédaction, comparaison côte à côte de deux variantes, recherche plein texte et filtres par contexte, sens, nature et texte visé, étapes du versement) ; 0.6 du 08/10/2026 (rangement des points d'un dépôt dans le clausier : proposition et deuxième candidate, contexte coché, validation point par point ou en bloc, journal des mouvements) ; 0.5 du 08/10/2026 (module Clausier, première tranche : plans de référence PSV AKZO et PUV R3S, numéros permanents, page Clausier) ; 0.4 du 08/10/2026 (titres des PDF non numérotés déduits de la mise en forme) ; 0.3 du 08/10/2026 (lecture Word avec numérotation automatique, contrôles de vraisemblance) ; 0.2 : moteur de découpe en service ; squelette du 07/10/2026
    Arbitrages (fiche clausier) : une application, deux moteurs ;
    on VERSE d'un côté (file d'attente sur le Drive), on TRAITE quand on veut ;
    le DÉCOUPAGE (neutralisation en champs, coupe en clauses, destination
@@ -695,15 +707,135 @@ async function chargerFile() {
 const PUCE_AFFICHAGE = /^\s*(?:[•▪\uf0b7\uf0a7\uf0d8\uf0d7\uf076\uf0fc]|o\s|-\s|–\s)\s*/u;
 const estIntertitre = p => p.length < 90 && !/[.;:!?»”"]\s*$/.test(p) && /^\p{Lu}/u.test(p) && !PUCE_AFFICHAGE.test(p) && !p.startsWith("Annexe");
 function dessinerDecoupe(dec) {
-  const alertes = new Map((dec.controles || []).filter(c => c.point).map(c => [c.point, c.message]));
+  const alertes = new Map((dec.controles || []).filter(c => c.point).map(c => [c.point, c]));
   return dec.structure.map(e => {
     if (e.t === "titre") return `<div class="t${Math.min(e.niveau, 3)}">${echapper(e.num)}. ${echapper(e.texte)}</div>`;
-    const paras = e.paras.map(p => PUCE_AFFICHAGE.test(p) ? `<p class="puce">• ${echapper(p.replace(PUCE_AFFICHAGE, ""))}</p>`
-      : estIntertitre(p) ? `<p class="intertitre">${echapper(p)}</p>` : `<p>${echapper(p)}</p>`).join("");
-    const a = alertes.get(e.num);
-    return `<div class="point${a ? " alerte" : ""}" id="point-${echapper(e.num)}"><div class="reperage">Point ${echapper(e.num)}</div>${a ? `<div class="motif">${echapper(a)}</div>` : ""}${paras}</div>`;
+    const n = echapper(e.num), enCoupe = etat.coupe === e.num, coupable = e.paras.length > 1;
+    const a = alertes.get(e.num), long = a?.code === "point-long";
+    const paras = e.paras.map((p, i) => (enCoupe && i > 0 ? `<button class="ligne-coupe" data-couper="${i}" data-point="${n}">✂ Couper ici</button>` : "")
+      + (PUCE_AFFICHAGE.test(p) ? `<p class="puce">• ${echapper(p.replace(PUCE_AFFICHAGE, ""))}</p>`
+      : estIntertitre(p) ? `<p class="intertitre">${echapper(p)}</p>` : `<p>${echapper(p)}</p>`)).join("");
+    const ciseau = coupable ? `<button class="ciseau${long ? " signale" : ""}" data-ciseau="${n}" aria-pressed="${enCoupe}" title="${enCoupe ? "Annuler la coupe (Échap)" : "Couper ce point"}" aria-label="${enCoupe ? "Annuler la coupe du point" : "Couper le point"} ${n}">✂</button>` : "";
+    const recoller = e.coupe ? `<button class="recoller" data-recoller="${n}">↺ recoller au point précédent</button>` : "";
+    const mode = enCoupe ? `<span class="mode-coupe">cliquez sur une ligne « couper ici »</span>` : "";
+    return `<div class="point${a ? " alerte" : ""}${enCoupe ? " en-coupe" : ""}" id="point-${n}"><div class="reperage">Point ${n}${ciseau}${recoller}${mode}</div>`
+      + `${a ? `<div class="motif">${echapper(a.message)}${long && coupable && !enCoupe ? ` <button class="ciseau-texte" data-ciseau="${n}">✂ Couper ce point</button>` : ""}</div>` : ""}${paras}</div>`;
   }).join("");
 }
+
+/* ============================================================
+   COUPE MANUELLE (0.8) — le ciseau, arbitrage du 09/10/2026
+   - coupe ENTRE paragraphes ou ENTRE puces (pas à l'intérieur d'un paragraphe) ;
+   - le point coupé garde son numéro, la partie détachée prend une lettre
+     (26.2.1 b, c…) ; les numéros des autres points ne bougent pas ;
+   - coupe à l'intérieur d'une liste : la phrase qui l'annonce (« … : ») est
+     reprise en tête de la partie détachée, pour que la clause se lise seule ;
+   - chaque coupe est enregistrée sur le dépôt (coupes[]) et au journal du
+     dépôt ; « Redécouper » relance le moteur puis RÉAPPLIQUE les coupes ;
+   - « recoller » défait une coupe ; les coupes n'enrichissent pas le moteur.
+   ============================================================ */
+etat.coupe = null;
+const LETTRES_COUPE = "bcdefghijklmnopqrstuvwxyz";
+const numBase = num => String(num).replace(/ [b-z]$/, "");
+function renumeroterFamille(S, base) {
+  let k = 0;
+  for (const e of S) if (e.t === "point" && numBase(e.num) === base) { e.num = k ? `${base} ${LETTRES_COUPE[k - 1]}` : base; k++; }
+}
+// Phrase d'annonce d'une liste : le dernier paragraphe hors puce avant la coupe, s'il finit par « : »
+function phraseAnnonce(paras, i) {
+  if (!PUCE_AFFICHAGE.test(paras[i])) return null;
+  for (let j = i - 1; j >= 0; j--) { if (PUCE_AFFICHAGE.test(paras[j])) continue; return /:\s*$/.test(paras[j]) ? paras[j] : null; }
+  return null;
+}
+// Mêmes alertes « point très long » que le moteur (seuil 2 500 caractères, citations exceptées)
+function recompterDecoupe(dec) {
+  const pts = dec.structure.filter(e => e.t === "point");
+  dec.controles = (dec.controles || []).filter(c => c.code !== "point-long");
+  for (const p of pts) {
+    const tout = p.paras.join(" "), long = tout.length;
+    const cite = (tout.match(/[«“"][^«»“”"]{40,}[»”"]/gu) || []).reduce((a, x) => a + x.length, 0);
+    if (long > 2500 && cite / long < 0.5) dec.controles.push({ niveau: "jaune", code: "point-long", point: p.num, message: `Point ${p.num} très long (${long.toLocaleString("fr-FR")} caractères) : peut-être à couper.` });
+  }
+  dec.points = pts.length;
+  if (dec.etat !== "carmin") dec.etat = dec.controles.length ? "jaune" : "vert";
+}
+const debutPara = p => plat(p).replace(/\s+/g, " ").trim().slice(0, 120);
+function couperPoint(dec, num, i) {
+  const S = dec.structure, k = S.findIndex(e => e.t === "point" && e.num === num); if (k < 0) return null;
+  const e = S[k]; if (!(i > 0 && i < e.paras.length)) return null;
+  const annonce = phraseAnnonce(e.paras, i), debut = debutPara(e.paras[i]);
+  const detache = { ...e, paras: [...(annonce ? [annonce] : []), ...e.paras.slice(i)], coupe: { annonce: !!annonce } };
+  e.paras = e.paras.slice(0, i);
+  S.splice(k + 1, 0, detache);
+  renumeroterFamille(S, numBase(num)); recompterDecoupe(dec);
+  return { base: numBase(num), debut, annonce: !!annonce };
+}
+function recollerPoint(dec, num) {
+  const S = dec.structure, k = S.findIndex(e => e.t === "point" && e.num === num); if (k < 1) return null;
+  const e = S[k], prec = S[k - 1];
+  if (!e.coupe || prec.t !== "point" || numBase(prec.num) !== numBase(num)) return null;
+  const propres = e.coupe.annonce ? e.paras.slice(1) : e.paras;
+  prec.paras.push(...propres); S.splice(k, 1);
+  renumeroterFamille(S, numBase(num)); recompterDecoupe(dec);
+  return debutPara(propres[0] || "");
+}
+// Après « Redécouper » : les coupes manuelles sont retrouvées par le début du paragraphe coupé
+function reappliquerCoupes(d) {
+  const gardees = [], perdues = [];
+  for (const c of d.coupes || []) {
+    const pts = d.decoupe.structure.filter(e => e.t === "point" && numBase(e.num) === c.base);
+    let fait = false;
+    for (const e of [...pts, ...d.decoupe.structure.filter(x => x.t === "point" && !pts.includes(x))]) {
+      const j = e.paras.findIndex((p, i) => i > 0 && debutPara(p) === c.debut);
+      if (j > 0) { const r = couperPoint(d.decoupe, e.num, j); if (r) { gardees.push({ ...c, base: r.base }); fait = true; break; } }
+    }
+    if (!fait) perdues.push(c);
+  }
+  d.coupes = gardees;
+  return perdues;
+}
+async function enregistrerCoupe(action) {
+  const f = etat.ouvert, d = f?.depot; if (!d?.decoupe) return;
+  const avant = JSON.stringify({ decoupe: d.decoupe, coupes: d.coupes || [], journal: d.journal || [] });
+  let ok = false;
+  try { ok = action(d); if (ok) await reecrireJson(f.id, d); }
+  catch (e) { const b = JSON.parse(avant); d.decoupe = b.decoupe; d.coupes = b.coupes; d.journal = b.journal; montrerErreur("Coupe non enregistrée : " + e.message); }
+  etat.coupe = null;
+  const zone = $("fiche-decoupe"), haut = zone.scrollTop;
+  remplirFiche(d); zone.scrollTop = haut;
+  if (ok) $("fiche-ranger").innerHTML = "";   // la découpe a changé : le rangement repart de la découpe à jour
+}
+$("fiche-decoupe").addEventListener("click", ev => {
+  const b = ev.target.closest("button"); if (!b) return;
+  const d = etat.ouvert?.depot; if (!d?.decoupe) return;
+  if (b.dataset.ciseau !== undefined) {
+    etat.coupe = etat.coupe === b.dataset.ciseau ? null : b.dataset.ciseau;
+    const zone = $("fiche-decoupe"), haut = zone.scrollTop;
+    zone.innerHTML = dessinerDecoupe(d.decoupe); zone.scrollTop = haut;
+    zone.querySelector(".ligne-coupe")?.focus({ preventScroll: true });
+    return;
+  }
+  if (b.dataset.couper !== undefined) {
+    const num = b.dataset.point, i = +b.dataset.couper;
+    enregistrerCoupe(dd => { const r = couperPoint(dd.decoupe, num, i); if (!r) return false;
+      (dd.coupes ||= []).push({ ...r, quand: new Date().toISOString() });
+      (dd.journal ||= []).push({ quand: new Date().toISOString(), quoi: "couper", point: num, debut: r.debut });
+      return true; });
+    return;
+  }
+  if (b.dataset.recoller !== undefined) {
+    const num = b.dataset.recoller;
+    enregistrerCoupe(dd => { const debut = recollerPoint(dd.decoupe, num); if (debut === null) return false;
+      const i = (dd.coupes || []).findIndex(c => c.debut === debut); if (i >= 0) dd.coupes.splice(i, 1);
+      (dd.journal ||= []).push({ quand: new Date().toISOString(), quoi: "recoller", point: num, debut });
+      return true; });
+  }
+});
+document.addEventListener("keydown", ev => {
+  if (ev.key !== "Escape" || !etat.coupe || !etat.ouvert?.depot?.decoupe) return;
+  etat.coupe = null; const zone = $("fiche-decoupe"), haut = zone.scrollTop;
+  zone.innerHTML = dessinerDecoupe(etat.ouvert.depot.decoupe); zone.scrollTop = haut;
+});
 function afficherVue(decoupe) {
   const avec = !!etat.ouvert?.depot?.decoupe;
   const vueDecoupe = decoupe && avec;
@@ -732,7 +864,7 @@ function remplirFiche(d) {
 }
 async function ouvrirDepot(i) {
   const f = etat.file[i]; if (!f) return;
-  etat.ouvert = f;
+  etat.ouvert = f; etat.coupe = null;
   document.querySelectorAll("table.file tr").forEach(tr => tr.classList.toggle("ouvert", tr.dataset.i === String(i)));
   const d = f.depot || (f.depot = await lireJson(f.id));
   remplirFiche(d);
@@ -747,8 +879,11 @@ $("btn-redecouper").addEventListener("click", async () => {
   try {
     const r = await appelerMoteur("decouper", { texte: f.depot.texte });
     f.depot.decoupe = r.decoupe; f.depot.statut = "decoupe"; delete f.depot.erreur_decoupe;
+    const perdues = f.depot.coupes?.length ? reappliquerCoupes(f.depot) : [];
     await reecrireJson(f.id, f.depot);
-    remplirFiche(f.depot); chargerFile();
+    etat.coupe = null; remplirFiche(f.depot); chargerFile(); $("fiche-ranger").innerHTML = "";
+    if (perdues.length) $("fiche-note").textContent = `Redécoupe faite. ${perdues.length} coupe${perdues.length > 1 ? "s" : ""} manuelle${perdues.length > 1 ? "s" : ""} n'${perdues.length > 1 ? "ont" : "a"} pas pu être réappliquée${perdues.length > 1 ? "s" : ""} : le texte coupé a changé.`;
+    else if (f.depot.coupes?.length) $("fiche-note").textContent = `Redécoupe faite, vos ${f.depot.coupes.length} coupe${f.depot.coupes.length > 1 ? "s" : ""} manuelle${f.depot.coupes.length > 1 ? "s" : ""} réappliquée${f.depot.coupes.length > 1 ? "s" : ""}.`;
   } catch (e) { $("fiche-note").textContent = "Redécoupe en échec : " + e.message; }
   finally { b.disabled = false; b.textContent = "Redécouper"; }
 });
