@@ -130,6 +130,18 @@ table.file tr.ouvert td{background:#EAFAFB}
 #zone-cote label{font-size:.88rem;margin-bottom:4px;display:block}
 #zone-cote input{width:100%;max-width:520px;padding:6px 10px;margin-bottom:8px}
 
+/* ---------- 1.3 — actes scannés : double passe ---------- */
+#verses li.scan{border-left-color:var(--carmin);background:#fff;border:1px solid var(--trait);border-left:4px solid var(--carmin);padding:12px 14px}
+#verses li.scan .sc-titre{font-weight:600;color:var(--nuit)}
+#verses li.scan .sc-etat{margin:6px 0;color:var(--doux);font-size:.9rem}
+#verses li.scan .sc-avert{background:#FFF3C4;border-left:4px solid var(--jaune-texte);padding:8px 10px;margin:8px 0;font-size:.88rem}
+#verses li.scan .sc-extrait{max-height:150px;overflow:auto;white-space:pre-wrap;font-family:Georgia,serif;font-size:.88rem;background:var(--gris);padding:8px 10px;border-radius:3px;margin:6px 0}
+#verses li.scan .sc-gestes{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+#verses li.scan .sc-gestes .bouton{font-size:.88rem;padding:6px 12px}
+#verses li.scan .sc-cout{font-size:.85rem;color:var(--nuit);margin-top:6px}
+#verses li.scan .sc-cout b{font-family:Georgia,serif}
+.bandeau.lecture-scan{background:#FFF3C4;border-left:4px solid var(--jaune-texte)}
+
 /* ---------- 1.2 — mode lecture seule (teinte de consultation : cyan de la charte) ---------- */
 .onglets button.consulter{margin-left:auto;background:#E3F7F8;color:var(--nuit);border:1px solid var(--cyan);border-bottom:3px solid var(--cyan);border-radius:4px 4px 0 0}
 .onglets button.consulter:hover{background:#CFF1F3}
@@ -335,7 +347,7 @@ mark{background:var(--jaune-forme);color:inherit;padding:0 1px}
 <body>
 <header>
   <h1>MONETA</h1>
-  <small>Le clausier du cabinet, version 1.2</small>
+  <small>Le clausier du cabinet, version 1.3</small>
   <span id="etat-connexion">Connexion au Drive…</span>
   <button id="btn-connexion">Autoriser l'accès au Drive</button>
 </header>
@@ -421,7 +433,7 @@ mark{background:var(--jaune-forme);color:inherit;padding:0 1px}
 
 <script>
 /* ============================================================
-   MONETA — version 1.2 du 09/10/2026 (MODE LECTURE SEULE : onglet « Consulter le clausier » en teinte de consultation, adresse directe ?consulter, bandeau avec retour au mode travail, aucun geste de modification ; sélection de clauses et envoi par mail d'un fichier Word aux champs entre crochets colorisés) ; 1.1 du 09/10/2026 (TRAITEMENT SIMULTANÉ : tous les points restants des dépôts d'un même type d'acte regroupés par rubrique proposée, tranchés en bloc ou un à un ; bascule avec l'ordre d'arrivée) ; 1.0 du 09/10/2026 (file « À traiter » : tableau de bord de la file, avancement de chaque dépôt, bouton « Mettre de côté » et liste des dépôts en attente ; compteurs d'usage dissociés du classement des clauses) ; 0.9 du 09/10/2026 (couverture du clausier par rubrique et par article, fiche éditable de la clause, journal de relecture avec rangement défait seul ou par lot, signal d'un acte non numéroté versé dans un clausier pauvre) ; 0.8 du 09/10/2026 (ciseau : coupe manuelle d'un point entre paragraphes ou puces, partie détachée lettrée, phrase d'annonce reprise, coupes conservées à la redécoupe, recollage) ; 0.7 du 09/10/2026 (ergonomie : fil d'Ariane collant, clause étoile choisie à la main et épinglée, compteurs indicatifs d'actes versés et de reprises en rédaction, comparaison côte à côte de deux variantes, recherche plein texte et filtres par contexte, sens, nature et texte visé, étapes du versement) ; 0.6 du 08/10/2026 (rangement des points d'un dépôt dans le clausier : proposition et deuxième candidate, contexte coché, validation point par point ou en bloc, journal des mouvements) ; 0.5 du 08/10/2026 (module Clausier, première tranche : plans de référence PSV AKZO et PUV R3S, numéros permanents, page Clausier) ; 0.4 du 08/10/2026 (titres des PDF non numérotés déduits de la mise en forme) ; 0.3 du 08/10/2026 (lecture Word avec numérotation automatique, contrôles de vraisemblance) ; 0.2 : moteur de découpe en service ; squelette du 07/10/2026
+   MONETA — version 1.3 du 09/10/2026 (DOUBLE PASSE SUR LES ACTES SCANNÉS, méthode reprise de TRENTE : pages sans texte détectées une à une, reconnaissance gratuite Tesseract dans le navigateur, puis lecture par Claude pour compléter, sur validation et après estimatif de coût ; texte reconnu signalé à relire dans la fiche) ; 1.2 du 09/10/2026 (MODE LECTURE SEULE : onglet « Consulter le clausier » en teinte de consultation, adresse directe ?consulter, bandeau avec retour au mode travail, aucun geste de modification ; sélection de clauses et envoi par mail d'un fichier Word aux champs entre crochets colorisés) ; 1.1 du 09/10/2026 (TRAITEMENT SIMULTANÉ : tous les points restants des dépôts d'un même type d'acte regroupés par rubrique proposée, tranchés en bloc ou un à un ; bascule avec l'ordre d'arrivée) ; 1.0 du 09/10/2026 (file « À traiter » : tableau de bord de la file, avancement de chaque dépôt, bouton « Mettre de côté » et liste des dépôts en attente ; compteurs d'usage dissociés du classement des clauses) ; 0.9 du 09/10/2026 (couverture du clausier par rubrique et par article, fiche éditable de la clause, journal de relecture avec rangement défait seul ou par lot, signal d'un acte non numéroté versé dans un clausier pauvre) ; 0.8 du 09/10/2026 (ciseau : coupe manuelle d'un point entre paragraphes ou puces, partie détachée lettrée, phrase d'annonce reprise, coupes conservées à la redécoupe, recollage) ; 0.7 du 09/10/2026 (ergonomie : fil d'Ariane collant, clause étoile choisie à la main et épinglée, compteurs indicatifs d'actes versés et de reprises en rédaction, comparaison côte à côte de deux variantes, recherche plein texte et filtres par contexte, sens, nature et texte visé, étapes du versement) ; 0.6 du 08/10/2026 (rangement des points d'un dépôt dans le clausier : proposition et deuxième candidate, contexte coché, validation point par point ou en bloc, journal des mouvements) ; 0.5 du 08/10/2026 (module Clausier, première tranche : plans de référence PSV AKZO et PUV R3S, numéros permanents, page Clausier) ; 0.4 du 08/10/2026 (titres des PDF non numérotés déduits de la mise en forme) ; 0.3 du 08/10/2026 (lecture Word avec numérotation automatique, contrôles de vraisemblance) ; 0.2 : moteur de découpe en service ; squelette du 07/10/2026
    Arbitrages (fiche clausier) : une application, deux moteurs ;
    on VERSE d'un côté (file d'attente sur le Drive), on TRAITE quand on veut ;
    le DÉCOUPAGE (neutralisation en champs, coupe en clauses, destination
@@ -652,13 +664,16 @@ async function extraireTexte(f) {
   if (nom.endsWith(".pdf")) {
     pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
     const pdf = await pdfjsLib.getDocument({ data: await f.arrayBuffer() }).promise;
-    const pages = [];
+    const pages = [], sansTexte = [];
     for (let i = 1; i <= pdf.numPages; i++) {
       const page = await pdf.getPage(i);
       await page.getOperatorList();                       // charge les polices : on sait alors ce qui est en gras
-      pages.push(lignesDeLaPage((await page.getTextContent()).items, page));
+      const t = lignesDeLaPage((await page.getTextContent()).items, page);
+      pages.push(t);
+      // 1.3 — détection page par page (choix de TRENTE) : moins de 40 signes lisibles = page scannée
+      if (sansMarques(t).replace(/\s/g, "").length < SEUIL_PAGE_SCANNEE) sansTexte.push(i);
     }
-    return { texte: pages.join("\n\f"), html: null };
+    return { texte: pages.join("\n\f"), html: null, pdf, pages, sansTexte };
   }
   return { texte: await f.text(), html: null };
 }
@@ -711,12 +726,12 @@ function noterVersement(txt, cls) {
 function etapeVersement(li, nom) {
   return quoi => { li.className = "encours"; li.innerHTML = `${echapper(nom)} : <span class="etape">${echapper(quoi)}…</span>`; };
 }
-async function verser({ nom, origine, texte, html }, etape = () => {}) {
+async function verser({ nom, origine, texte, html, lecture }, etape = () => {}) {
   if (!texte || !texte.trim()) throw new Error(/\.pdf$/i.test(nom) ? "aucun texte lisible : le PDF est sans doute scanné en image" : "aucun texte lisible");
   const { file } = await arborescence();
   const id = (crypto.randomUUID?.() || String(Date.now()) + Math.random().toString(16).slice(2));
   const depot = { moneta: 1, id, nom, origine, type_acte: $("type-acte").value || null,
-                  verse_le: new Date().toISOString(), statut: "attente-decoupage", texte, html, clauses: [] };
+                  verse_le: new Date().toISOString(), statut: "attente-decoupage", texte, html, clauses: [], ...(lecture ? { lecture } : {}) };
   // découpe tout de suite (règles fixes, côté serveur) ; en cas d'échec le dépôt part quand même, à redécouper
   etape("découpe en cours");
   try { const r = await appelerMoteur("decouper", { texte }); depot.decoupe = r.decoupe; depot.statut = "decoupe"; }
@@ -732,7 +747,8 @@ async function verserFichiers(liste) {
     const li = noterVersement(""), etape = etapeVersement(li, f.name);
     etape("lecture du fichier");
     try {
-      const { texte, html } = await extraireTexte(f);
+      const lu = await extraireTexte(f), { texte, html } = lu;
+      if (lu.sansTexte?.length) { traiterScan(li, f, lu); continue; }   // 1.3 — double passe, à la main du collaborateur
       const d = await verser({ nom: f.name, origine: "fichier", texte, html }, etape);
       li.className = "ok"; li.textContent = `${f.name} : versé dans la file (${libelleType($("type-acte").value)})` +
         (d.decoupe ? ` — découpé en ${d.decoupe.points} points (${d.decoupe.articles} articles, ${d.decoupe.rubriques} rubriques)` +
@@ -744,6 +760,141 @@ async function verserFichiers(liste) {
     } catch (e) { li.className = "ko"; li.textContent = `${f.name} : non versé — ${e.message}`; }
   }
   majCompteur();
+}
+/* ============================================================
+   ACTES SCANNÉS — DOUBLE PASSE (1.3), méthode du cabinet reprise de TRENTE
+   1) Détection page par page des pages sans texte (scan).
+   2) Reconnaissance GRATUITE dans le navigateur (Tesseract, français).
+   3) Lecture par Claude pour COMPLÉTER : image de la page + texte reconnu,
+      transcription corrigée (manuscrit compris). Lancée SEULEMENT sur
+      validation du collaborateur, après un ESTIMATIF DE COÛT.
+   Le dépôt garde la trace du mode de lecture ; la fiche demande une relecture.
+   ============================================================ */
+const SEUIL_PAGE_SCANNEE = 40;
+const PAGES_PAR_LOT = 3;          // trois images par requête : sous la limite de 4,5 Mo de Vercel
+const PIXELS_IMAGE = 1150000;     // taille d'image que l'API lit sans réduction (environ 1 500 jetons)
+let tesseractPret = null;
+function chargerTesseract() {
+  return tesseractPret ||= new Promise((ok, ko) => {
+    if (window.Tesseract) return ok();
+    const s = document.createElement("script"); s.src = "https://cdn.jsdelivr.net/npm/tesseract.js@5.1.0/dist/tesseract.min.js";
+    s.onload = () => ok(); s.onerror = () => { tesseractPret = null; ko(new Error("la bibliothèque de reconnaissance n'a pas pu être chargée")); };
+    document.head.appendChild(s);
+  });
+}
+async function rendrePage(pdf, n, echelle) {
+  const page = await pdf.getPage(n), vp1 = page.getViewport({ scale: 1 });
+  const sc = typeof echelle === "number" ? echelle : Math.sqrt(PIXELS_IMAGE / (vp1.width * vp1.height));
+  const vp = page.getViewport({ scale: sc }), cv = document.createElement("canvas");
+  cv.width = Math.round(vp.width); cv.height = Math.round(vp.height);
+  const ctx = cv.getContext("2d"); ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, cv.width, cv.height);
+  await page.render({ canvasContext: ctx, viewport: vp }).promise;
+  return cv;
+}
+let tarifLecture = null;
+async function lireTarif() {
+  if (tarifLecture) return tarifLecture;
+  try { const r = await fetch(MOTEURS); const j = await r.json(); tarifLecture = j?.moneta?.moteurs?.lire || null; } catch { tarifLecture = null; }
+  return tarifLecture;
+}
+// Estimatif : par page, une image (~1 500 jetons) + le texte reconnu en entrée ; la transcription en sortie
+function estimer(sc, t) {
+  let entree = 400, sortie = 0;
+  for (const n of sc.sansTexte) { const ocr = sc.ocr?.[n] || ""; entree += 1550 + Math.ceil(ocr.length / 3.2); sortie += Math.max(600, Math.ceil(Math.max(ocr.length, 2500) / 3.2)); }
+  const pe = t?.entree ?? 3, ps = t?.sortie ?? 15;
+  return { entree, sortie, dollars: (entree * pe + sortie * ps) / 1e6 };
+}
+const dollars = x => (x < 0.01 ? "moins d'un centime" : x.toFixed(2).replace(".", ",") + " $");
+function traiterScan(li, f, lu) {
+  const sc = { f, nom: f.name, pdf: lu.pdf, pages: lu.pages, sansTexte: lu.sansTexte, ocr: {}, claude: {}, mode: null, cout: null, modele: null };
+  li.className = "scan";
+  const n = sc.sansTexte.length, tot = sc.pages.length;
+  const dessiner = (etatTxt, corps = "", gestes = "") => {
+    li.innerHTML = `<div class="sc-titre">${echapper(sc.nom)} — ${n === tot ? `acte scanné, ${tot} page${tot > 1 ? "s" : ""} sans texte` : `${n} page${n > 1 ? "s" : ""} sur ${tot} sans texte (scan)`}</div>
+      <div class="sc-etat">${etatTxt}</div>${corps}<div class="sc-gestes">${gestes}</div>`;
+  };
+  const etape1 = () => {
+    dessiner(`Rien n'est versé tant que le texte n'est pas lu. Première passe gratuite : la reconnaissance de caractères, dans votre navigateur (quelques secondes par page).`, "",
+      `<button class="bouton" data-g="ocr">Reconnaître le texte (gratuit)</button><button class="bouton discret" data-g="abandon">Abandonner</button>`);
+    brancher();
+  };
+  const etape2 = async () => {
+    const t = await lireTarif(), e = estimer(sc, t);
+    const caracteres = sc.sansTexte.reduce((s, k) => s + (sc.ocr[k] || "").replace(/\s/g, "").length, 0);
+    const pauvre = caracteres < 300 * n;
+    const extrait = sc.sansTexte.map(k => `— page ${k} —\n${(sc.ocr[k] || "").trim().slice(0, 400)}`).join("\n\n");
+    dessiner(`Reconnaissance gratuite terminée : ${caracteres.toLocaleString("fr-FR")} signes sur ${n} page${n > 1 ? "s" : ""}${pauvre ? " — c'est peu : écriture manuscrite ou scan médiocre, la seconde passe est recommandée" : ""}.`,
+      `<div class="sc-avert"><b>Texte reconnu, non vérifié.</b> La reconnaissance se trompe surtout sur les chiffres, les dates, les volumes et les noms propres.</div>
+       <div class="sc-extrait">${echapper(extrait)}</div>
+       <div class="sc-cout">Seconde passe par Claude, pour compléter et corriger d'après l'image : <b>environ ${dollars(e.dollars)}</b> pour ${n} page${n > 1 ? "s" : ""}
+         (environ ${nb(Math.round(e.entree / 100) * 100)} jetons lus et ${nb(Math.round(e.sortie / 100) * 100)} écrits${t?.modele ? `, modèle ${echapper(t.modele)}` : ""}${t?.suppose || !t ? ", tarif supposé" : ""}). Facturée à l'usage, en dollars.
+         ${t && !t.disponible ? "<br><b>La clé API n'est pas encore déclarée dans Vercel pour MONETA</b> : la seconde passe échouera tant qu'elle manque." : ""}</div>`,
+      `<button class="bouton" data-g="claude">Lancer la lecture par Claude (≈ ${dollars(e.dollars)})</button>
+       <button class="bouton secondaire" data-g="verser">Verser le texte reconnu tel quel</button><button class="bouton discret" data-g="abandon">Abandonner</button>`);
+    brancher();
+  };
+  const lancerOcr = async () => {
+    try {
+      dessiner("Chargement de la reconnaissance de caractères…");
+      await chargerTesseract();
+      let echec = null;
+      const w = await Promise.race([
+        Tesseract.createWorker("fra", 1, { errorHandler: e => { echec = e; },
+          logger: m => { if (m.status === "recognizing text") { const x = li.querySelector(".sc-etat .pc"); if (x) x.textContent = Math.round(m.progress * 100) + " %"; } } }),
+        new Promise((_, ko) => { const t0 = Date.now(), v = setInterval(() => {
+          if (echec || Date.now() - t0 > 90000) { clearInterval(v); ko(new Error(echec ? "données de reconnaissance introuvables (" + String(echec.message || echec).slice(0, 120) + ")" : "la reconnaissance ne démarre pas")); } }, 500); })
+      ]);
+      try {
+        for (const [i, k] of sc.sansTexte.entries()) {
+          dessiner(`Reconnaissance gratuite : page ${k} (${i + 1} sur ${n}) — <span class="pc">0 %</span>`);
+          const cv = await rendrePage(sc.pdf, k, 2);
+          const r = await w.recognize(cv); sc.ocr[k] = (r.data.text || "").replace(/[ \t]+\n/g, "\n"); cv.width = cv.height = 0;
+        }
+      } finally { try { await w.terminate(); } catch { } }
+      sc.mode = "ocr"; etape2();
+    } catch (e) { dessiner(`Reconnaissance impossible : ${echapper(e.message)}.`, "", `<button class="bouton" data-g="ocr">Réessayer</button><button class="bouton discret" data-g="abandon">Abandonner</button>`); brancher(); }
+  };
+  const lancerClaude = async () => {
+    const t = await lireTarif(), e = estimer(sc, t);
+    if (!confirm(`Lecture par Claude de ${n} page${n > 1 ? "s" : ""} de « ${sc.nom} ». Coût estimé : environ ${dollars(e.dollars)}, facturé à l'usage. Continuer ?`)) return;
+    let cout = 0;
+    try {
+      for (let i = 0; i < n; i += PAGES_PAR_LOT) {
+        const lot = sc.sansTexte.slice(i, i + PAGES_PAR_LOT);
+        dessiner(`Lecture par Claude : pages ${lot.join(", ")} (${Math.min(i + PAGES_PAR_LOT, n)} sur ${n})…`);
+        const pages = [];
+        for (const k of lot) { const cv = await rendrePage(sc.pdf, k); pages.push({ n: k, ocr: sc.ocr[k] || "", image: cv.toDataURL("image/jpeg", 0.82).split(",")[1] }); cv.width = cv.height = 0; }
+        const r = await appelerMoteur("lire", { nom: sc.nom, pages });
+        for (const p of r.lecture.pages) if (lot.includes(p.n)) sc.claude[p.n] = p.texte;
+        cout += r.lecture.cout || 0; sc.modele = r.lecture.modele;
+      }
+      sc.mode = "claude"; sc.cout = cout;
+      await verserScan();
+    } catch (err) {
+      dessiner(`Lecture par Claude interrompue : ${echapper(err.message)}${cout ? ` (déjà dépensé : ${dollars(cout)})` : ""}.`, "",
+        `<button class="bouton" data-g="claude">Réessayer</button><button class="bouton secondaire" data-g="verser">Verser le texte reconnu gratuitement</button><button class="bouton discret" data-g="abandon">Abandonner</button>`);
+      brancher();
+    }
+  };
+  const verserScan = async () => {
+    const pages = sc.pages.map((t, i) => { const k = i + 1; return sc.sansTexte.includes(k) ? (sc.claude[k] ?? sc.ocr[k] ?? "") : t; });
+    const texte = pages.join("\n\f");
+    try {
+      dessiner("Versement du texte lu…");
+      const d = await verser({ nom: sc.nom, origine: "fichier", texte, html: null,
+        lecture: { mode: sc.mode === "claude" ? "claude" : "ocr", pages: sc.sansTexte, modele: sc.modele, cout: sc.cout, le: new Date().toISOString() } }, () => {});
+      li.className = "ok jaune";
+      li.textContent = `${sc.nom} : versé dans la file après ${sc.mode === "claude" ? `reconnaissance gratuite puis lecture par Claude (${dollars(sc.cout || 0)})` : "reconnaissance gratuite"}`
+        + (d.decoupe ? ` — découpé en ${d.decoupe.points} points. Texte reconnu : à relire dans la fiche avant de ranger.` : " — découpe à relancer.");
+      majCompteur();
+    } catch (e) { dessiner(`Versement impossible : ${echapper(e.message)}.`, "", `<button class="bouton" data-g="verser">Réessayer</button>`); brancher(); }
+  };
+  const brancher = () => li.querySelectorAll("[data-g]").forEach(b => b.addEventListener("click", () => {
+    const g = b.dataset.g;
+    if (g === "ocr") lancerOcr(); else if (g === "claude") lancerClaude(); else if (g === "verser") verserScan();
+    else if (g === "abandon") { li.className = "ko"; li.textContent = `${sc.nom} : non versé (acte scanné, abandonné).`; }
+  }));
+  etape1();
 }
 (() => {
   const zone = $("zone-depot"), entree = $("fichiers");
@@ -1084,6 +1235,11 @@ function remplirFiche(d) {
     : (d.erreur_decoupe ? `La découpe a échoué au versement (${d.erreur_decoupe}) : cliquez « Redécouper ».` : "Ce dépôt n'a pas encore été découpé : cliquez « Redécouper ».");
   afficherVue(true);
   signalerPauvrete(d);
+  if (d.lecture) {
+    const b = document.createElement("div"); b.className = "bandeau lecture-scan";
+    b.innerHTML = `<b>Texte reconnu sur un scan, à relire</b> — ${d.lecture.pages.length} page${d.lecture.pages.length > 1 ? "s" : ""} sans texte d'origine (${echapper(d.lecture.pages.join(", "))}), lue${d.lecture.pages.length > 1 ? "s" : ""} par ${d.lecture.mode === "claude" ? `reconnaissance gratuite puis Claude (${echapper(d.lecture.modele || "")}${d.lecture.cout != null ? `, ${d.lecture.cout.toFixed(2).replace(".", ",")} $` : ""})` : "reconnaissance gratuite seule"}. Vérifiez chiffres, dates, volumes et noms propres avant de ranger.`;
+    $("fiche-controles").prepend(b);
+  }
 }
 async function ouvrirDepot(i) {
   const f = etat.file[i]; if (!f) return;

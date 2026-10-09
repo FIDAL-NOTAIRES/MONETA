@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "api/moteurs.js": {
+      "maxDuration": 300
+    }
+  }
+}
