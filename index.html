@@ -130,6 +130,26 @@ table.file tr.ouvert td{background:#EAFAFB}
 #zone-cote label{font-size:.88rem;margin-bottom:4px;display:block}
 #zone-cote input{width:100%;max-width:520px;padding:6px 10px;margin-bottom:8px}
 
+/* ---------- 1.1 — traitement simultané ---------- */
+#simultane{display:none;margin-top:18px;border:1px solid var(--trait);border-radius:6px;padding:18px;background:#FBFCFD}
+#simultane h3{font-size:1.2rem;color:var(--nuit);margin-bottom:4px}
+.ts-tete{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:10px}
+.ts-groupe{border:1px solid var(--trait);border-radius:4px;background:#fff;margin-bottom:8px}
+.ts-groupe>summary{cursor:pointer;padding:10px 14px;display:flex;gap:12px;align-items:baseline;flex-wrap:wrap;list-style:none}
+.ts-groupe>summary::-webkit-details-marker{display:none}
+.ts-groupe>summary::before{content:"▸";color:var(--canard)}
+.ts-groupe[open]>summary::before{content:"▾"}
+.ts-groupe .r-id{font-family:"Segoe UI",system-ui,sans-serif;font-size:.8rem;color:var(--doux)}
+.ts-groupe .r-titre{font-family:Georgia,serif;font-weight:bold;color:var(--nuit)}
+.ts-groupe .r-compte{margin-left:auto;font-size:.85rem;color:var(--doux)}
+.ts-groupe.fini>summary .r-compte{color:var(--vert)}
+.ts-corps{padding:0 14px 12px}
+.ts-corps .ts-actions-groupe{display:flex;gap:8px;margin:4px 0 10px}
+.ranger-point .source{font-size:.8rem;color:var(--canard);font-weight:600}
+.ranger-point .ctx{font-size:.78rem;color:var(--doux);margin-left:8px}
+#tableau-bord button.ts-ouvrir{font-size:.82rem;padding:3px 10px;border:1px solid var(--canard);background:#fff;color:var(--canard);border-radius:3px;cursor:pointer;white-space:nowrap}
+#tableau-bord button.ts-ouvrir:hover{background:var(--canard);color:#fff}
+
 /* ---------- clausier (0.5) : plan en tête, rubrique en deux colonnes ---------- */
 .cl-tete{display:flex;gap:14px;align-items:end;flex-wrap:wrap;margin-bottom:14px}
 .cl-tete > div{flex:1 1 260px}
@@ -294,7 +314,7 @@ mark{background:var(--jaune-forme);color:inherit;padding:0 1px}
 <body>
 <header>
   <h1>MONETA</h1>
-  <small>Le clausier du cabinet, version 1.0</small>
+  <small>Le clausier du cabinet, version 1.1</small>
   <span id="etat-connexion">Connexion au Drive…</span>
   <button id="btn-connexion">Autoriser l'accès au Drive</button>
 </header>
@@ -339,6 +359,7 @@ mark{background:var(--jaune-forme);color:inherit;padding:0 1px}
   <!-- ======== À TRAITER : la file d'attente, du plus ancien au plus récent ======== -->
   <section class="panneau" id="panneau-traiter" role="tabpanel">
     <div id="file-contenu"><p class="vide">Chargement de la file…</p></div>
+    <div id="simultane"></div>
     <div id="fiche-depot">
       <h3 id="fiche-titre"></h3>
       <p class="aide" id="fiche-meta"></p>
@@ -375,7 +396,7 @@ mark{background:var(--jaune-forme);color:inherit;padding:0 1px}
 
 <script>
 /* ============================================================
-   MONETA — version 1.0 du 09/10/2026 (file « À traiter » : tableau de bord de la file, avancement de chaque dépôt, bouton « Mettre de côté » et liste des dépôts en attente ; compteurs d'usage dissociés du classement des clauses) ; 0.9 du 09/10/2026 (couverture du clausier par rubrique et par article, fiche éditable de la clause, journal de relecture avec rangement défait seul ou par lot, signal d'un acte non numéroté versé dans un clausier pauvre) ; 0.8 du 09/10/2026 (ciseau : coupe manuelle d'un point entre paragraphes ou puces, partie détachée lettrée, phrase d'annonce reprise, coupes conservées à la redécoupe, recollage) ; 0.7 du 09/10/2026 (ergonomie : fil d'Ariane collant, clause étoile choisie à la main et épinglée, compteurs indicatifs d'actes versés et de reprises en rédaction, comparaison côte à côte de deux variantes, recherche plein texte et filtres par contexte, sens, nature et texte visé, étapes du versement) ; 0.6 du 08/10/2026 (rangement des points d'un dépôt dans le clausier : proposition et deuxième candidate, contexte coché, validation point par point ou en bloc, journal des mouvements) ; 0.5 du 08/10/2026 (module Clausier, première tranche : plans de référence PSV AKZO et PUV R3S, numéros permanents, page Clausier) ; 0.4 du 08/10/2026 (titres des PDF non numérotés déduits de la mise en forme) ; 0.3 du 08/10/2026 (lecture Word avec numérotation automatique, contrôles de vraisemblance) ; 0.2 : moteur de découpe en service ; squelette du 07/10/2026
+   MONETA — version 1.1 du 09/10/2026 (TRAITEMENT SIMULTANÉ : tous les points restants des dépôts d'un même type d'acte regroupés par rubrique proposée, tranchés en bloc ou un à un ; bascule avec l'ordre d'arrivée) ; 1.0 du 09/10/2026 (file « À traiter » : tableau de bord de la file, avancement de chaque dépôt, bouton « Mettre de côté » et liste des dépôts en attente ; compteurs d'usage dissociés du classement des clauses) ; 0.9 du 09/10/2026 (couverture du clausier par rubrique et par article, fiche éditable de la clause, journal de relecture avec rangement défait seul ou par lot, signal d'un acte non numéroté versé dans un clausier pauvre) ; 0.8 du 09/10/2026 (ciseau : coupe manuelle d'un point entre paragraphes ou puces, partie détachée lettrée, phrase d'annonce reprise, coupes conservées à la redécoupe, recollage) ; 0.7 du 09/10/2026 (ergonomie : fil d'Ariane collant, clause étoile choisie à la main et épinglée, compteurs indicatifs d'actes versés et de reprises en rédaction, comparaison côte à côte de deux variantes, recherche plein texte et filtres par contexte, sens, nature et texte visé, étapes du versement) ; 0.6 du 08/10/2026 (rangement des points d'un dépôt dans le clausier : proposition et deuxième candidate, contexte coché, validation point par point ou en bloc, journal des mouvements) ; 0.5 du 08/10/2026 (module Clausier, première tranche : plans de référence PSV AKZO et PUV R3S, numéros permanents, page Clausier) ; 0.4 du 08/10/2026 (titres des PDF non numérotés déduits de la mise en forme) ; 0.3 du 08/10/2026 (lecture Word avec numérotation automatique, contrôles de vraisemblance) ; 0.2 : moteur de découpe en service ; squelette du 07/10/2026
    Arbitrages (fiche clausier) : une application, deux moteurs ;
    on VERSE d'un côté (file d'attente sur le Drive), on TRAITE quand on veut ;
    le DÉCOUPAGE (neutralisation en champs, coupe en clauses, destination
@@ -779,11 +800,13 @@ function dessinerTableauBord(fichiers, cote) {
       <div class="tb-chiffre"><b>${nb(cote.length)}</b><span>mis de côté</span></div>
     </div>
     <div class="tb-barre" title="${pc(faits, total)} % des points traités"><i style="width:${pc(faits, total)}%"></i></div>
-    ${lignes.length ? `<table><thead><tr><th>Type d'acte</th><th class="nb">Dépôts</th><th class="nb">Restants</th><th class="nb">Traités</th><th class="tb-av">Avancement</th></tr></thead><tbody>
+    ${lignes.length ? `<table><thead><tr><th>Type d'acte</th><th class="nb">Dépôts</th><th class="nb">Restants</th><th class="nb">Traités</th><th class="tb-av">Avancement</th><th></th></tr></thead><tbody>
       ${lignes.map(([k, g]) => `<tr><td>${echapper(libelleType(k || null))}</td><td class="nb">${nb(g.depots)}</td><td class="nb">${nb(g.total - g.faits)}</td><td class="nb">${nb(g.faits)}</td>
-        <td class="tb-av"><div class="tb-barre"><i style="width:${pc(g.faits, g.total)}%"></i></div></td></tr>`).join("")}
+        <td class="tb-av"><div class="tb-barre"><i style="width:${pc(g.faits, g.total)}%"></i></div></td>
+        <td>${PLANS[k] && g.total > g.faits && lus.length === fichiers.length ? `<button class="ts-ouvrir" data-simul="${k}" title="Regrouper par rubrique les points restants de tous les dépôts de ce type">Traitement simultané</button>` : ""}</td></tr>`).join("")}
     </tbody></table>` : ""}
     ${lus.length < fichiers.length ? `<p class="tb-note">Lecture des dépôts en cours (${lus.length} sur ${fichiers.length})…</p>` : `<p class="tb-note">Types d'actes classés du plus chargé au moins chargé : commencez par le haut. Un point compte comme traité une fois rangé ou écarté.</p>`}`;
+  zone.querySelectorAll("[data-simul]").forEach(b => b.addEventListener("click", () => ouvrirSimultane(b.dataset.simul)));
 }
 function dessinerCote(cote) {
   const zone = $("liste-cote"); if (!zone) return;
@@ -1040,6 +1063,7 @@ function remplirFiche(d) {
 async function ouvrirDepot(i) {
   const f = etat.file[i]; if (!f) return;
   etat.ouvert = f; etat.coupe = null; $("zone-cote").style.display = "none";
+  if ($("simultane").style.display === "block") { $("simultane").style.display = "none"; $("simultane").innerHTML = ""; ts.items = []; }
   document.querySelectorAll("table.file tr").forEach(tr => tr.classList.toggle("ouvert", tr.dataset.i === String(i)));
   const d = f.depot || (f.depot = await lireJson(f.id));
   remplirFiche(d);
@@ -1178,20 +1202,24 @@ function brancherRangement() {
   });
   $("rg-tout")?.addEventListener("click", validerTout);
 }
+// Ajout d'une clause dans le clausier (en mémoire) + journal ; partagé par le rangement d'un dépôt et le traitement simultané (1.1)
+function ajouterClause(f, { depot, num, texte, contextes, rubriqueId }) {
+  const r = f.rubriques[rubriqueId]; if (!r) throw new Error("rubrique " + rubriqueId + " introuvable");
+  if (!r.clauses.some(c => c.source?.depot === depot.id && c.point === num)) {
+    f.prochaine_clause = (f.prochaine_clause || 0) + 1;
+    const ajoutes = [];
+    for (const m of motsAuto(texte)) if (!r.mots_cles.some(k => normMot(k.mot) === normMot(m))) { r.mots_cles.push({ mot: m, origine: "auto" }); ajoutes.push(m); }
+    r.clauses.push({ id: `${f.prefixe}-C${String(f.prochaine_clause).padStart(4, "0")}`, point: num, texte,
+      occurrences: 1, contextes: [...contextes], sens: null, nature: null, commentaire: "",
+      source: { depot: depot.id, nom: depot.nom, date: depot.verse_le.slice(0, 10) }, admise_le: new Date().toISOString(),
+      mots_ajoutes: ajoutes });
+  }
+  (f.journal ||= []).push({ quand: new Date().toISOString(), quoi: "ranger", point: num, rubrique: rubriqueId, depot: depot.id, depot_nom: depot.nom });
+}
 async function enregistrerClause(num, rubriqueId) {
   const texte = rg.points.find(p => p.num === num)?.texte || "";
   rg.clausier = await modifierClausier(f => {
-    const r = f.rubriques[rubriqueId]; if (!r) throw new Error("rubrique " + rubriqueId + " introuvable");
-    if (!r.clauses.some(c => c.source?.depot === rg.depot.id && c.point === num)) {
-      f.prochaine_clause = (f.prochaine_clause || 0) + 1;
-      const ajoutes = [];
-      for (const m of motsAuto(texte)) if (!r.mots_cles.some(k => normMot(k.mot) === normMot(m))) { r.mots_cles.push({ mot: m, origine: "auto" }); ajoutes.push(m); }
-      r.clauses.push({ id: `${f.prefixe}-C${String(f.prochaine_clause).padStart(4, "0")}`, point: num, texte,
-        occurrences: 1, contextes: [...rg.contextes], sens: null, nature: null, commentaire: "",
-        source: { depot: rg.depot.id, nom: rg.depot.nom, date: rg.depot.verse_le.slice(0, 10) }, admise_le: new Date().toISOString(),
-        mots_ajoutes: ajoutes });   // retenus pour pouvoir défaire proprement un rangement (journal de relecture)
-    }
-    (f.journal ||= []).push({ quand: new Date().toISOString(), quoi: "ranger", point: num, rubrique: rubriqueId, depot: rg.depot.id, depot_nom: rg.depot.nom });
+    ajouterClause(f, { depot: rg.depot, num, texte, contextes: rg.contextes, rubriqueId });
   }, rg.fichier);
 }
 async function validerPoint(num, rubriqueId) {
@@ -1212,6 +1240,126 @@ async function validerTout() {
   }
   dessinerRangement();
 }
+/* ============================================================
+   TRAITEMENT SIMULTANÉ (1.1) — piste retenue le 09/10/2026 au soir
+   Bouton optionnel : tous les points RESTANTS des dépôts d'un même type
+   d'acte sont regroupés par rubrique proposée (ordre du plan), pour trancher
+   une rubrique en une seule passe. Mêmes gestes que le rangement d'un dépôt ;
+   « Valider tout le groupe » écrit le groupe en une seule écriture du clausier.
+   « Revenir à l'ordre d'arrivée » referme et rafraîchit la file.
+   ============================================================ */
+const ts = { type: null, clausier: null, fichier: null, items: [], ouverts: new Set() };
+async function ouvrirSimultane(type) {
+  const zone = $("simultane");
+  $("fiche-depot").style.display = "none"; etat.ouvert = null;
+  document.querySelectorAll("table.file tr.ouvert").forEach(tr => tr.classList.remove("ouvert"));
+  zone.style.display = "block"; zone.scrollIntoView({ behavior: "smooth", block: "start" });
+  const depots = etat.file.map(f => f.depot).filter(d => d?.type_acte === type && d.decoupe?.structure?.length);
+  zone.innerHTML = `<h3>Traitement simultané — ${echapper(libelleType(type))}</h3><p class="note-moteur" id="ts-etat">Lecture du clausier…</p>`;
+  try {
+    const r = await chargerType(type);
+    Object.assign(ts, { type, clausier: r.donnees, fichier: r.fichier, items: [], ouverts: new Set() });
+    const rubriques = Object.values(ts.clausier.rubriques).map(x => ({ id: x.id, titre: x.titre, article: x.article,
+      article_titre: ts.clausier.articles.find(a => a.num === x.article)?.titre || "", mots_cles: x.mots_cles }));
+    for (const [n, d] of depots.entries()) {
+      $("ts-etat").textContent = `Rangement des points : dépôt ${n + 1} sur ${depots.length} (${d.nom})…`;
+      const faits = new Set(Object.values(ts.clausier.rubriques).flatMap(x => x.clauses).filter(c => c.source?.depot === d.id).map(c => c.point));
+      (ts.clausier.journal || []).forEach(e => { if (e.quoi === "ecarter" && e.depot === d.id) faits.add(e.point); });
+      const points = d.decoupe.structure.filter(e => e.t === "point" && !faits.has(e.num))
+        .map(e => ({ num: e.num, texte: e.paras.join("\n").replace(/\u200b/g, ""), titres: titresDuPoint(d.decoupe, e.num) }));
+      if (!points.length) continue;
+      const rep = await appelerMoteur("ranger", { points, rubriques, texte_acte: sansMarques(d.texte) });
+      const contextes = (d.contextes && d.contextes.length) ? d.contextes : (rep.rangement.contextes || []);
+      const propo = new Map(rep.rangement.propositions.map(p => [p.num, p.candidats]));
+      for (const p of points) ts.items.push({ depot: d, num: p.num, texte: p.texte, contextes, candidats: propo.get(p.num) || [], etat: undefined });
+    }
+    const premier = groupesSimultane()[0]; if (premier) ts.ouverts.add(premier.cle);
+    dessinerSimultane();
+  } catch (e) { $("ts-etat").textContent = "Traitement simultané impossible : " + e.message; }
+}
+function groupesSimultane() {
+  const ordre = new Map(); let i = 0;
+  for (const a of ts.clausier.articles) for (const id of a.rubriques) ordre.set(id, i++);
+  const g = new Map();
+  for (const it of ts.items) { const k = it.candidats[0]?.id || ""; if (!g.has(k)) g.set(k, []); g.get(k).push(it); }
+  return [...g.entries()].map(([cle, items]) => ({ cle, items }))
+    .sort((a, b) => (a.cle ? ordre.get(a.cle) ?? 1e9 : 2e9) - (b.cle ? ordre.get(b.cle) ?? 1e9 : 2e9));
+}
+function dessinerSimultane() {
+  const zone = $("simultane"), rubs = ts.clausier.rubriques;
+  const libRub = id => rubs[id] ? `${rubs[id].id} · ${rubs[id].titre}` : id;
+  const options = Object.values(rubs).map(r => `<option value="${r.id}">${echapper(r.id)} · ${echapper(r.titre)}</option>`).join("");
+  const groupes = groupesSimultane(), restants = ts.items.filter(x => x.etat === undefined).length;
+  const nbDep = new Set(ts.items.map(x => x.depot.id)).size;
+  zone.innerHTML = `<div class="ts-tete"><div><h3>Traitement simultané — ${echapper(libelleType(ts.type))}</h3>
+      <p class="aide">${pl(ts.items.length, "point")} de ${pl(nbDep, "dépôt")}, regroupés en ${pl(groupes.length, "rubrique")} proposée${groupes.length > 1 ? "s" : ""} ; ${pl(restants, "point restant", "points restants")}. Le contexte de chaque clause est celui de son dépôt.</p></div>
+      <button class="bouton secondaire" id="ts-fermer">Revenir à l'ordre d'arrivée</button></div>
+    ${ts.items.length ? "" : `<p class="vide">Aucun point restant pour ce type d'acte.</p>`}
+    ${groupes.map(g => {
+      const reste = g.items.filter(x => x.etat === undefined).length, r = rubs[g.cle];
+      const art = r ? ts.clausier.articles.find(a => a.num === r.article) : null;
+      return `<details class="ts-groupe${reste ? "" : " fini"}" data-groupe="${echapper(g.cle)}"${ts.ouverts.has(g.cle) ? " open" : ""}>
+        <summary><span class="r-id">${r ? echapper(r.id) : "—"}</span><span class="r-titre">${r ? echapper(r.titre) : "Sans rubrique évidente"}</span>
+          ${art ? `<span class="r-id">article ${art.num}, ${echapper(art.titre)}</span>` : ""}
+          <span class="r-compte">${reste ? `${pl(reste, "point")} à trancher` : "groupe tranché"} · ${pl(new Set(g.items.map(x => x.depot.id)).size, "dépôt")}</span></summary>
+        <div class="ts-corps">
+          ${g.cle && reste > 1 ? `<div class="ts-actions-groupe"><button class="bouton secondaire" data-tout="${echapper(g.cle)}">Valider les ${reste} points dans cette rubrique</button></div>` : ""}
+          ${g.items.map((it, j) => {
+            const fait = it.etat !== undefined;
+            const verdict = it.etat === null ? '<span class="verdict">écarté</span>' : it.etat ? `<span class="verdict ok">→ ${echapper(libRub(it.etat))}</span>` : it.candidats.length ? "" : '<span class="verdict">aucune rubrique évidente</span>';
+            return `<div class="ranger-point${fait ? " classee" : ""}" data-item="${ts.items.indexOf(it)}">
+              <div class="rp-haut"><span class="source">${echapper(it.depot.nom)}</span><span class="num">Point ${echapper(it.num)}</span>${verdict}
+                ${it.contextes.length ? `<span class="ctx">${echapper(it.contextes.join(", "))}</span>` : ""}</div>
+              <div class="rp-texte">${echapper(it.texte.slice(0, 600))}${it.texte.length > 600 ? "…" : ""}</div>
+              ${fait ? "" : `<div class="rp-prop">
+                <div class="rp-choix">${it.candidats.map((c, i) => `<button data-choisir="${echapper(c.id)}" class="${i ? "second" : ""}" aria-pressed="false">${i ? "2ᵉ candidate" : "Proposée"}<span class="r-id">${echapper(libRub(c.id))}</span>${c.mots?.length ? `<span class="r-mots">${echapper(c.mots.slice(0, 4).join(", "))}</span>` : ""}</button>`).join("")}</div>
+                <div class="rp-actions">
+                  <select aria-label="Choisir une autre rubrique"><option value="">Autre rubrique…</option>${options}</select>
+                  <button class="bouton valider" disabled>Valider</button>
+                  <button class="bouton discret ecarter">Écarter</button>
+                </div></div>`}
+            </div>`;
+          }).join("")}
+        </div></details>`;
+    }).join("")}`;
+  brancherSimultane();
+}
+function brancherSimultane() {
+  const zone = $("simultane");
+  $("ts-fermer").addEventListener("click", () => { zone.style.display = "none"; zone.innerHTML = ""; ts.items = []; chargerFile(); });
+  zone.querySelectorAll(".ts-groupe").forEach(d => d.addEventListener("toggle", () => { d.open ? ts.ouverts.add(d.dataset.groupe) : ts.ouverts.delete(d.dataset.groupe); }));
+  zone.querySelectorAll("[data-tout]").forEach(b => b.addEventListener("click", () => { b.disabled = true; b.textContent = "Rangement…"; validerGroupe(b.dataset.tout); }));
+  zone.querySelectorAll(".ranger-point[data-item]").forEach(bloc => {
+    const it = ts.items[+bloc.dataset.item], sel = bloc.querySelector("select"), valider = bloc.querySelector(".valider");
+    let choisi = null;
+    const poser = id => { choisi = id || null;
+      bloc.querySelectorAll("[data-choisir]").forEach(b => b.setAttribute("aria-pressed", b.dataset.choisir === id));
+      if (valider) valider.disabled = !choisi; };
+    bloc.querySelectorAll("[data-choisir]").forEach(b => b.addEventListener("click", () => { if (sel) sel.value = ""; poser(b.dataset.choisir); }));
+    sel?.addEventListener("change", () => { bloc.querySelectorAll("[data-choisir]").forEach(b => b.setAttribute("aria-pressed", "false")); poser(sel.value); });
+    valider?.addEventListener("click", () => choisi && trancherSimultane([it], choisi, bloc));
+    bloc.querySelector(".ecarter")?.addEventListener("click", () => trancherSimultane([it], null, bloc));
+  });
+}
+// rubriqueId = null → écarter ; une seule écriture du clausier pour tout le lot
+async function trancherSimultane(items, rubriqueId, bloc) {
+  bloc?.querySelectorAll("button,select").forEach(b => b.disabled = true);
+  try {
+    ts.clausier = await modifierClausier(f => {
+      for (const it of items) {
+        if (rubriqueId) ajouterClause(f, { depot: it.depot, num: it.num, texte: it.texte, contextes: it.contextes, rubriqueId });
+        else (f.journal ||= []).push({ quand: new Date().toISOString(), quoi: "ecarter", point: it.num, depot: it.depot.id });
+      }
+    }, ts.fichier);
+    items.forEach(it => it.etat = rubriqueId);
+  } catch (e) { montrerErreur((rubriqueId ? "Rangement" : "Écart") + " non enregistré : " + e.message); }
+  dessinerSimultane();
+}
+function validerGroupe(cle) {
+  const items = ts.items.filter(x => x.etat === undefined && x.candidats[0]?.id === cle);
+  return trancherSimultane(items, cle);
+}
+
 $("btn-ranger").addEventListener("click", ouvrirRangement);
 // Type d'acte choisi dans la fiche : enregistré sur le dépôt (un dépôt versé « à reconnaître » peut ainsi être rangé)
 $("fiche-type").addEventListener("change", async e => {
