@@ -338,6 +338,11 @@ mark{background:var(--jaune-forme);color:inherit;padding:0 1px}
 
 .cl-ranger-tete{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:14px 0 6px}
 .cl-ranger-tete .avance{font-size:.9rem;color:var(--doux)}
+.cl-ranger-tete .clavier{display:inline-flex;gap:6px;align-items:center;font-size:.86rem;color:var(--nuit);margin:0 0 0 auto}
+.cl-ranger-tete .clavier input{width:auto;margin:0}
+.aide-clavier{font-size:.8rem;color:var(--doux);margin:-2px 0 8px}
+.aide-clavier kbd{font-family:inherit;border:1px solid var(--trait);border-bottom-width:2px;border-radius:3px;padding:0 5px;background:#fff;color:var(--nuit)}
+.ranger-point.courant{outline:3px solid var(--cyan);outline-offset:2px}
 .cl-ctx{background:#F7FBFB;border:1px solid var(--trait);border-radius:4px;padding:10px 14px;margin:8px 0 14px}
 .cl-ctx .lib{font-size:.85rem;color:var(--nuit);font-weight:600;margin-bottom:6px}
 .cl-ctx label{display:inline-flex;align-items:center;gap:5px;margin:0 12px 4px 0;font-size:.88rem;color:var(--texte)}
@@ -368,7 +373,7 @@ mark{background:var(--jaune-forme);color:inherit;padding:0 1px}
 <body>
 <header>
   <h1>MONETA</h1>
-  <small>Le clausier du cabinet, version 1.6</small>
+  <small>Le clausier du cabinet, version 1.7</small>
   <span id="etat-connexion">Connexion au Drive…</span>
   <button id="btn-connexion">Autoriser l'accès au Drive</button>
 </header>
@@ -454,7 +459,7 @@ mark{background:var(--jaune-forme);color:inherit;padding:0 1px}
 
 <script>
 /* ============================================================
-   MONETA — version 1.6 du 10/10/2026 (SECONDE PASSE DE COMPARAISON, PAR LE SENS : empreintes fabriquées par un seul petit modèle dans le navigateur, gardées par type d'acte sur le Drive, appliquées aux seuls points que la première passe n'a pas tranchés) ; 1.5 du 09/10/2026 (MOTEUR DE COMPARAISON, première passe mot à mot : verdict doublon / variante / nouvelle pour chaque point, AFFICHAGE CÔTE À CÔTE avec la clause de référence et ses différences, toutes les candidates proches quand le moteur hésite, doublon confirmé = une occurrence de plus sur la clause existante, verdict en couleur dans la file après première consultation) ; 1.4 du 09/10/2026 (article « Clôture et signature » ajouté aux deux plans, y compris aux clausiers déjà créés ; partie finale de l'acte versée ; mentions techniques de signature électronique et pieds de page répétés retirés avant découpe ; reconnaissance gratuite lancée d'office sur un scan, lecture par Claude proposée seulement pour les pages mal reconnues, avec le détail de ce qui manque) ; 1.3 du 09/10/2026 (DOUBLE PASSE SUR LES ACTES SCANNÉS, méthode reprise de TRENTE : pages sans texte détectées une à une, reconnaissance gratuite Tesseract dans le navigateur, puis lecture par Claude pour compléter, sur validation et après estimatif de coût ; texte reconnu signalé à relire dans la fiche) ; 1.2 du 09/10/2026 (MODE LECTURE SEULE : onglet « Consulter le clausier » en teinte de consultation, adresse directe ?consulter, bandeau avec retour au mode travail, aucun geste de modification ; sélection de clauses et envoi par mail d'un fichier Word aux champs entre crochets colorisés) ; 1.1 du 09/10/2026 (TRAITEMENT SIMULTANÉ : tous les points restants des dépôts d'un même type d'acte regroupés par rubrique proposée, tranchés en bloc ou un à un ; bascule avec l'ordre d'arrivée) ; 1.0 du 09/10/2026 (file « À traiter » : tableau de bord de la file, avancement de chaque dépôt, bouton « Mettre de côté » et liste des dépôts en attente ; compteurs d'usage dissociés du classement des clauses) ; 0.9 du 09/10/2026 (couverture du clausier par rubrique et par article, fiche éditable de la clause, journal de relecture avec rangement défait seul ou par lot, signal d'un acte non numéroté versé dans un clausier pauvre) ; 0.8 du 09/10/2026 (ciseau : coupe manuelle d'un point entre paragraphes ou puces, partie détachée lettrée, phrase d'annonce reprise, coupes conservées à la redécoupe, recollage) ; 0.7 du 09/10/2026 (ergonomie : fil d'Ariane collant, clause étoile choisie à la main et épinglée, compteurs indicatifs d'actes versés et de reprises en rédaction, comparaison côte à côte de deux variantes, recherche plein texte et filtres par contexte, sens, nature et texte visé, étapes du versement) ; 0.6 du 08/10/2026 (rangement des points d'un dépôt dans le clausier : proposition et deuxième candidate, contexte coché, validation point par point ou en bloc, journal des mouvements) ; 0.5 du 08/10/2026 (module Clausier, première tranche : plans de référence PSV AKZO et PUV R3S, numéros permanents, page Clausier) ; 0.4 du 08/10/2026 (titres des PDF non numérotés déduits de la mise en forme) ; 0.3 du 08/10/2026 (lecture Word avec numérotation automatique, contrôles de vraisemblance) ; 0.2 : moteur de découpe en service ; squelette du 07/10/2026
+   MONETA — version 1.7 du 10/10/2026 (RACCOURCIS CLAVIER dans le rangement, désactivés par défaut : D doublon, V variante, Entrée valider la proposée, E écarter, flèches pour changer de point) ; 1.6 du 10/10/2026 (SECONDE PASSE DE COMPARAISON, PAR LE SENS : empreintes fabriquées par un seul petit modèle dans le navigateur, gardées par type d'acte sur le Drive, appliquées aux seuls points que la première passe n'a pas tranchés) ; 1.5 du 09/10/2026 (MOTEUR DE COMPARAISON, première passe mot à mot : verdict doublon / variante / nouvelle pour chaque point, AFFICHAGE CÔTE À CÔTE avec la clause de référence et ses différences, toutes les candidates proches quand le moteur hésite, doublon confirmé = une occurrence de plus sur la clause existante, verdict en couleur dans la file après première consultation) ; 1.4 du 09/10/2026 (article « Clôture et signature » ajouté aux deux plans, y compris aux clausiers déjà créés ; partie finale de l'acte versée ; mentions techniques de signature électronique et pieds de page répétés retirés avant découpe ; reconnaissance gratuite lancée d'office sur un scan, lecture par Claude proposée seulement pour les pages mal reconnues, avec le détail de ce qui manque) ; 1.3 du 09/10/2026 (DOUBLE PASSE SUR LES ACTES SCANNÉS, méthode reprise de TRENTE : pages sans texte détectées une à une, reconnaissance gratuite Tesseract dans le navigateur, puis lecture par Claude pour compléter, sur validation et après estimatif de coût ; texte reconnu signalé à relire dans la fiche) ; 1.2 du 09/10/2026 (MODE LECTURE SEULE : onglet « Consulter le clausier » en teinte de consultation, adresse directe ?consulter, bandeau avec retour au mode travail, aucun geste de modification ; sélection de clauses et envoi par mail d'un fichier Word aux champs entre crochets colorisés) ; 1.1 du 09/10/2026 (TRAITEMENT SIMULTANÉ : tous les points restants des dépôts d'un même type d'acte regroupés par rubrique proposée, tranchés en bloc ou un à un ; bascule avec l'ordre d'arrivée) ; 1.0 du 09/10/2026 (file « À traiter » : tableau de bord de la file, avancement de chaque dépôt, bouton « Mettre de côté » et liste des dépôts en attente ; compteurs d'usage dissociés du classement des clauses) ; 0.9 du 09/10/2026 (couverture du clausier par rubrique et par article, fiche éditable de la clause, journal de relecture avec rangement défait seul ou par lot, signal d'un acte non numéroté versé dans un clausier pauvre) ; 0.8 du 09/10/2026 (ciseau : coupe manuelle d'un point entre paragraphes ou puces, partie détachée lettrée, phrase d'annonce reprise, coupes conservées à la redécoupe, recollage) ; 0.7 du 09/10/2026 (ergonomie : fil d'Ariane collant, clause étoile choisie à la main et épinglée, compteurs indicatifs d'actes versés et de reprises en rédaction, comparaison côte à côte de deux variantes, recherche plein texte et filtres par contexte, sens, nature et texte visé, étapes du versement) ; 0.6 du 08/10/2026 (rangement des points d'un dépôt dans le clausier : proposition et deuxième candidate, contexte coché, validation point par point ou en bloc, journal des mouvements) ; 0.5 du 08/10/2026 (module Clausier, première tranche : plans de référence PSV AKZO et PUV R3S, numéros permanents, page Clausier) ; 0.4 du 08/10/2026 (titres des PDF non numérotés déduits de la mise en forme) ; 0.3 du 08/10/2026 (lecture Word avec numérotation automatique, contrôles de vraisemblance) ; 0.2 : moteur de découpe en service ; squelette du 07/10/2026
    Arbitrages (fiche clausier) : une application, deux moteurs ;
    on VERSE d'un côté (file d'attente sur le Drive), on TRAITE quand on veut ;
    le DÉCOUPAGE (neutralisation en champs, coupe en clauses, destination
@@ -1553,7 +1558,9 @@ function dessinerRangement() {
       <div id="rg-ctx">${ctx}<input class="ajout" id="rg-ctx-ajout" placeholder="autre contexte" aria-label="Ajouter un contexte"></div></div>
     ${barreSens()}
     <div class="cl-ranger-tete"><b>Ranger les points</b><span class="avance" id="rg-avance">${faits} sur ${total} classés</span>
-      <button class="bouton secondaire" id="rg-tout">Valider toutes les propositions</button></div>
+      <button class="bouton secondaire" id="rg-tout">Valider toutes les propositions</button>
+      <label class="clavier"><input type="checkbox" id="rg-clavier"${clavierActif() ? " checked" : ""}> Raccourcis clavier</label></div>
+    ${clavierActif() ? `<p class="aide-clavier"><kbd>D</kbd> doublon · <kbd>V</kbd> variante · <kbd>Entrée</kbd> valider la proposée · <kbd>E</kbd> écarter · <kbd>↓</kbd> <kbd>↑</kbd> point suivant ou précédent</p>` : ""}
     <div id="rg-liste">${rg.points.map(p => {
       const cand = propo.get(p.num) || [], deja = rg.dejaRanges.has(p.num), choix = rg.choix[p.num];
       const classee = deja || choix !== undefined;
@@ -1576,6 +1583,8 @@ function dessinerRangement() {
     }).join("")}</div>`;
   brancherRangement();
   $("rg-sens")?.addEventListener("click", lancerSens);
+  $("rg-clavier")?.addEventListener("change", e => { try { localStorage.setItem("moneta-clavier", e.target.checked ? "1" : "0"); } catch { } dessinerRangement(); });
+  marquerCourant(!!rg.defiler); rg.defiler = false;
   zone.querySelectorAll(".ranger-point:not(.classee)").forEach(bloc => {
     const num = bloc.dataset.point, p = rg.points.find(x => x.num === num);
     if (rg.cmp?.[num]) brancherComparaison(bloc, rg.cmp[num], p.texte, { doublon: id => confirmerDoublon(num, id), variante: rid => validerPoint(num, rid) });
@@ -1628,6 +1637,40 @@ async function validerPoint(num, rubriqueId) {
   try { await enregistrerClause(num, rubriqueId); rg.choix[num] = rubriqueId; rg.dejaRanges.add(num); dessinerRangement(); }
   catch (e) { montrerErreur("Point non rangé : " + e.message); dessinerRangement(); }
 }
+/* ---------- RACCOURCIS CLAVIER (1.7) — tranchés le 09/10/2026, désactivés par défaut ----------
+   Le point en cours est encadré ; chaque touche agit sur lui ; après une décision, le point
+   suivant non tranché devient le point en cours. Aucun effet pendant une saisie. */
+const clavierActif = () => { try { return localStorage.getItem("moneta-clavier") === "1"; } catch { return false; } };
+const pointsOuverts = () => [...document.querySelectorAll("#fiche-ranger .ranger-point:not(.classee)")];
+function marquerCourant(defiler = true) {
+  document.querySelectorAll("#fiche-ranger .ranger-point.courant").forEach(b => b.classList.remove("courant"));
+  if (!clavierActif()) return;
+  const ouverts = pointsOuverts(); if (!ouverts.length) { rg.courant = null; return; }
+  let b = ouverts.find(x => x.dataset.point === rg.courant);
+  if (!b) {   // le point en cours vient d'être tranché : on passe au suivant dans l'ordre de l'acte
+    const ordre = rg.points.map(p => p.num), i = ordre.indexOf(rg.courant);
+    b = ouverts.find(x => ordre.indexOf(x.dataset.point) > i) || ouverts[0];
+  }
+  rg.courant = b.dataset.point; b.classList.add("courant");
+  if (defiler) b.scrollIntoView({ behavior: "smooth", block: "center" });
+}
+document.addEventListener("keydown", e => {
+  if (!clavierActif() || e.ctrlKey || e.metaKey || e.altKey) return;
+  const fiche = $("fiche-ranger"); if (!fiche || fiche.offsetParent === null || !rg.points?.length) return;
+  if (/^(INPUT|SELECT|TEXTAREA)$/.test(document.activeElement?.tagName || "") || document.activeElement?.isContentEditable) return;
+  const ouverts = pointsOuverts(); if (!ouverts.length) return;
+  const b = ouverts.find(x => x.dataset.point === rg.courant) || ouverts[0], num = b.dataset.point, k = e.key.toLowerCase();
+  const geste = () => { e.preventDefault(); rg.courant = num; rg.defiler = true; };
+  if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+    e.preventDefault(); const i = ouverts.indexOf(b), j = e.key === "ArrowDown" ? Math.min(i + 1, ouverts.length - 1) : Math.max(i - 1, 0);
+    rg.courant = ouverts[j].dataset.point; marquerCourant(); return;
+  }
+  if (k === "d") { const x = b.querySelector("[data-doublon]"); if (x) { geste(); x.click(); } return; }
+  if (k === "v") { const x = b.querySelector("[data-variante]"); if (x) { geste(); x.click(); } return; }
+  if (k === "e") { geste(); ecarterPoint(num); return; }
+  if (e.key === "Enter") { const x = b.querySelector("[data-choisir]"); if (x) { geste(); validerPoint(num, x.dataset.choisir); } }
+});
+
 // Barre de la seconde passe : lancée à la main la première fois (téléchargement du modèle), d'office ensuite
 function aTrancherSens() { return rg.points.filter(p => !rg.dejaRanges.has(p.num) && rg.choix[p.num] === undefined && rg.cmp?.[p.num] && rg.cmp[p.num].verdict !== "doublon" && rg.cmp[p.num].passe !== 2 && !rg.cmp[p.num].sensVu); }
 const nbClausesAutres = () => Object.values(rg.clausier.rubriques).reduce((n, r) => n + r.clauses.filter(c => c.source?.depot !== rg.depot.id).length, 0);
