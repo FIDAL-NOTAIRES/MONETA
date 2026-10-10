@@ -11,16 +11,18 @@
 import { decouper, VERSION_DECOUPE } from "./_decoupe.js";
 import { ranger, VERSION_RANGEMENT } from "./_rangement.js";
 import { lire, tarif, VERSION_LECTURE } from "./_lecture.js";
+import { neutraliser, VERSION_NEUTRALISATION } from "./_neutraliser.js";
 
-const ACTIONS = { decouper: "découpe", ranger: "rangement", lire: "lecture des pages scannées", comparer: "comparaison" };
+const ACTIONS = { decouper: "découpe", ranger: "rangement", lire: "lecture des pages scannées", neutraliser: "neutralisation", comparer: "comparaison" };
 const TAILLE_MAX = 3_000_000;   // caractères : un acte fait rarement plus de 300 000
 
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
-  if (req.method === "GET") return res.status(200).json({ moneta: { version: "1.3",
+  if (req.method === "GET") return res.status(200).json({ moneta: { version: "1.9",
     moteurs: { decouper: { etat: "en service", version: VERSION_DECOUPE },
                ranger: { etat: "en service", version: VERSION_RANGEMENT },
                lire: { etat: tarif().disponible ? "en service" : "clé API absente", version: VERSION_LECTURE, ...tarif() },
+               neutraliser: { etat: tarif().disponible ? "en service" : "clé API absente", version: VERSION_NEUTRALISATION },
                comparer: { etat: "à venir" } } } });
   if (req.method !== "POST") return res.status(405).json({ erreur: { code: "methode", message: "GET ou POST seulement." } });
   let corps = req.body;
@@ -41,6 +43,13 @@ export default async function handler(req, res) {
     if (!Array.isArray(rubriques) || !rubriques.length) return res.status(400).json({ erreur: { code: "rubriques", message: "Le plan du clausier est vide." } });
     try { return res.status(200).json({ rangement: ranger({ points, rubriques, texte_acte }) }); }
     catch (e) { return res.status(500).json({ erreur: { code: "rangement", message: "Rangement en échec : " + (e.message || e) } }); }
+  }
+  if (action === "neutraliser") {
+    const { points, nom, type } = corps;
+    if (!Array.isArray(points) || !points.length || points.some(p => !p || typeof p.texte !== "string")) return res.status(400).json({ erreur: { code: "points", message: "Aucun point à neutraliser." } });
+    if (points.reduce((n, p) => n + p.texte.length, 0) > 30000) return res.status(400).json({ erreur: { code: "lot", message: "Lot trop long (30 000 signes au plus)." } });
+    try { return res.status(200).json({ neutralisation: await neutraliser({ points, nom, type }) }); }
+    catch (e) { return res.status(e.code === "cle" ? 503 : 502).json({ erreur: { code: e.code || "neutralisation", message: "Neutralisation en échec : " + (e.message || e) } }); }
   }
   if (action === "lire") {
     const { pages, nom } = corps;
