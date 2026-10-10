@@ -373,7 +373,7 @@ mark{background:var(--jaune-forme);color:inherit;padding:0 1px}
 <body>
 <header>
   <h1>MONETA</h1>
-  <small>Le clausier du cabinet, version 1.7</small>
+  <small>Le clausier du cabinet, version 1.8</small>
   <span id="etat-connexion">Connexion au Drive…</span>
   <button id="btn-connexion">Autoriser l'accès au Drive</button>
 </header>
@@ -459,7 +459,7 @@ mark{background:var(--jaune-forme);color:inherit;padding:0 1px}
 
 <script>
 /* ============================================================
-   MONETA — version 1.7 du 10/10/2026 (RACCOURCIS CLAVIER dans le rangement, désactivés par défaut : D doublon, V variante, Entrée valider la proposée, E écarter, flèches pour changer de point) ; 1.6 du 10/10/2026 (SECONDE PASSE DE COMPARAISON, PAR LE SENS : empreintes fabriquées par un seul petit modèle dans le navigateur, gardées par type d'acte sur le Drive, appliquées aux seuls points que la première passe n'a pas tranchés) ; 1.5 du 09/10/2026 (MOTEUR DE COMPARAISON, première passe mot à mot : verdict doublon / variante / nouvelle pour chaque point, AFFICHAGE CÔTE À CÔTE avec la clause de référence et ses différences, toutes les candidates proches quand le moteur hésite, doublon confirmé = une occurrence de plus sur la clause existante, verdict en couleur dans la file après première consultation) ; 1.4 du 09/10/2026 (article « Clôture et signature » ajouté aux deux plans, y compris aux clausiers déjà créés ; partie finale de l'acte versée ; mentions techniques de signature électronique et pieds de page répétés retirés avant découpe ; reconnaissance gratuite lancée d'office sur un scan, lecture par Claude proposée seulement pour les pages mal reconnues, avec le détail de ce qui manque) ; 1.3 du 09/10/2026 (DOUBLE PASSE SUR LES ACTES SCANNÉS, méthode reprise de TRENTE : pages sans texte détectées une à une, reconnaissance gratuite Tesseract dans le navigateur, puis lecture par Claude pour compléter, sur validation et après estimatif de coût ; texte reconnu signalé à relire dans la fiche) ; 1.2 du 09/10/2026 (MODE LECTURE SEULE : onglet « Consulter le clausier » en teinte de consultation, adresse directe ?consulter, bandeau avec retour au mode travail, aucun geste de modification ; sélection de clauses et envoi par mail d'un fichier Word aux champs entre crochets colorisés) ; 1.1 du 09/10/2026 (TRAITEMENT SIMULTANÉ : tous les points restants des dépôts d'un même type d'acte regroupés par rubrique proposée, tranchés en bloc ou un à un ; bascule avec l'ordre d'arrivée) ; 1.0 du 09/10/2026 (file « À traiter » : tableau de bord de la file, avancement de chaque dépôt, bouton « Mettre de côté » et liste des dépôts en attente ; compteurs d'usage dissociés du classement des clauses) ; 0.9 du 09/10/2026 (couverture du clausier par rubrique et par article, fiche éditable de la clause, journal de relecture avec rangement défait seul ou par lot, signal d'un acte non numéroté versé dans un clausier pauvre) ; 0.8 du 09/10/2026 (ciseau : coupe manuelle d'un point entre paragraphes ou puces, partie détachée lettrée, phrase d'annonce reprise, coupes conservées à la redécoupe, recollage) ; 0.7 du 09/10/2026 (ergonomie : fil d'Ariane collant, clause étoile choisie à la main et épinglée, compteurs indicatifs d'actes versés et de reprises en rédaction, comparaison côte à côte de deux variantes, recherche plein texte et filtres par contexte, sens, nature et texte visé, étapes du versement) ; 0.6 du 08/10/2026 (rangement des points d'un dépôt dans le clausier : proposition et deuxième candidate, contexte coché, validation point par point ou en bloc, journal des mouvements) ; 0.5 du 08/10/2026 (module Clausier, première tranche : plans de référence PSV AKZO et PUV R3S, numéros permanents, page Clausier) ; 0.4 du 08/10/2026 (titres des PDF non numérotés déduits de la mise en forme) ; 0.3 du 08/10/2026 (lecture Word avec numérotation automatique, contrôles de vraisemblance) ; 0.2 : moteur de découpe en service ; squelette du 07/10/2026
+   MONETA — version 1.8 du 10/10/2026 (seconde passe, par le sens, aussi dans le TRAITEMENT SIMULTANÉ) ; 1.7 du 10/10/2026 (RACCOURCIS CLAVIER dans le rangement, désactivés par défaut : D doublon, V variante, Entrée valider la proposée, E écarter, flèches pour changer de point) ; 1.6 du 10/10/2026 (SECONDE PASSE DE COMPARAISON, PAR LE SENS : empreintes fabriquées par un seul petit modèle dans le navigateur, gardées par type d'acte sur le Drive, appliquées aux seuls points que la première passe n'a pas tranchés) ; 1.5 du 09/10/2026 (MOTEUR DE COMPARAISON, première passe mot à mot : verdict doublon / variante / nouvelle pour chaque point, AFFICHAGE CÔTE À CÔTE avec la clause de référence et ses différences, toutes les candidates proches quand le moteur hésite, doublon confirmé = une occurrence de plus sur la clause existante, verdict en couleur dans la file après première consultation) ; 1.4 du 09/10/2026 (article « Clôture et signature » ajouté aux deux plans, y compris aux clausiers déjà créés ; partie finale de l'acte versée ; mentions techniques de signature électronique et pieds de page répétés retirés avant découpe ; reconnaissance gratuite lancée d'office sur un scan, lecture par Claude proposée seulement pour les pages mal reconnues, avec le détail de ce qui manque) ; 1.3 du 09/10/2026 (DOUBLE PASSE SUR LES ACTES SCANNÉS, méthode reprise de TRENTE : pages sans texte détectées une à une, reconnaissance gratuite Tesseract dans le navigateur, puis lecture par Claude pour compléter, sur validation et après estimatif de coût ; texte reconnu signalé à relire dans la fiche) ; 1.2 du 09/10/2026 (MODE LECTURE SEULE : onglet « Consulter le clausier » en teinte de consultation, adresse directe ?consulter, bandeau avec retour au mode travail, aucun geste de modification ; sélection de clauses et envoi par mail d'un fichier Word aux champs entre crochets colorisés) ; 1.1 du 09/10/2026 (TRAITEMENT SIMULTANÉ : tous les points restants des dépôts d'un même type d'acte regroupés par rubrique proposée, tranchés en bloc ou un à un ; bascule avec l'ordre d'arrivée) ; 1.0 du 09/10/2026 (file « À traiter » : tableau de bord de la file, avancement de chaque dépôt, bouton « Mettre de côté » et liste des dépôts en attente ; compteurs d'usage dissociés du classement des clauses) ; 0.9 du 09/10/2026 (couverture du clausier par rubrique et par article, fiche éditable de la clause, journal de relecture avec rangement défait seul ou par lot, signal d'un acte non numéroté versé dans un clausier pauvre) ; 0.8 du 09/10/2026 (ciseau : coupe manuelle d'un point entre paragraphes ou puces, partie détachée lettrée, phrase d'annonce reprise, coupes conservées à la redécoupe, recollage) ; 0.7 du 09/10/2026 (ergonomie : fil d'Ariane collant, clause étoile choisie à la main et épinglée, compteurs indicatifs d'actes versés et de reprises en rédaction, comparaison côte à côte de deux variantes, recherche plein texte et filtres par contexte, sens, nature et texte visé, étapes du versement) ; 0.6 du 08/10/2026 (rangement des points d'un dépôt dans le clausier : proposition et deuxième candidate, contexte coché, validation point par point ou en bloc, journal des mouvements) ; 0.5 du 08/10/2026 (module Clausier, première tranche : plans de référence PSV AKZO et PUV R3S, numéros permanents, page Clausier) ; 0.4 du 08/10/2026 (titres des PDF non numérotés déduits de la mise en forme) ; 0.3 du 08/10/2026 (lecture Word avec numérotation automatique, contrôles de vraisemblance) ; 0.2 : moteur de découpe en service ; squelette du 07/10/2026
    Arbitrages (fiche clausier) : une application, deux moteurs ;
    on VERSE d'un côté (file d'attente sur le Drive), on TRAITE quand on veut ;
    le DÉCOUPAGE (neutralisation en champs, coupe en clauses, destination
@@ -1750,7 +1750,9 @@ async function ouvrirSimultane(type) {
         cmp: comparerPoint(p.texte, { rubriques: Object.fromEntries(Object.entries(ts.clausier.rubriques).map(([k, r]) => [k, { ...r, clauses: r.clauses.filter(c => c.source?.depot !== d.id) }])) }) });
     }
     const premier = groupesSimultane()[0]; if (premier) ts.ouverts.add(premier.cle);
+    ts.sensEtat = null;
     dessinerSimultane();
+    if (sensDejaUtilise() && aTrancherSensTs().length) lancerSensSimultane();   // modèle déjà en réserve : seconde passe d'office
   } catch (e) { $("ts-etat").textContent = "Traitement simultané impossible : " + e.message; }
 }
 function groupesSimultane() {
@@ -1770,6 +1772,7 @@ function dessinerSimultane() {
   zone.innerHTML = `<div class="ts-tete"><div><h3>Traitement simultané — ${echapper(libelleType(ts.type))}</h3>
       <p class="aide">${pl(ts.items.length, "point")} de ${pl(nbDep, "dépôt")}, regroupés en ${pl(groupes.length, "rubrique")} proposée${groupes.length > 1 ? "s" : ""} ; ${pl(restants, "point restant", "points restants")}. Le contexte de chaque clause est celui de son dépôt.</p></div>
       <button class="bouton secondaire" id="ts-fermer">Revenir à l'ordre d'arrivée</button></div>
+    ${barreSensSimultane()}
     ${ts.items.length ? "" : `<p class="vide">Aucun point restant pour ce type d'acte.</p>`}
     ${groupes.map(g => {
       const reste = g.items.filter(x => x.etat === undefined).length, r = rubs[g.cle];
@@ -1803,6 +1806,7 @@ function dessinerSimultane() {
 function brancherSimultane() {
   const zone = $("simultane");
   $("ts-fermer").addEventListener("click", () => { zone.style.display = "none"; zone.innerHTML = ""; ts.items = []; chargerFile(); });
+  $("ts-sens")?.addEventListener("click", lancerSensSimultane);
   zone.querySelectorAll(".ts-groupe").forEach(d => d.addEventListener("toggle", () => { d.open ? ts.ouverts.add(d.dataset.groupe) : ts.ouverts.delete(d.dataset.groupe); }));
   zone.querySelectorAll("[data-tout]").forEach(b => b.addEventListener("click", () => { b.disabled = true; b.textContent = "Rangement…"; validerGroupe(b.dataset.tout); }));
   zone.querySelectorAll(".ranger-point[data-item]").forEach(bloc => {
@@ -1817,6 +1821,36 @@ function brancherSimultane() {
     if (it.cmp && it.etat === undefined) brancherComparaison(bloc, it.cmp, it.texte, { doublon: id => trancherSimultane([it], { doublon: id }, bloc), variante: rid => trancherSimultane([it], rid, bloc) });
     bloc.querySelector(".ecarter")?.addEventListener("click", () => trancherSimultane([it], null, bloc));
   });
+}
+// 1.8 — seconde passe, par le sens, dans le traitement simultané : même moteur, dépôt par dépôt
+// (chaque point n'est comparé qu'aux clauses venues d'autres dépôts), fusion « le verdict le plus fort l'emporte »
+const aTrancherSensTs = () => ts.items.filter(it => it.etat === undefined && it.cmp && it.cmp.verdict !== "doublon" && it.cmp.passe !== 2 && !it.cmp.sensVu);
+function barreSensSimultane() {
+  if (ts.sensEtat) return `<div class="note-moteur" id="ts-sens-etat">${ts.sensEtat}</div>`;
+  const n = aTrancherSensTs().length;
+  if (!n || !Object.values(ts.clausier.rubriques).some(r => r.clauses.length)) return "";
+  return `<div class="note-moteur">${pl(n, "point reste", "points restent")} sans doublon évident mot à mot : la <b>seconde passe, par le sens</b>, cherche les clauses qui disent la même chose avec d'autres mots. Gratuite, dans votre navigateur${sensDejaUtilise() ? "" : " ; la première fois, le modèle (environ 120 Mo) se télécharge"}.
+    <button class="bouton secondaire" id="ts-sens" style="margin-left:8px">Comparer le sens</button></div>`;
+}
+async function lancerSensSimultane() {
+  const items = aTrancherSensTs(); if (!items.length) return;
+  const maj = t => { ts.sensEtat = t; const z = $("ts-sens-etat"); if (z) z.textContent = t; else dessinerSimultane(); };
+  maj("Seconde passe : préparation du modèle…");
+  const rang = { nouvelle: 0, variante: 1, doublon: 2 }, bilan = { doublon: 0, variante: 0, nouvelle: 0 };
+  try {
+    const parDepot = new Map(); for (const it of items) { if (!parDepot.has(it.depot.id)) parDepot.set(it.depot.id, []); parDepot.get(it.depot.id).push(it); }
+    let k = 0;
+    for (const [depotId, lot] of parDepot) {
+      k++;
+      const res = await passeSens({ code: ts.type, clausier: ts.clausier, depotId, points: lot.map(it => ({ num: it.num, texte: it.texte })),
+        progres: t => maj(`Dépôt ${k} sur ${parDepot.size} (${lot[0].depot.nom}) — ${t}`) });
+      for (const it of lot) { const x = res[it.num]; if (!x) continue; bilan[x.verdict]++;
+        it.cmp = rang[x.verdict] >= rang[it.cmp.verdict] ? x : { ...it.cmp, sensVu: true }; }
+    }
+    try { localStorage.setItem("moneta-sens", MODELE_SENS); } catch { }
+    ts.sensEtat = `Seconde passe faite sur ${pl(items.length, "point")} : ${bilan.doublon} même sens, ${bilan.variante} même sujet, ${bilan.nouvelle} sans équivalent.`;
+  } catch (e) { ts.sensEtat = `Seconde passe impossible : ${echapper(e.message)}. La première passe reste valable.`; }
+  dessinerSimultane();
 }
 // rubriqueId = null → écarter ; une seule écriture du clausier pour tout le lot
 async function trancherSimultane(items, rubriqueId, bloc) {
