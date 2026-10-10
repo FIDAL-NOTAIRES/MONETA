@@ -130,6 +130,12 @@ table.file tr.ouvert td{background:#EAFAFB}
 #zone-cote label{font-size:.88rem;margin-bottom:4px;display:block}
 #zone-cote input{width:100%;max-width:520px;padding:6px 10px;margin-bottom:8px}
 
+/* ---------- 2.0 — pourquoi cette variante ---------- */
+.clause details.pourquoi{margin:6px 0 2px;font-size:.86rem}
+.clause details.pourquoi summary{cursor:pointer;color:var(--canard);font-weight:600}
+.clause details.pourquoi p{margin:4px 0 0 2px;padding:6px 10px;border-left:3px solid var(--canard);background:#F3F8F8;font-style:italic}
+.clause details.pourquoi .qui{font-style:normal;color:var(--doux);font-size:.78rem}
+
 /* ---------- 1.9 — neutralisation ---------- */
 .champ{color:var(--canard);font-weight:700}
 .neutre-barre{border-left:4px solid var(--canard)}
@@ -377,7 +383,7 @@ mark{background:var(--jaune-forme);color:inherit;padding:0 1px}
 <body>
 <header>
   <h1>MONETA</h1>
-  <small>Le clausier du cabinet, version 1.9</small>
+  <small>Le clausier du cabinet, version 2.0</small>
   <span id="etat-connexion">Connexion au Drive…</span>
   <button id="btn-connexion">Autoriser l'accès au Drive</button>
 </header>
@@ -463,7 +469,7 @@ mark{background:var(--jaune-forme);color:inherit;padding:0 1px}
 
 <script>
 /* ============================================================
-   MONETA — version 1.9 du 10/10/2026 (NEUTRALISATION PAR CLAUDE à l'amorçage : bouton dans le rangement, estimatif, points neutralisés par lots, champs [ ] en couleur, texte neutralisé rangé et comparé, original gardé caché dans la clause) ; 1.8 du 10/10/2026 (seconde passe, par le sens, aussi dans le TRAITEMENT SIMULTANÉ) ; 1.7 du 10/10/2026 (RACCOURCIS CLAVIER dans le rangement, désactivés par défaut : D doublon, V variante, Entrée valider la proposée, E écarter, flèches pour changer de point) ; 1.6 du 10/10/2026 (SECONDE PASSE DE COMPARAISON, PAR LE SENS : empreintes fabriquées par un seul petit modèle dans le navigateur, gardées par type d'acte sur le Drive, appliquées aux seuls points que la première passe n'a pas tranchés) ; 1.5 du 09/10/2026 (MOTEUR DE COMPARAISON, première passe mot à mot : verdict doublon / variante / nouvelle pour chaque point, AFFICHAGE CÔTE À CÔTE avec la clause de référence et ses différences, toutes les candidates proches quand le moteur hésite, doublon confirmé = une occurrence de plus sur la clause existante, verdict en couleur dans la file après première consultation) ; 1.4 du 09/10/2026 (article « Clôture et signature » ajouté aux deux plans, y compris aux clausiers déjà créés ; partie finale de l'acte versée ; mentions techniques de signature électronique et pieds de page répétés retirés avant découpe ; reconnaissance gratuite lancée d'office sur un scan, lecture par Claude proposée seulement pour les pages mal reconnues, avec le détail de ce qui manque) ; 1.3 du 09/10/2026 (DOUBLE PASSE SUR LES ACTES SCANNÉS, méthode reprise de TRENTE : pages sans texte détectées une à une, reconnaissance gratuite Tesseract dans le navigateur, puis lecture par Claude pour compléter, sur validation et après estimatif de coût ; texte reconnu signalé à relire dans la fiche) ; 1.2 du 09/10/2026 (MODE LECTURE SEULE : onglet « Consulter le clausier » en teinte de consultation, adresse directe ?consulter, bandeau avec retour au mode travail, aucun geste de modification ; sélection de clauses et envoi par mail d'un fichier Word aux champs entre crochets colorisés) ; 1.1 du 09/10/2026 (TRAITEMENT SIMULTANÉ : tous les points restants des dépôts d'un même type d'acte regroupés par rubrique proposée, tranchés en bloc ou un à un ; bascule avec l'ordre d'arrivée) ; 1.0 du 09/10/2026 (file « À traiter » : tableau de bord de la file, avancement de chaque dépôt, bouton « Mettre de côté » et liste des dépôts en attente ; compteurs d'usage dissociés du classement des clauses) ; 0.9 du 09/10/2026 (couverture du clausier par rubrique et par article, fiche éditable de la clause, journal de relecture avec rangement défait seul ou par lot, signal d'un acte non numéroté versé dans un clausier pauvre) ; 0.8 du 09/10/2026 (ciseau : coupe manuelle d'un point entre paragraphes ou puces, partie détachée lettrée, phrase d'annonce reprise, coupes conservées à la redécoupe, recollage) ; 0.7 du 09/10/2026 (ergonomie : fil d'Ariane collant, clause étoile choisie à la main et épinglée, compteurs indicatifs d'actes versés et de reprises en rédaction, comparaison côte à côte de deux variantes, recherche plein texte et filtres par contexte, sens, nature et texte visé, étapes du versement) ; 0.6 du 08/10/2026 (rangement des points d'un dépôt dans le clausier : proposition et deuxième candidate, contexte coché, validation point par point ou en bloc, journal des mouvements) ; 0.5 du 08/10/2026 (module Clausier, première tranche : plans de référence PSV AKZO et PUV R3S, numéros permanents, page Clausier) ; 0.4 du 08/10/2026 (titres des PDF non numérotés déduits de la mise en forme) ; 0.3 du 08/10/2026 (lecture Word avec numérotation automatique, contrôles de vraisemblance) ; 0.2 : moteur de découpe en service ; squelette du 07/10/2026
+   MONETA — version 2.0 du 10/10/2026 (« POURQUOI CETTE VARIANTE » : à chaque point gardé comme variante, Claude rédige en une ligne ce qu'elle change sur le fond par rapport à la clause étoile ou à la plus proche ; affichée dans le clausier, corrigeable dans la fiche) ; 1.9 du 10/10/2026 (NEUTRALISATION PAR CLAUDE à l'amorçage : bouton dans le rangement, estimatif, points neutralisés par lots, champs [ ] en couleur, texte neutralisé rangé et comparé, original gardé caché dans la clause) ; 1.8 du 10/10/2026 (seconde passe, par le sens, aussi dans le TRAITEMENT SIMULTANÉ) ; 1.7 du 10/10/2026 (RACCOURCIS CLAVIER dans le rangement, désactivés par défaut : D doublon, V variante, Entrée valider la proposée, E écarter, flèches pour changer de point) ; 1.6 du 10/10/2026 (SECONDE PASSE DE COMPARAISON, PAR LE SENS : empreintes fabriquées par un seul petit modèle dans le navigateur, gardées par type d'acte sur le Drive, appliquées aux seuls points que la première passe n'a pas tranchés) ; 1.5 du 09/10/2026 (MOTEUR DE COMPARAISON, première passe mot à mot : verdict doublon / variante / nouvelle pour chaque point, AFFICHAGE CÔTE À CÔTE avec la clause de référence et ses différences, toutes les candidates proches quand le moteur hésite, doublon confirmé = une occurrence de plus sur la clause existante, verdict en couleur dans la file après première consultation) ; 1.4 du 09/10/2026 (article « Clôture et signature » ajouté aux deux plans, y compris aux clausiers déjà créés ; partie finale de l'acte versée ; mentions techniques de signature électronique et pieds de page répétés retirés avant découpe ; reconnaissance gratuite lancée d'office sur un scan, lecture par Claude proposée seulement pour les pages mal reconnues, avec le détail de ce qui manque) ; 1.3 du 09/10/2026 (DOUBLE PASSE SUR LES ACTES SCANNÉS, méthode reprise de TRENTE : pages sans texte détectées une à une, reconnaissance gratuite Tesseract dans le navigateur, puis lecture par Claude pour compléter, sur validation et après estimatif de coût ; texte reconnu signalé à relire dans la fiche) ; 1.2 du 09/10/2026 (MODE LECTURE SEULE : onglet « Consulter le clausier » en teinte de consultation, adresse directe ?consulter, bandeau avec retour au mode travail, aucun geste de modification ; sélection de clauses et envoi par mail d'un fichier Word aux champs entre crochets colorisés) ; 1.1 du 09/10/2026 (TRAITEMENT SIMULTANÉ : tous les points restants des dépôts d'un même type d'acte regroupés par rubrique proposée, tranchés en bloc ou un à un ; bascule avec l'ordre d'arrivée) ; 1.0 du 09/10/2026 (file « À traiter » : tableau de bord de la file, avancement de chaque dépôt, bouton « Mettre de côté » et liste des dépôts en attente ; compteurs d'usage dissociés du classement des clauses) ; 0.9 du 09/10/2026 (couverture du clausier par rubrique et par article, fiche éditable de la clause, journal de relecture avec rangement défait seul ou par lot, signal d'un acte non numéroté versé dans un clausier pauvre) ; 0.8 du 09/10/2026 (ciseau : coupe manuelle d'un point entre paragraphes ou puces, partie détachée lettrée, phrase d'annonce reprise, coupes conservées à la redécoupe, recollage) ; 0.7 du 09/10/2026 (ergonomie : fil d'Ariane collant, clause étoile choisie à la main et épinglée, compteurs indicatifs d'actes versés et de reprises en rédaction, comparaison côte à côte de deux variantes, recherche plein texte et filtres par contexte, sens, nature et texte visé, étapes du versement) ; 0.6 du 08/10/2026 (rangement des points d'un dépôt dans le clausier : proposition et deuxième candidate, contexte coché, validation point par point ou en bloc, journal des mouvements) ; 0.5 du 08/10/2026 (module Clausier, première tranche : plans de référence PSV AKZO et PUV R3S, numéros permanents, page Clausier) ; 0.4 du 08/10/2026 (titres des PDF non numérotés déduits de la mise en forme) ; 0.3 du 08/10/2026 (lecture Word avec numérotation automatique, contrôles de vraisemblance) ; 0.2 : moteur de découpe en service ; squelette du 07/10/2026
    Arbitrages (fiche clausier) : une application, deux moteurs ;
    on VERSE d'un côté (file d'attente sur le Drive), on TRAITE quand on veut ;
    le DÉCOUPAGE (neutralisation en champs, coupe en clauses, destination
@@ -1423,7 +1429,7 @@ function blocComparaison(cmp, texte, choisi = 0) {
       <div><h6>${echapper(ref.clause.id)} · ${echapper(ref.rubrique.id)} ${echapper(ref.rubrique.titre)}${ref.clause.source?.nom ? ` — tirée de « ${echapper(ref.clause.source.nom)} »` : ""} (souligné : propre à elle)</h6>${colorerChamps(gb)}</div></div>
     <div class="cmp-actions">
       <button class="bouton secondaire" data-doublon="${echapper(ref.clause.id)}" title="Le point n'apporte rien : il n'entre pas au clausier, et ${echapper(ref.clause.id)} gagne une occurrence">C'est un doublon de ${echapper(ref.clause.id)}</button>
-      <button class="bouton secondaire" data-variante="${echapper(ref.rubrique.id)}">Garder comme variante dans ${echapper(ref.rubrique.id)}</button>
+      <button class="bouton secondaire" data-variante="${echapper(ref.rubrique.id)}" data-ref="${echapper(ref.clause.id)}" title="Rangé comme variante ; Claude indique en une ligne ce qu'il change par rapport à la clause de référence">Garder comme variante dans ${echapper(ref.rubrique.id)}</button>
     </div></div>`;
 }
 // Doublon confirmé : le point n'entre pas au clausier ; la clause existante compte une occurrence de plus
@@ -1431,6 +1437,22 @@ function noterDoublon(f, { depot, num, clauseId }) {
   for (const r of Object.values(f.rubriques)) { const c = r.clauses.find(x => x.id === clauseId);
     if (c) { c.occurrences = (c.occurrences || 1) + 1; (c.doublons ||= []).push({ depot: depot.id, nom: depot.nom, point: num, le: new Date().toISOString() }); break; } }
   (f.journal ||= []).push({ quand: new Date().toISOString(), quoi: "doublon", point: num, clause: clauseId, depot: depot.id, depot_nom: depot.nom });
+}
+// 2.0 — « Pourquoi cette variante » : rédigée par Claude juste après le rangement, sans bloquer la suite
+// Référence = clause étoile de la rubrique si elle existe (et n'est pas la variante), sinon la clause proche affichée
+async function indiquerVariante({ fichier, depotId, num, rid, refId }) {
+  try {
+    const f0 = await lireJson(fichier), r = f0.rubriques[rid]; if (!r) return null;
+    const v = r.clauses.find(c => c.source?.depot === depotId && c.point === num); if (!v || v.indication) return null;
+    const tous = Object.values(f0.rubriques).flatMap(x => x.clauses);
+    const ref = (r.etoile && r.etoile.clause !== v.id && r.clauses.find(c => c.id === r.etoile.clause)) || tous.find(c => c.id === refId);
+    if (!ref || ref.id === v.id) return null;
+    const rep = await appelerMoteur("indication", { reference: ref.texte, variante: v.texte, rubrique: r.titre });
+    return await modifierClausier(f => {
+      const c = f.rubriques[rid]?.clauses.find(x => x.id === v.id); if (!c || c.indication) return;
+      c.indication = { texte: rep.indication.texte, par: "Claude", reference: ref.id, modele: rep.indication.modele, cout: rep.indication.cout, le: new Date().toISOString() };
+    }, fichier);
+  } catch (e) { console.warn("Indication de variante non rédigée :", e); return null; }
 }
 // Brancher les gestes d'un bloc de comparaison : changer de clause de référence, doublon, variante
 function brancherComparaison(bloc, cmp, texte, { doublon, variante }) {
@@ -1440,7 +1462,7 @@ function brancherComparaison(bloc, cmp, texte, { doublon, variante }) {
     z.replaceWith(tmp.firstElementChild); brancherComparaison(bloc, cmp, texte, { doublon, variante });
   }));
   z.querySelector("[data-doublon]")?.addEventListener("click", e => { e.target.disabled = true; doublon(e.target.dataset.doublon); });
-  z.querySelector("[data-variante]")?.addEventListener("click", e => { e.target.disabled = true; variante(e.target.dataset.variante); });
+  z.querySelector("[data-variante]")?.addEventListener("click", e => { e.target.disabled = true; variante(e.target.dataset.variante, e.target.dataset.ref); });
 }
 /* ============================================================
    SECONDE PASSE, PAR LE SENS (1.6) — arbitrage du 09/10/2026 (nuit)
@@ -1652,7 +1674,8 @@ function dessinerRangement() {
   marquerCourant(!!rg.defiler); rg.defiler = false;
   zone.querySelectorAll(".ranger-point:not(.classee)").forEach(bloc => {
     const num = bloc.dataset.point, p = rg.points.find(x => x.num === num);
-    if (rg.cmp?.[num]) brancherComparaison(bloc, rg.cmp[num], p.texte, { doublon: id => confirmerDoublon(num, id), variante: rid => validerPoint(num, rid) });
+    if (rg.cmp?.[num]) brancherComparaison(bloc, rg.cmp[num], p.texte, { doublon: id => confirmerDoublon(num, id),
+      variante: async (rid, refId) => { await validerPoint(num, rid); if (rg.dejaRanges.has(num)) indiquerVariante({ fichier: rg.fichier, depotId: rg.depot.id, num, rid, refId }).then(f => { if (f) rg.clausier = f; }); } });
   });
 }
 function brancherRangement() {
@@ -1884,7 +1907,8 @@ function brancherSimultane() {
     bloc.querySelectorAll("[data-choisir]").forEach(b => b.addEventListener("click", () => { if (sel) sel.value = ""; poser(b.dataset.choisir); }));
     sel?.addEventListener("change", () => { bloc.querySelectorAll("[data-choisir]").forEach(b => b.setAttribute("aria-pressed", "false")); poser(sel.value); });
     valider?.addEventListener("click", () => choisi && trancherSimultane([it], choisi, bloc));
-    if (it.cmp && it.etat === undefined) brancherComparaison(bloc, it.cmp, it.texte, { doublon: id => trancherSimultane([it], { doublon: id }, bloc), variante: rid => trancherSimultane([it], rid, bloc) });
+    if (it.cmp && it.etat === undefined) brancherComparaison(bloc, it.cmp, it.texte, { doublon: id => trancherSimultane([it], { doublon: id }, bloc),
+      variante: async (rid, refId) => { await trancherSimultane([it], rid, bloc); if (it.etat === rid) indiquerVariante({ fichier: ts.fichier, depotId: it.depot.id, num: it.num, rid, refId }).then(f => { if (f) ts.clausier = f; }); } });
     bloc.querySelector(".ecarter")?.addEventListener("click", () => trancherSimultane([it], null, bloc));
   });
 }
@@ -2322,6 +2346,8 @@ function carteClause(c, etoile, opts = {}) {
     <div class="vignettes">${vignettes(c)}</div>
     <div class="texte">${colorerChamps(surligner(c.texte, q))}</div>
     ${c.commentaire ? `<p class="commentaire">${echapper(c.commentaire)}</p>` : ""}
+    ${c.indication?.texte ? `<details class="pourquoi"><summary>Pourquoi cette variante</summary><p>${echapper(c.indication.texte)}
+      <span class="qui"> — ${c.indication.par === "Claude" ? `rédigé par Claude${c.indication.reference ? `, par rapport à ${echapper(c.indication.reference)}` : ""}` : "corrigé à la main"}</span></p></details>` : ""}
     <p class="source">${c.id ? echapper(c.id) + ", " : ""}${c.source?.nom ? "tirée de « " + echapper(c.source.nom) + " »" : ""}${c.source?.date ? ", " + echapper(c.source.date) : ""} ; ${compteurs}</p>
     ${etat.lecture && c.id ? `<div class="gestes">
       <label class="panier-case"><input type="checkbox" data-panier="${echapper(c.id)}"${cl.panier.has(c.id) ? " checked" : ""}> Sélectionner pour l'envoi</label>
@@ -2344,6 +2370,7 @@ function ficheEdition(c) {
     <div class="deux"><div><div class="lib">Sens</div><select data-champ="sens" aria-label="Sens">${opt(SENS_CONNUS, c.sens, "non renseigné")}</select></div>
       <div><div class="lib">Nature</div><select data-champ="nature" aria-label="Nature">${opt(NATURES_CONNUES, c.nature, "non renseignée")}</select></div></div>
     <div><div class="lib">Commentaire (situation où la clause a servi, précaution d'emploi…)</div><textarea data-champ="commentaire" aria-label="Commentaire">${echapper(c.commentaire || "")}</textarea></div>
+    <div><div class="lib">Pourquoi cette variante (ce qu'elle change sur le fond)</div><textarea data-champ="indication" aria-label="Pourquoi cette variante" rows="2">${echapper(c.indication?.texte || "")}</textarea></div>
     <div class="boutons"><button class="bouton" data-enregistrer-fiche>Enregistrer</button><button class="bouton secondaire" data-annuler-fiche>Annuler</button></div>
   </div>`;
 }
@@ -2352,11 +2379,13 @@ async function enregistrerFiche(zone, idClause) {
   const contextes = [...zone.querySelectorAll(".ctx input[type=checkbox]:checked")].map(x => x.value);
   const sens = zone.querySelector('[data-champ="sens"]').value || null, nature = zone.querySelector('[data-champ="nature"]').value || null;
   const commentaire = zone.querySelector('[data-champ="commentaire"]').value.trim();
+  const indication = zone.querySelector('[data-champ="indication"]')?.value.trim() ?? null;
   zone.querySelectorAll("button,input,select,textarea").forEach(x => x.disabled = true);
   try {
     await modifierClausier(f => {
       const c = f.rubriques[rid]?.clauses.find(x => x.id === idClause); if (!c) throw new Error("clause " + idClause + " introuvable");
       c.contextes = contextes; c.sens = sens; c.nature = nature; c.commentaire = commentaire; c.fiche_modifiee_le = new Date().toISOString();
+      if (indication !== null && indication !== (c.indication?.texte || "")) c.indication = indication ? { ...(c.indication || {}), texte: indication, par: "main", le: new Date().toISOString() } : undefined;
       (f.journal ||= []).push({ quand: new Date().toISOString(), quoi: "fiche", rubrique: rid, clause: idClause });
     });
     cl.edition = null; cl.ctxAjoutes = []; dessinerRubrique();
