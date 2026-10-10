@@ -130,6 +130,10 @@ table.file tr.ouvert td{background:#EAFAFB}
 #zone-cote label{font-size:.88rem;margin-bottom:4px;display:block}
 #zone-cote input{width:100%;max-width:520px;padding:6px 10px;margin-bottom:8px}
 
+/* ---------- 1.9 — neutralisation ---------- */
+.champ{color:var(--canard);font-weight:700}
+.neutre-barre{border-left:4px solid var(--canard)}
+
 /* ---------- 1.5 — comparaison : verdict et côte à côte ---------- */
 .cmp{margin:8px 0 6px;border:1px solid var(--trait);border-radius:4px;background:#FBFCFD}
 .cmp-tete{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;padding:8px 10px;border-bottom:1px solid var(--trait);font-size:.86rem}
@@ -373,7 +377,7 @@ mark{background:var(--jaune-forme);color:inherit;padding:0 1px}
 <body>
 <header>
   <h1>MONETA</h1>
-  <small>Le clausier du cabinet, version 1.8</small>
+  <small>Le clausier du cabinet, version 1.9</small>
   <span id="etat-connexion">Connexion au Drive…</span>
   <button id="btn-connexion">Autoriser l'accès au Drive</button>
 </header>
@@ -459,7 +463,7 @@ mark{background:var(--jaune-forme);color:inherit;padding:0 1px}
 
 <script>
 /* ============================================================
-   MONETA — version 1.8 du 10/10/2026 (seconde passe, par le sens, aussi dans le TRAITEMENT SIMULTANÉ) ; 1.7 du 10/10/2026 (RACCOURCIS CLAVIER dans le rangement, désactivés par défaut : D doublon, V variante, Entrée valider la proposée, E écarter, flèches pour changer de point) ; 1.6 du 10/10/2026 (SECONDE PASSE DE COMPARAISON, PAR LE SENS : empreintes fabriquées par un seul petit modèle dans le navigateur, gardées par type d'acte sur le Drive, appliquées aux seuls points que la première passe n'a pas tranchés) ; 1.5 du 09/10/2026 (MOTEUR DE COMPARAISON, première passe mot à mot : verdict doublon / variante / nouvelle pour chaque point, AFFICHAGE CÔTE À CÔTE avec la clause de référence et ses différences, toutes les candidates proches quand le moteur hésite, doublon confirmé = une occurrence de plus sur la clause existante, verdict en couleur dans la file après première consultation) ; 1.4 du 09/10/2026 (article « Clôture et signature » ajouté aux deux plans, y compris aux clausiers déjà créés ; partie finale de l'acte versée ; mentions techniques de signature électronique et pieds de page répétés retirés avant découpe ; reconnaissance gratuite lancée d'office sur un scan, lecture par Claude proposée seulement pour les pages mal reconnues, avec le détail de ce qui manque) ; 1.3 du 09/10/2026 (DOUBLE PASSE SUR LES ACTES SCANNÉS, méthode reprise de TRENTE : pages sans texte détectées une à une, reconnaissance gratuite Tesseract dans le navigateur, puis lecture par Claude pour compléter, sur validation et après estimatif de coût ; texte reconnu signalé à relire dans la fiche) ; 1.2 du 09/10/2026 (MODE LECTURE SEULE : onglet « Consulter le clausier » en teinte de consultation, adresse directe ?consulter, bandeau avec retour au mode travail, aucun geste de modification ; sélection de clauses et envoi par mail d'un fichier Word aux champs entre crochets colorisés) ; 1.1 du 09/10/2026 (TRAITEMENT SIMULTANÉ : tous les points restants des dépôts d'un même type d'acte regroupés par rubrique proposée, tranchés en bloc ou un à un ; bascule avec l'ordre d'arrivée) ; 1.0 du 09/10/2026 (file « À traiter » : tableau de bord de la file, avancement de chaque dépôt, bouton « Mettre de côté » et liste des dépôts en attente ; compteurs d'usage dissociés du classement des clauses) ; 0.9 du 09/10/2026 (couverture du clausier par rubrique et par article, fiche éditable de la clause, journal de relecture avec rangement défait seul ou par lot, signal d'un acte non numéroté versé dans un clausier pauvre) ; 0.8 du 09/10/2026 (ciseau : coupe manuelle d'un point entre paragraphes ou puces, partie détachée lettrée, phrase d'annonce reprise, coupes conservées à la redécoupe, recollage) ; 0.7 du 09/10/2026 (ergonomie : fil d'Ariane collant, clause étoile choisie à la main et épinglée, compteurs indicatifs d'actes versés et de reprises en rédaction, comparaison côte à côte de deux variantes, recherche plein texte et filtres par contexte, sens, nature et texte visé, étapes du versement) ; 0.6 du 08/10/2026 (rangement des points d'un dépôt dans le clausier : proposition et deuxième candidate, contexte coché, validation point par point ou en bloc, journal des mouvements) ; 0.5 du 08/10/2026 (module Clausier, première tranche : plans de référence PSV AKZO et PUV R3S, numéros permanents, page Clausier) ; 0.4 du 08/10/2026 (titres des PDF non numérotés déduits de la mise en forme) ; 0.3 du 08/10/2026 (lecture Word avec numérotation automatique, contrôles de vraisemblance) ; 0.2 : moteur de découpe en service ; squelette du 07/10/2026
+   MONETA — version 1.9 du 10/10/2026 (NEUTRALISATION PAR CLAUDE à l'amorçage : bouton dans le rangement, estimatif, points neutralisés par lots, champs [ ] en couleur, texte neutralisé rangé et comparé, original gardé caché dans la clause) ; 1.8 du 10/10/2026 (seconde passe, par le sens, aussi dans le TRAITEMENT SIMULTANÉ) ; 1.7 du 10/10/2026 (RACCOURCIS CLAVIER dans le rangement, désactivés par défaut : D doublon, V variante, Entrée valider la proposée, E écarter, flèches pour changer de point) ; 1.6 du 10/10/2026 (SECONDE PASSE DE COMPARAISON, PAR LE SENS : empreintes fabriquées par un seul petit modèle dans le navigateur, gardées par type d'acte sur le Drive, appliquées aux seuls points que la première passe n'a pas tranchés) ; 1.5 du 09/10/2026 (MOTEUR DE COMPARAISON, première passe mot à mot : verdict doublon / variante / nouvelle pour chaque point, AFFICHAGE CÔTE À CÔTE avec la clause de référence et ses différences, toutes les candidates proches quand le moteur hésite, doublon confirmé = une occurrence de plus sur la clause existante, verdict en couleur dans la file après première consultation) ; 1.4 du 09/10/2026 (article « Clôture et signature » ajouté aux deux plans, y compris aux clausiers déjà créés ; partie finale de l'acte versée ; mentions techniques de signature électronique et pieds de page répétés retirés avant découpe ; reconnaissance gratuite lancée d'office sur un scan, lecture par Claude proposée seulement pour les pages mal reconnues, avec le détail de ce qui manque) ; 1.3 du 09/10/2026 (DOUBLE PASSE SUR LES ACTES SCANNÉS, méthode reprise de TRENTE : pages sans texte détectées une à une, reconnaissance gratuite Tesseract dans le navigateur, puis lecture par Claude pour compléter, sur validation et après estimatif de coût ; texte reconnu signalé à relire dans la fiche) ; 1.2 du 09/10/2026 (MODE LECTURE SEULE : onglet « Consulter le clausier » en teinte de consultation, adresse directe ?consulter, bandeau avec retour au mode travail, aucun geste de modification ; sélection de clauses et envoi par mail d'un fichier Word aux champs entre crochets colorisés) ; 1.1 du 09/10/2026 (TRAITEMENT SIMULTANÉ : tous les points restants des dépôts d'un même type d'acte regroupés par rubrique proposée, tranchés en bloc ou un à un ; bascule avec l'ordre d'arrivée) ; 1.0 du 09/10/2026 (file « À traiter » : tableau de bord de la file, avancement de chaque dépôt, bouton « Mettre de côté » et liste des dépôts en attente ; compteurs d'usage dissociés du classement des clauses) ; 0.9 du 09/10/2026 (couverture du clausier par rubrique et par article, fiche éditable de la clause, journal de relecture avec rangement défait seul ou par lot, signal d'un acte non numéroté versé dans un clausier pauvre) ; 0.8 du 09/10/2026 (ciseau : coupe manuelle d'un point entre paragraphes ou puces, partie détachée lettrée, phrase d'annonce reprise, coupes conservées à la redécoupe, recollage) ; 0.7 du 09/10/2026 (ergonomie : fil d'Ariane collant, clause étoile choisie à la main et épinglée, compteurs indicatifs d'actes versés et de reprises en rédaction, comparaison côte à côte de deux variantes, recherche plein texte et filtres par contexte, sens, nature et texte visé, étapes du versement) ; 0.6 du 08/10/2026 (rangement des points d'un dépôt dans le clausier : proposition et deuxième candidate, contexte coché, validation point par point ou en bloc, journal des mouvements) ; 0.5 du 08/10/2026 (module Clausier, première tranche : plans de référence PSV AKZO et PUV R3S, numéros permanents, page Clausier) ; 0.4 du 08/10/2026 (titres des PDF non numérotés déduits de la mise en forme) ; 0.3 du 08/10/2026 (lecture Word avec numérotation automatique, contrôles de vraisemblance) ; 0.2 : moteur de découpe en service ; squelette du 07/10/2026
    Arbitrages (fiche clausier) : une application, deux moteurs ;
    on VERSE d'un côté (file d'attente sur le Drive), on TRAITE quand on veut ;
    le DÉCOUPAGE (neutralisation en champs, coupe en clauses, destination
@@ -1415,8 +1419,8 @@ function blocComparaison(cmp, texte, choisi = 0) {
   return `<div class="cmp" data-cmp>
     <div class="cmp-tete"><span class="pastille-v v-${cmp.verdict}">${LIB_VERDICT[cmp.verdict]}${sens ? " · sens" : ""}</span><span>${phrase}${cmp.hesite ? " — le moteur hésite entre plusieurs clauses" : ""}</span>
       ${cmp.proches.length > 1 ? `<span class="proches">${cmp.proches.map((x, i) => `<button data-proche="${i}" aria-pressed="${i === choisi}" title="${echapper(x.rubrique.id + " · " + x.rubrique.titre)}">${echapper(x.clause.id)} · ${pc(x.sim)}</button>`).join("")}</span>` : ""}</div>
-    <div class="cmp-cols"><div><h6>Ce point (barré : absent de la clause existante)</h6>${ga}</div>
-      <div><h6>${echapper(ref.clause.id)} · ${echapper(ref.rubrique.id)} ${echapper(ref.rubrique.titre)}${ref.clause.source?.nom ? ` — tirée de « ${echapper(ref.clause.source.nom)} »` : ""} (souligné : propre à elle)</h6>${gb}</div></div>
+    <div class="cmp-cols"><div><h6>Ce point (barré : absent de la clause existante)</h6>${colorerChamps(ga)}</div>
+      <div><h6>${echapper(ref.clause.id)} · ${echapper(ref.rubrique.id)} ${echapper(ref.rubrique.titre)}${ref.clause.source?.nom ? ` — tirée de « ${echapper(ref.clause.source.nom)} »` : ""} (souligné : propre à elle)</h6>${colorerChamps(gb)}</div></div>
     <div class="cmp-actions">
       <button class="bouton secondaire" data-doublon="${echapper(ref.clause.id)}" title="Le point n'apporte rien : il n'entre pas au clausier, et ${echapper(ref.clause.id)} gagne une occurrence">C'est un doublon de ${echapper(ref.clause.id)}</button>
       <button class="bouton secondaire" data-variante="${echapper(ref.rubrique.id)}">Garder comme variante dans ${echapper(ref.rubrique.id)}</button>
@@ -1514,6 +1518,63 @@ function bilanComparaison(cmps) {
   return { ...b, version: VERSION_COMPARAISON, le: new Date().toISOString() };
 }
 
+/* ============================================================
+   NEUTRALISATION PAR CLAUDE (1.9) — amorçage du socle (arbitrage du 09/10/2026, confirmé le 10/10)
+   Lancée à la main depuis le rangement, après un estimatif ; les points partent par lots de
+   20 000 signes au plus. Le résultat est gardé dans le dépôt (aucune dépense en double) ; le
+   texte neutralisé est celui qui est comparé et rangé ; l'original reste caché dans la clause.
+   ============================================================ */
+const LOT_NEUTRE = 20000;
+const colorerChamps = html => String(html).replace(/\[[^\]<>\n]{1,40}\]/g, m => `<span class="champ">${m}</span>`);
+function neutraliserPoints(points, d) {
+  const n = d?.neutralisation?.points; if (!n) return points;
+  for (const p of points) if (n[p.num] != null && !p.origine) { p.origine = p.texte; p.texte = n[p.num]; }
+  return points;
+}
+function lotsNeutres(points) {
+  const lots = []; let lot = [], n = 0;
+  for (const p of points) { if (lot.length && n + p.texte.length > LOT_NEUTRE) { lots.push(lot); lot = []; n = 0; } lot.push(p); n += p.texte.length; }
+  if (lot.length) lots.push(lot); return lots;
+}
+function estimerNeutre(points, t) {
+  const signes = points.reduce((n, p) => n + p.texte.length, 0), lots = lotsNeutres(points).length;
+  const entree = Math.ceil(signes / 3.2) + 900 * lots, sortie = Math.ceil(signes / 3.0) + 50 * points.length;
+  return { entree, sortie, lots, dollars: (entree * (t?.entree ?? 3) + sortie * (t?.sortie ?? 15)) / 1e6 };
+}
+function barreNeutre() {
+  const d = rg.depot;
+  if (rg.neutreEtat) return `<div class="note-moteur neutre-barre" id="rg-neutre-etat">${rg.neutreEtat}</div>`;
+  if (d.neutralisation) return `<div class="note-moteur neutre-barre">Textes neutralisés par Claude le ${dateCourte(d.neutralisation.le)} (${pl(Object.keys(d.neutralisation.points).length, "point")}${d.neutralisation.cout != null ? `, ${dollars(d.neutralisation.cout)}` : ""}) : c'est la version neutralisée qui est comparée et rangée ; l'original reste gardé dans chaque clause.</div>`;
+  const e = estimerNeutre(rg.points, tarifLecture);
+  return `<div class="note-moteur neutre-barre">Textes <b>non neutralisés</b> : les noms, prix, adresses et dates de ce dossier entreraient tels quels au clausier.
+    <button class="bouton secondaire" id="rg-neutre" style="margin-left:8px">Neutraliser par Claude (≈ ${dollars(e.dollars)})</button></div>`;
+}
+async function lancerNeutre() {
+  const d = rg.depot, pts = rg.points.map(p => ({ num: p.num, texte: p.origine || p.texte }));
+  const t = await lireTarif(), e = estimerNeutre(pts, t);
+  if (!confirm(`Neutralisation par Claude des ${pts.length} points de « ${d.nom} », en ${e.lots} envoi${e.lots > 1 ? "s" : ""}. Coût estimé : environ ${dollars(e.dollars)}, facturé à l'usage. Continuer ?`)) return;
+  const maj = x => { rg.neutreEtat = x; const z = $("rg-neutre-etat"); if (z) z.textContent = x; else dessinerRangement(); };
+  const res = {}; let cout = 0, modele = null;
+  try {
+    const lots = lotsNeutres(pts);
+    for (const [i, lot] of lots.entries()) {
+      maj(`Neutralisation par Claude : envoi ${i + 1} sur ${lots.length}…`);
+      const r = await appelerMoteur("neutraliser", { points: lot, nom: d.nom, type: libelleType(d.type_acte) });
+      for (const p of r.neutralisation.points) if (lot.some(x => x.num === p.num)) res[p.num] = p.texte;
+      cout += r.neutralisation.cout || 0; modele = r.neutralisation.modele;
+    }
+    d.neutralisation = { points: res, modele, cout, le: new Date().toISOString() };
+    await reecrireJson(etat.ouvert.id, d);
+    rg.neutreEtat = null;
+    await ouvrirRangement();   // tout est recalculé sur les textes neutralisés (comparaison comprise)
+  } catch (err) {
+    if (Object.keys(res).length) { d.neutralisation_partielle = { points: res, cout, le: new Date().toISOString() }; reecrireJson(etat.ouvert.id, d).catch(() => {}); }
+    rg.neutreEtat = `Neutralisation interrompue : ${echapper(err.message)}${cout ? ` (déjà dépensé : ${dollars(cout)})` : ""}. Les textes restent non neutralisés ; vous pouvez relancer.`;
+    dessinerRangement();
+    setTimeout(() => { rg.neutreEtat = null; }, 0);
+  }
+}
+
 async function ouvrirRangement() {
   const d = etat.ouvert?.depot, zone = $("fiche-ranger");
   if (!d) return;
@@ -1522,12 +1583,14 @@ async function ouvrirRangement() {
   zone.innerHTML = `<p class="note-moteur">Lecture du clausier et rangement des points…</p>`;
   try {
     const r = await chargerType(d.type_acte);
-    rg.depot = d; rg.clausier = r.donnees; rg.fichier = r.fichier; rg.choix = {}; rg.sensEtat = null;
+    rg.depot = d; rg.clausier = r.donnees; rg.fichier = r.fichier; rg.choix = {}; rg.sensEtat = null; rg.neutreEtat = null;
+    lireTarif();
     rg.points = d.decoupe.structure.filter(e => e.t === "point")
       .map(e => ({ num: e.num, texte: e.paras.join("\n").replace(/\u200b/g, ""), titres: titresDuPoint(d.decoupe, e.num) }));
     const rubriques = Object.values(rg.clausier.rubriques).map(x => ({ id: x.id, titre: x.titre, article: x.article,
       article_titre: rg.clausier.articles.find(a => a.num === x.article)?.titre || "", mots_cles: x.mots_cles }));
     const rep = await appelerMoteur("ranger", { points: rg.points, rubriques, texte_acte: sansMarques(d.texte) });
+    neutraliserPoints(rg.points, d);   // 1.9 — le texte rangé et comparé est le texte neutralisé, s'il existe
     rg.propositions = rep.rangement.propositions;
     rg.contextes = (d.contextes && d.contextes.length) ? d.contextes : (rep.rangement.contextes || []);
     rg.dejaRanges = new Set(Object.values(rg.clausier.rubriques).flatMap(x => x.clauses).filter(c => c.source?.depot === d.id).map(c => c.point));
@@ -1556,6 +1619,7 @@ function dessinerRangement() {
   zone.innerHTML = `
     <div class="cl-ctx"><div class="lib">Contexte du dépôt — proposé d'après l'acte, à corriger ; il sera porté par chaque clause rangée</div>
       <div id="rg-ctx">${ctx}<input class="ajout" id="rg-ctx-ajout" placeholder="autre contexte" aria-label="Ajouter un contexte"></div></div>
+    ${barreNeutre()}
     ${barreSens()}
     <div class="cl-ranger-tete"><b>Ranger les points</b><span class="avance" id="rg-avance">${faits} sur ${total} classés</span>
       <button class="bouton secondaire" id="rg-tout">Valider toutes les propositions</button>
@@ -1571,7 +1635,7 @@ function dessinerRangement() {
         : cand.length ? "" : '<span class="verdict">aucune rubrique évidente</span>';
       return `<div class="ranger-point${classee ? " classee" : ""}" data-point="${echapper(p.num)}">
         <div class="rp-haut"><span class="num">Point ${echapper(p.num)}</span>${verdict}</div>
-        ${classee || !rg.cmp?.[p.num] ? `<div class="rp-texte">${echapper(p.texte.slice(0, 600))}${p.texte.length > 600 ? "…" : ""}</div>` : blocComparaison(rg.cmp[p.num], p.texte)}
+        ${classee || !rg.cmp?.[p.num] ? `<div class="rp-texte">${colorerChamps(echapper(p.texte.slice(0, 600)))}${p.texte.length > 600 ? "…" : ""}</div>` : blocComparaison(rg.cmp[p.num], p.texte)}
         ${classee ? "" : `<div class="rp-prop">
           <div class="rp-choix">${cand.map((c, i) => `<button data-choisir="${echapper(c.id)}" class="${i ? "second" : ""}" aria-pressed="false">${i ? "2ᵉ candidate" : "Proposée"}<span class="r-id">${echapper(libRub(c.id))}</span>${c.mots?.length ? `<span class="r-mots">${echapper(c.mots.slice(0, 4).join(", "))}</span>` : ""}</button>`).join("")}</div>
           <div class="rp-actions">
@@ -1583,6 +1647,7 @@ function dessinerRangement() {
     }).join("")}</div>`;
   brancherRangement();
   $("rg-sens")?.addEventListener("click", lancerSens);
+  $("rg-neutre")?.addEventListener("click", lancerNeutre);
   $("rg-clavier")?.addEventListener("change", e => { try { localStorage.setItem("moneta-clavier", e.target.checked ? "1" : "0"); } catch { } dessinerRangement(); });
   marquerCourant(!!rg.defiler); rg.defiler = false;
   zone.querySelectorAll(".ranger-point:not(.classee)").forEach(bloc => {
@@ -1612,7 +1677,7 @@ function brancherRangement() {
   $("rg-tout")?.addEventListener("click", validerTout);
 }
 // Ajout d'une clause dans le clausier (en mémoire) + journal ; partagé par le rangement d'un dépôt et le traitement simultané (1.1)
-function ajouterClause(f, { depot, num, texte, contextes, rubriqueId }) {
+function ajouterClause(f, { depot, num, texte, origine, contextes, rubriqueId }) {
   const r = f.rubriques[rubriqueId]; if (!r) throw new Error("rubrique " + rubriqueId + " introuvable");
   if (!r.clauses.some(c => c.source?.depot === depot.id && c.point === num)) {
     f.prochaine_clause = (f.prochaine_clause || 0) + 1;
@@ -1621,14 +1686,14 @@ function ajouterClause(f, { depot, num, texte, contextes, rubriqueId }) {
     r.clauses.push({ id: `${f.prefixe}-C${String(f.prochaine_clause).padStart(4, "0")}`, point: num, texte,
       occurrences: 1, contextes: [...contextes], sens: null, nature: null, commentaire: "",
       source: { depot: depot.id, nom: depot.nom, date: depot.verse_le.slice(0, 10) }, admise_le: new Date().toISOString(),
-      mots_ajoutes: ajoutes });
+      mots_ajoutes: ajoutes, ...(origine && origine !== texte ? { texte_origine: origine, neutralisee: true } : {}) });
   }
   (f.journal ||= []).push({ quand: new Date().toISOString(), quoi: "ranger", point: num, rubrique: rubriqueId, depot: depot.id, depot_nom: depot.nom });
 }
 async function enregistrerClause(num, rubriqueId) {
-  const texte = rg.points.find(p => p.num === num)?.texte || "";
+  const p = rg.points.find(x => x.num === num), texte = p?.texte || "";
   rg.clausier = await modifierClausier(f => {
-    ajouterClause(f, { depot: rg.depot, num, texte, contextes: rg.contextes, rubriqueId });
+    ajouterClause(f, { depot: rg.depot, num, texte, origine: p?.origine, contextes: rg.contextes, rubriqueId });
   }, rg.fichier);
 }
 async function validerPoint(num, rubriqueId) {
@@ -1746,7 +1811,8 @@ async function ouvrirSimultane(type) {
       const rep = await appelerMoteur("ranger", { points, rubriques, texte_acte: sansMarques(d.texte) });
       const contextes = (d.contextes && d.contextes.length) ? d.contextes : (rep.rangement.contextes || []);
       const propo = new Map(rep.rangement.propositions.map(p => [p.num, p.candidats]));
-      for (const p of points) ts.items.push({ depot: d, num: p.num, texte: p.texte, contextes, candidats: propo.get(p.num) || [], etat: undefined,
+      neutraliserPoints(points, d);
+      for (const p of points) ts.items.push({ depot: d, num: p.num, texte: p.texte, origine: p.origine, contextes, candidats: propo.get(p.num) || [], etat: undefined,
         cmp: comparerPoint(p.texte, { rubriques: Object.fromEntries(Object.entries(ts.clausier.rubriques).map(([k, r]) => [k, { ...r, clauses: r.clauses.filter(c => c.source?.depot !== d.id) }])) }) });
     }
     const premier = groupesSimultane()[0]; if (premier) ts.ouverts.add(premier.cle);
@@ -1859,7 +1925,7 @@ async function trancherSimultane(items, rubriqueId, bloc) {
     ts.clausier = await modifierClausier(f => {
       for (const it of items) {
         if (rubriqueId?.doublon) noterDoublon(f, { depot: it.depot, num: it.num, clauseId: rubriqueId.doublon });
-        else if (rubriqueId) ajouterClause(f, { depot: it.depot, num: it.num, texte: it.texte, contextes: it.contextes, rubriqueId });
+        else if (rubriqueId) ajouterClause(f, { depot: it.depot, num: it.num, texte: it.texte, origine: it.origine, contextes: it.contextes, rubriqueId });
         else (f.journal ||= []).push({ quand: new Date().toISOString(), quoi: "ecarter", point: it.num, depot: it.depot.id });
       }
     }, ts.fichier);
@@ -2254,7 +2320,7 @@ function carteClause(c, etoile, opts = {}) {
   return `<article class="clause${etoile ? " etoile" : ""}${etat.lecture && cl.panier.has(c.id) ? " choisie" : ""}" data-clause="${echapper(c.id || "")}">
     ${etoile ? `<div class="marque-etoile">★ Clause étoile <span>${opts.choisieLe ? "choisie le " + echapper(new Date(opts.choisieLe).toLocaleDateString("fr-FR")) : "choisie par un collaborateur"}</span></div>` : ""}
     <div class="vignettes">${vignettes(c)}</div>
-    <div class="texte">${surligner(c.texte, q)}</div>
+    <div class="texte">${colorerChamps(surligner(c.texte, q))}</div>
     ${c.commentaire ? `<p class="commentaire">${echapper(c.commentaire)}</p>` : ""}
     <p class="source">${c.id ? echapper(c.id) + ", " : ""}${c.source?.nom ? "tirée de « " + echapper(c.source.nom) + " »" : ""}${c.source?.date ? ", " + echapper(c.source.date) : ""} ; ${compteurs}</p>
     ${etat.lecture && c.id ? `<div class="gestes">
