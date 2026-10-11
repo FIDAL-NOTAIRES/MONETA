@@ -3,7 +3,7 @@
 // (limite de douze fonctions par déploiement sur l'offre gratuite de Vercel)
 //   POST /api/moteurs  { action: "decouper", texte }                → moteur de DÉCOUPE (en service)
 //                      { action: "ranger", points, rubriques, … }   → moteur de RANGEMENT (en service, 0.6)
-//                      { action: "comparer", depot }                → moteur de COMPARAISON (à venir)
+//                      comparaison : faite DANS LE NAVIGATEUR depuis la 1.5 (mot à mot) et la 1.6 (sens), aucune action serveur
 //   GET  /api/moteurs                                               → état des moteurs
 // Les règles tournent ici, côté serveur : la page envoie le texte et ne reçoit
 // que le résultat, jamais les règles (cœur caché, comme /api/filiation de HISTO).
@@ -19,13 +19,13 @@ const TAILLE_MAX = 3_000_000;   // caractères : un acte fait rarement plus de 3
 
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
-  if (req.method === "GET") return res.status(200).json({ moneta: { version: "2.0",
+  if (req.method === "GET") return res.status(200).json({ moneta: { version: "2.1",
     moteurs: { decouper: { etat: "en service", version: VERSION_DECOUPE },
                ranger: { etat: "en service", version: VERSION_RANGEMENT },
                lire: { etat: tarif().disponible ? "en service" : "clé API absente", version: VERSION_LECTURE, ...tarif() },
                neutraliser: { etat: tarif().disponible ? "en service" : "clé API absente", version: VERSION_NEUTRALISATION },
                indication: { etat: tarif().disponible ? "en service" : "clé API absente", version: VERSION_INDICATION },
-               comparer: { etat: "à venir" } } } });
+               comparer: { etat: "dans le navigateur", version: "mot à mot 1.0 + sens 1.0" } } } });
   if (req.method !== "POST") return res.status(405).json({ erreur: { code: "methode", message: "GET ou POST seulement." } });
   let corps = req.body;
   if (typeof corps === "string") { try { corps = JSON.parse(corps); } catch { corps = null; } }
