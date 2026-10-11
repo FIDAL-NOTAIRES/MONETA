@@ -13,18 +13,20 @@ import { ranger, VERSION_RANGEMENT } from "./_rangement.js";
 import { lire, tarif, VERSION_LECTURE } from "./_lecture.js";
 import { neutraliser, VERSION_NEUTRALISATION } from "./_neutraliser.js";
 import { indiquer, VERSION_INDICATION } from "./_indication.js";
+import { proposer, VERSION_PROPOSITION } from "./_proposer.js";
 
-const ACTIONS = { decouper: "découpe", ranger: "rangement", lire: "lecture des pages scannées", neutraliser: "neutralisation", indication: "indication de variante", comparer: "comparaison" };
+const ACTIONS = { decouper: "découpe", ranger: "rangement", lire: "lecture des pages scannées", neutraliser: "neutralisation", indication: "indication de variante", proposer: "propositions de l'IA", comparer: "comparaison" };
 const TAILLE_MAX = 3_000_000;   // caractères : un acte fait rarement plus de 300 000
 
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
-  if (req.method === "GET") return res.status(200).json({ moneta: { version: "2.1",
+  if (req.method === "GET") return res.status(200).json({ moneta: { version: "2.2",
     moteurs: { decouper: { etat: "en service", version: VERSION_DECOUPE },
                ranger: { etat: "en service", version: VERSION_RANGEMENT },
                lire: { etat: tarif().disponible ? "en service" : "clé API absente", version: VERSION_LECTURE, ...tarif() },
                neutraliser: { etat: tarif().disponible ? "en service" : "clé API absente", version: VERSION_NEUTRALISATION },
                indication: { etat: tarif().disponible ? "en service" : "clé API absente", version: VERSION_INDICATION },
+               proposer: { etat: tarif().disponible ? "en service" : "clé API absente", version: VERSION_PROPOSITION },
                comparer: { etat: "dans le navigateur", version: "mot à mot 1.0 + sens 1.0" } } } });
   if (req.method !== "POST") return res.status(405).json({ erreur: { code: "methode", message: "GET ou POST seulement." } });
   let corps = req.body;
@@ -45,6 +47,12 @@ export default async function handler(req, res) {
     if (!Array.isArray(rubriques) || !rubriques.length) return res.status(400).json({ erreur: { code: "rubriques", message: "Le plan du clausier est vide." } });
     try { return res.status(200).json({ rangement: ranger({ points, rubriques, texte_acte }) }); }
     catch (e) { return res.status(500).json({ erreur: { code: "rangement", message: "Rangement en échec : " + (e.message || e) } }); }
+  }
+  if (action === "proposer") {
+    const { rubrique, etoile, variantes, appui } = corps;
+    if (typeof etoile !== "string" || !etoile.trim()) return res.status(400).json({ erreur: { code: "etoile", message: "Clause de référence absente." } });
+    try { return res.status(200).json({ proposition: await proposer({ rubrique, etoile, variantes, appui }) }); }
+    catch (e) { return res.status(e.code === "cle" ? 503 : 502).json({ erreur: { code: e.code || "proposition", message: "Proposition en échec : " + (e.message || e) } }); }
   }
   if (action === "indication") {
     const { reference, variante, rubrique } = corps;
