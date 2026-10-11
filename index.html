@@ -130,6 +130,27 @@ table.file tr.ouvert td{background:#EAFAFB}
 #zone-cote label{font-size:.88rem;margin-bottom:4px;display:block}
 #zone-cote input{width:100%;max-width:520px;padding:6px 10px;margin-bottom:8px}
 
+/* ---------- 2.1 — bibliothèque d'appui ---------- */
+#bib-saisie .bib-carte{border:1px solid var(--trait);border-left:4px solid var(--canard);border-radius:4px;padding:14px 16px;margin:6px 0 18px;background:#fff}
+#bib-saisie .bib-carte.refus{border-left-color:var(--carmin)}
+#bib-saisie .grille{display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px 14px;margin:10px 0}
+#bib-saisie .grille .large{grid-column:1/-1}
+#bib-saisie .debut{max-height:160px;overflow:auto;white-space:pre-wrap;font-family:Georgia,serif;font-size:.86rem;background:var(--gris);padding:8px 10px;border-radius:3px}
+#bib-saisie .rubs label{display:flex;gap:8px;align-items:baseline;font-size:.9rem;margin:3px 0}
+#bib-saisie .rubs input{width:auto}
+table.bib{width:100%;border-collapse:collapse;font-size:.9rem;margin-top:8px}
+table.bib th,table.bib td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--trait);vertical-align:top}
+table.bib th{color:var(--doux);font-weight:600}
+.nature{font-size:.75rem;font-weight:700;color:#fff;border-radius:8px;padding:1px 7px;white-space:nowrap}
+.nature.doctrine{background:var(--canard)} .nature.jurisprudence{background:var(--nuit)} .nature.texte{background:var(--orange)}
+.cl-appui{margin-bottom:16px}
+.cl-appui h4{margin-bottom:6px}
+.cl-appui .doc{font-size:.86rem;padding:6px 0;border-bottom:1px solid var(--trait)}
+.cl-appui .doc a{color:var(--nuit);font-weight:600}
+.cl-appui .doc .ref{color:var(--doux);font-size:.8rem}
+.cl-appui .doc button{background:none;border:0;color:var(--carmin);font-size:.78rem;padding:0;margin-left:6px;text-decoration:underline}
+.cl-appui select{font-size:.84rem;margin-top:6px}
+
 /* ---------- 2.0 — pourquoi cette variante ---------- */
 .clause details.pourquoi{margin:6px 0 2px;font-size:.86rem}
 .clause details.pourquoi summary{cursor:pointer;color:var(--canard);font-weight:600}
@@ -383,7 +404,7 @@ mark{background:var(--jaune-forme);color:inherit;padding:0 1px}
 <body>
 <header>
   <h1>MONETA</h1>
-  <small>Le clausier du cabinet, version 2.0</small>
+  <small>Le clausier du cabinet, version 2.1</small>
   <span id="etat-connexion">Connexion au Drive…</span>
   <button id="btn-connexion">Autoriser l'accès au Drive</button>
 </header>
@@ -395,6 +416,7 @@ mark{background:var(--jaune-forme);color:inherit;padding:0 1px}
     <button role="tab" aria-selected="true" data-onglet="verser">Verser</button>
     <button role="tab" aria-selected="false" data-onglet="traiter">À traiter <span class="compteur zero" id="compteur">0</span></button>
     <button role="tab" aria-selected="false" data-onglet="clausier">Clausier</button>
+    <button role="tab" aria-selected="false" data-onglet="bibliotheque">Bibliothèque</button>
     <button class="consulter" id="btn-consulter" title="Ouvrir le clausier en lecture seule">Consulter le clausier</button>
   </div>
   <div id="bandeau-lecture" role="status"><b>Lecture seule</b><span>Consultation du clausier : rien ne peut y être modifié. Cochez des clauses pour les envoyer par mail.</span>
@@ -426,6 +448,25 @@ mark{background:var(--jaune-forme);color:inherit;padding:0 1px}
       <span class="aide">Les versements partent dans la file « À traiter ». Rien n'entre au clausier sans votre décision.</span>
     </div>
     <ul id="verses"></ul>
+  </section>
+
+  <!-- ======== BIBLIOTHÈQUE D'APPUI (2.1) : doctrine, jurisprudence, textes — une par type d'acte ======== -->
+  <section class="panneau" id="panneau-bibliotheque" role="tabpanel">
+    <div class="ligne deux">
+      <div>
+        <label for="bib-type">Type d'acte</label>
+        <select id="bib-type"></select>
+        <p class="aide">Chaque type d'acte a sa propre bibliothèque. Un article utile à deux types se verse dans chacun.</p>
+      </div>
+      <div>
+        <label class="depot" id="bib-zone" for="bib-fichier">
+          Glissez ici un article, un arrêt ou un texte (PDF, Word ou texte),<br>ou cliquez pour le choisir.
+          <input type="file" id="bib-fichier" accept=".docx,.pdf,.txt">
+        </label>
+      </div>
+    </div>
+    <div id="bib-saisie"></div>
+    <div id="bib-liste"><p class="vide">Choisissez un type d'acte.</p></div>
   </section>
 
   <!-- ======== À TRAITER : la file d'attente, du plus ancien au plus récent ======== -->
@@ -469,7 +510,7 @@ mark{background:var(--jaune-forme);color:inherit;padding:0 1px}
 
 <script>
 /* ============================================================
-   MONETA — version 2.0 du 10/10/2026 (« POURQUOI CETTE VARIANTE » : à chaque point gardé comme variante, Claude rédige en une ligne ce qu'elle change sur le fond par rapport à la clause étoile ou à la plus proche ; affichée dans le clausier, corrigeable dans la fiche) ; 1.9 du 10/10/2026 (NEUTRALISATION PAR CLAUDE à l'amorçage : bouton dans le rangement, estimatif, points neutralisés par lots, champs [ ] en couleur, texte neutralisé rangé et comparé, original gardé caché dans la clause) ; 1.8 du 10/10/2026 (seconde passe, par le sens, aussi dans le TRAITEMENT SIMULTANÉ) ; 1.7 du 10/10/2026 (RACCOURCIS CLAVIER dans le rangement, désactivés par défaut : D doublon, V variante, Entrée valider la proposée, E écarter, flèches pour changer de point) ; 1.6 du 10/10/2026 (SECONDE PASSE DE COMPARAISON, PAR LE SENS : empreintes fabriquées par un seul petit modèle dans le navigateur, gardées par type d'acte sur le Drive, appliquées aux seuls points que la première passe n'a pas tranchés) ; 1.5 du 09/10/2026 (MOTEUR DE COMPARAISON, première passe mot à mot : verdict doublon / variante / nouvelle pour chaque point, AFFICHAGE CÔTE À CÔTE avec la clause de référence et ses différences, toutes les candidates proches quand le moteur hésite, doublon confirmé = une occurrence de plus sur la clause existante, verdict en couleur dans la file après première consultation) ; 1.4 du 09/10/2026 (article « Clôture et signature » ajouté aux deux plans, y compris aux clausiers déjà créés ; partie finale de l'acte versée ; mentions techniques de signature électronique et pieds de page répétés retirés avant découpe ; reconnaissance gratuite lancée d'office sur un scan, lecture par Claude proposée seulement pour les pages mal reconnues, avec le détail de ce qui manque) ; 1.3 du 09/10/2026 (DOUBLE PASSE SUR LES ACTES SCANNÉS, méthode reprise de TRENTE : pages sans texte détectées une à une, reconnaissance gratuite Tesseract dans le navigateur, puis lecture par Claude pour compléter, sur validation et après estimatif de coût ; texte reconnu signalé à relire dans la fiche) ; 1.2 du 09/10/2026 (MODE LECTURE SEULE : onglet « Consulter le clausier » en teinte de consultation, adresse directe ?consulter, bandeau avec retour au mode travail, aucun geste de modification ; sélection de clauses et envoi par mail d'un fichier Word aux champs entre crochets colorisés) ; 1.1 du 09/10/2026 (TRAITEMENT SIMULTANÉ : tous les points restants des dépôts d'un même type d'acte regroupés par rubrique proposée, tranchés en bloc ou un à un ; bascule avec l'ordre d'arrivée) ; 1.0 du 09/10/2026 (file « À traiter » : tableau de bord de la file, avancement de chaque dépôt, bouton « Mettre de côté » et liste des dépôts en attente ; compteurs d'usage dissociés du classement des clauses) ; 0.9 du 09/10/2026 (couverture du clausier par rubrique et par article, fiche éditable de la clause, journal de relecture avec rangement défait seul ou par lot, signal d'un acte non numéroté versé dans un clausier pauvre) ; 0.8 du 09/10/2026 (ciseau : coupe manuelle d'un point entre paragraphes ou puces, partie détachée lettrée, phrase d'annonce reprise, coupes conservées à la redécoupe, recollage) ; 0.7 du 09/10/2026 (ergonomie : fil d'Ariane collant, clause étoile choisie à la main et épinglée, compteurs indicatifs d'actes versés et de reprises en rédaction, comparaison côte à côte de deux variantes, recherche plein texte et filtres par contexte, sens, nature et texte visé, étapes du versement) ; 0.6 du 08/10/2026 (rangement des points d'un dépôt dans le clausier : proposition et deuxième candidate, contexte coché, validation point par point ou en bloc, journal des mouvements) ; 0.5 du 08/10/2026 (module Clausier, première tranche : plans de référence PSV AKZO et PUV R3S, numéros permanents, page Clausier) ; 0.4 du 08/10/2026 (titres des PDF non numérotés déduits de la mise en forme) ; 0.3 du 08/10/2026 (lecture Word avec numérotation automatique, contrôles de vraisemblance) ; 0.2 : moteur de découpe en service ; squelette du 07/10/2026
+   MONETA — version 2.1 du 10/10/2026 (BIBLIOTHÈQUE D'APPUI, une par type d'acte : onglet « Bibliothèque », lecture des vingt premières lignes et refus d'un article déjà présent, fiche pré-remplie, rubriques proposées par mots-clés, section « Appui » dans chaque rubrique avec rattachement et retrait) ; 2.0 du 10/10/2026 (« POURQUOI CETTE VARIANTE » : à chaque point gardé comme variante, Claude rédige en une ligne ce qu'elle change sur le fond par rapport à la clause étoile ou à la plus proche ; affichée dans le clausier, corrigeable dans la fiche) ; 1.9 du 10/10/2026 (NEUTRALISATION PAR CLAUDE à l'amorçage : bouton dans le rangement, estimatif, points neutralisés par lots, champs [ ] en couleur, texte neutralisé rangé et comparé, original gardé caché dans la clause) ; 1.8 du 10/10/2026 (seconde passe, par le sens, aussi dans le TRAITEMENT SIMULTANÉ) ; 1.7 du 10/10/2026 (RACCOURCIS CLAVIER dans le rangement, désactivés par défaut : D doublon, V variante, Entrée valider la proposée, E écarter, flèches pour changer de point) ; 1.6 du 10/10/2026 (SECONDE PASSE DE COMPARAISON, PAR LE SENS : empreintes fabriquées par un seul petit modèle dans le navigateur, gardées par type d'acte sur le Drive, appliquées aux seuls points que la première passe n'a pas tranchés) ; 1.5 du 09/10/2026 (MOTEUR DE COMPARAISON, première passe mot à mot : verdict doublon / variante / nouvelle pour chaque point, AFFICHAGE CÔTE À CÔTE avec la clause de référence et ses différences, toutes les candidates proches quand le moteur hésite, doublon confirmé = une occurrence de plus sur la clause existante, verdict en couleur dans la file après première consultation) ; 1.4 du 09/10/2026 (article « Clôture et signature » ajouté aux deux plans, y compris aux clausiers déjà créés ; partie finale de l'acte versée ; mentions techniques de signature électronique et pieds de page répétés retirés avant découpe ; reconnaissance gratuite lancée d'office sur un scan, lecture par Claude proposée seulement pour les pages mal reconnues, avec le détail de ce qui manque) ; 1.3 du 09/10/2026 (DOUBLE PASSE SUR LES ACTES SCANNÉS, méthode reprise de TRENTE : pages sans texte détectées une à une, reconnaissance gratuite Tesseract dans le navigateur, puis lecture par Claude pour compléter, sur validation et après estimatif de coût ; texte reconnu signalé à relire dans la fiche) ; 1.2 du 09/10/2026 (MODE LECTURE SEULE : onglet « Consulter le clausier » en teinte de consultation, adresse directe ?consulter, bandeau avec retour au mode travail, aucun geste de modification ; sélection de clauses et envoi par mail d'un fichier Word aux champs entre crochets colorisés) ; 1.1 du 09/10/2026 (TRAITEMENT SIMULTANÉ : tous les points restants des dépôts d'un même type d'acte regroupés par rubrique proposée, tranchés en bloc ou un à un ; bascule avec l'ordre d'arrivée) ; 1.0 du 09/10/2026 (file « À traiter » : tableau de bord de la file, avancement de chaque dépôt, bouton « Mettre de côté » et liste des dépôts en attente ; compteurs d'usage dissociés du classement des clauses) ; 0.9 du 09/10/2026 (couverture du clausier par rubrique et par article, fiche éditable de la clause, journal de relecture avec rangement défait seul ou par lot, signal d'un acte non numéroté versé dans un clausier pauvre) ; 0.8 du 09/10/2026 (ciseau : coupe manuelle d'un point entre paragraphes ou puces, partie détachée lettrée, phrase d'annonce reprise, coupes conservées à la redécoupe, recollage) ; 0.7 du 09/10/2026 (ergonomie : fil d'Ariane collant, clause étoile choisie à la main et épinglée, compteurs indicatifs d'actes versés et de reprises en rédaction, comparaison côte à côte de deux variantes, recherche plein texte et filtres par contexte, sens, nature et texte visé, étapes du versement) ; 0.6 du 08/10/2026 (rangement des points d'un dépôt dans le clausier : proposition et deuxième candidate, contexte coché, validation point par point ou en bloc, journal des mouvements) ; 0.5 du 08/10/2026 (module Clausier, première tranche : plans de référence PSV AKZO et PUV R3S, numéros permanents, page Clausier) ; 0.4 du 08/10/2026 (titres des PDF non numérotés déduits de la mise en forme) ; 0.3 du 08/10/2026 (lecture Word avec numérotation automatique, contrôles de vraisemblance) ; 0.2 : moteur de découpe en service ; squelette du 07/10/2026
    Arbitrages (fiche clausier) : une application, deux moteurs ;
    on VERSE d'un côté (file d'attente sur le Drive), on TRAITE quand on veut ;
    le DÉCOUPAGE (neutralisation en champs, coupe en clauses, destination
@@ -535,6 +576,7 @@ document.querySelectorAll(".onglets [role=tab]").forEach(b => b.addEventListener
   document.querySelectorAll(".panneau").forEach(p => p.classList.toggle("actif", p.id === "panneau-" + b.dataset.onglet));
   if (b.dataset.onglet === "traiter") chargerFile();
   if (b.dataset.onglet === "clausier") chargerClausier();
+  if (b.dataset.onglet === "bibliotheque") chargerBibliotheque();
 }));
 $("type-acte").innerHTML = `<option value="">À reconnaître</option>` + TYPES_ACTE.map(t => `<option value="${t.code}">${t.libelle}</option>`).join("");
 
@@ -2180,6 +2222,7 @@ async function afficherType() {
     const r = etat.lecture ? { fichier: null, donnees: await clausierExistant(cl.type) } : await chargerType(cl.type);
     if (etat.lecture && r.donnees && articlesManquants(r.donnees, cl.type).length) completerPlan(r.donnees, cl.type);   // en mémoire seulement
     cl.fichier = r.fichier; cl.donnees = r.donnees;
+    cl.biblio = await lireBiblio(cl.type).catch(() => null);
     if (etat.lecture && !r.donnees && PLANS[cl.type]) { corps.innerHTML = `<p class="vide">Aucune clause n'a encore été rangée pour ce type d'acte.</p>`; return; }
     if (!r.donnees) { corps.innerHTML = `<p class="vide">Le plan de référence de ce type d'acte reste à construire. Les deux promesses sont prêtes.</p>`; return; }
     dessinerType();
@@ -2434,12 +2477,13 @@ function dessinerRubrique() {
         ${clauses.length ? clauses.map(c => carteClause(c, c.id === etoile, { comparable: clauses.length > 1, comparee: cl.comparer.includes(c.id), choisieLe: c.id === etoile ? r.etoile.choisie_le : null, edition: !etat.lecture && cl.edition === c.id })).join("")
           : `<p class="vide" style="text-align:left;padding:10px 0">Aucune clause rangée ici pour l'instant. Les clauses arrivent par l'onglet « À traiter », une fois validées.</p>`}
       </div>
-      <aside class="cl-ia"><h4>Propositions de l'IA</h4>
+      <aside class="cl-ia">${blocAppui(r)}<h4>Propositions de l'IA</h4>
         ${r.propositions?.length ? r.propositions.map(p => `<article class="clause"><div class="texte">${echapper(p.texte)}</div><p class="source">${echapper(p.fondement || "")}</p></article>`).join("")
           : `<p class="vide">Ici viendront les rédactions que l'IA propose pour améliorer la clause étoile ou une variante, avec la doctrine ou la jurisprudence qui les fonde. Prochaine tranche.</p>`}
       </aside>
     </div></section>`;
   const zoneR = $("cl-rubrique");
+  brancherAppui(zoneR, r);
   zoneR.querySelector('[data-ariane="type"]').addEventListener("click", () => { $("cl-type").scrollIntoView({ behavior: "smooth", block: "start" }); $("cl-type").focus(); });
   zoneR.querySelector('[data-ariane="article"]').addEventListener("click", () => {
     const det = $("cl-corps").querySelectorAll(".cl-plan details")[art.num - 1];
@@ -2591,6 +2635,180 @@ async function envoyerPanier() {
     setTimeout(() => { location.href = `mailto:?subject=${encodeURIComponent(sujet)}&body=${encodeURIComponent(corps)}`; }, 400);
     dessinerPanier(`Fichier « ${echapper(nom)} » téléchargé : joignez-le au message qui vient de s'ouvrir dans votre messagerie.`);
   } catch (e) { montrerErreur("Fichier Word non préparé : " + e.message); dessinerPanier(); }
+}
+
+/* ============================================================
+   BIBLIOTHÈQUE D'APPUI (2.1) — arbitrages JFD du 10/10/2026
+   UNE BIBLIOTHÈQUE PAR TYPE D'ACTE (comme les clauses) : index
+   Clausier/<type>/bibliotheque.json, fichiers dans Clausier/<type>/Bibliothèque/.
+   À l'entrée : lecture des VINGT PREMIÈRES LIGNES (reconnaissance gratuite si
+   scan) et comparaison avec la bibliothèque du type : déjà présent → REFUS.
+   Fiche : titre, nature (doctrine / jurisprudence / texte), date, référence,
+   pré-remplis d'après les premières lignes, corrigés à la main. Rubriques
+   proposées par le moteur de rangement, validées à la main ; rattachement et
+   retrait ensuite depuis la section « Appui » de chaque rubrique.
+   ============================================================ */
+const NOM_BIBLIO = "bibliotheque.json", DOSSIER_BIBLIO = "Bibliothèque", SEUIL_DEJA_PRESENT = 0.8;
+const NATURES_BIB = { doctrine: "doctrine", jurisprudence: "jurisprudence", texte: "texte" };
+const bib = { type: null, index: null, idIndex: null, encours: null };
+async function trouverBiblio(code, creer) {
+  const { clausier } = await arborescence();
+  const dos = creer ? { id: await dossierType(code) } : (await lister(clausier, ` and name = '${echapperQ(libelleType(code))}' and mimeType = 'application/vnd.google-apps.folder'`))[0];
+  if (!dos) return null;
+  const f = (await lister(dos.id, ` and name = '${NOM_BIBLIO}'`))[0];
+  return { idType: dos.id, idIndex: f?.id || null };
+}
+async function lireBiblio(code) {
+  const t = await trouverBiblio(code, false); if (!t?.idIndex) return { documents: [] };
+  return (await lireJson(t.idIndex)) || { documents: [] };
+}
+async function modifierBiblio(code, changement) {
+  const t = await trouverBiblio(code, true);
+  if (!t.idIndex) { const vide = { moneta: 1, type_acte: code, prochain: 1, documents: [] }; changement(vide); const c = await ecrireJson(NOM_BIBLIO, vide, t.idType); return { index: vide, idIndex: c.id }; }
+  const d = await lireJson(t.idIndex); changement(d); await reecrireJson(t.idIndex, d); return { index: d, idIndex: t.idIndex };
+}
+async function televerser(fichier, parent) {
+  const limite = "moneta" + Math.random().toString(36).slice(2);
+  const tete = `--${limite}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify({ name: fichier.name, parents: [parent] })}\r\n--${limite}\r\nContent-Type: ${fichier.type || "application/octet-stream"}\r\n\r\n`;
+  const corps = new Blob([tete, fichier, `\r\n--${limite}--`]);
+  return drive(`${DRIVE_ENVOI}?uploadType=multipart&fields=id,webViewLink`, { method: "POST", headers: { "Content-Type": `multipart/related; boundary=${limite}` }, body: corps });
+}
+// Pré-remplissage gratuit d'après les premières lignes
+function preRemplir(debut) {
+  const lignes = debut.split("\n").map(l => l.trim()).filter(Boolean);
+  const tout = debut.replace(/\s+/g, " ");
+  const juris = /\b(Cass\.?|Cour de cassation|cour d['’]appel|CA\s+[A-Z]|Conseil d['’][ÉE]tat|CE,|arr[êe]t|pourvoi|chambre civile|civ\.\s*\d|com\.,)/i.test(tout);
+  const texte = !juris && /\b(Loi n°|Décret n°|Ordonnance n°|Article [LRD]\.?\s*\d|Code (civil|de la construction|de l['’]urbanisme|général des impôts))/i.test(tout);
+  const mois = "janvier|février|fevrier|mars|avril|mai|juin|juillet|août|aout|septembre|octobre|novembre|décembre|decembre";
+  const md = tout.match(new RegExp(`\\b(\\d{1,2}(?:er)?\\s+(?:${mois})\\s+\\d{4})\\b`, "i")) || tout.match(/\b(\d{1,2}[\/.]\d{1,2}[\/.]\d{4})\b/);
+  const pourvoi = tout.match(/\b(?:pourvoi\s+)?n°\s*([A-Z]?\d{2}-\d{2}\.\d{3})/i);
+  const revue = lignes.find(l => /\b(RTD|JCP|Defrénois|Defrenois|AJDI|RDI|Dalloz|D\.\s*\d{4}|Gaz\.? Pal|Revue|Bull\.?|JurisData|Solution notaire|Lexbase)\b/i.test(l));
+  const juridiction = (tout.match(/\b(Cass\.?\s*[^,.;]{0,30}|Cour de cassation[^,.;]{0,40}|CA\s+[A-ZÉ][\p{L}-]+|Conseil d['’][ÉE]tat)/iu) || [])[1];
+  const titre = lignes.find(l => l.length >= 12 && l.length <= 200 && !/^(page|\d+$)/i.test(l)) || lignes[0] || "";
+  return { titre, nature: juris ? "jurisprudence" : texte ? "texte" : "doctrine", date: md?.[1] || "",
+    reference: juris ? [juridiction, pourvoi ? `n° ${pourvoi[1]}` : ""].filter(Boolean).join(", ") : (revue || "").slice(0, 120) };
+}
+async function chargerBibliotheque() {
+  const sel = $("bib-type");
+  if (!sel.options.length) {
+    sel.innerHTML = TYPES_ACTE.filter(t => PLANS[t.code]).map(t => `<option value="${t.code}">${t.libelle}</option>`).join("");
+    sel.addEventListener("change", () => { bib.encours = null; $("bib-saisie").innerHTML = ""; chargerBibliotheque(); });
+  }
+  bib.type = sel.value;
+  const z = $("bib-liste"); z.innerHTML = `<p class="note-moteur">Lecture de la bibliothèque…</p>`;
+  try {
+    bib.index = await lireBiblio(bib.type);
+    const cla = await clausierExistant(bib.type).catch(() => null);
+    const titreRub = id => cla?.rubriques?.[id] ? `${id} · ${cla.rubriques[id].titre}` : id;
+    const docs = bib.index.documents || [];
+    z.innerHTML = docs.length ? `<h3 style="margin-top:6px">${pl(docs.length, "document")} dans la bibliothèque — ${echapper(libelleType(bib.type))}</h3>
+      <table class="bib"><thead><tr><th>Réf.</th><th>Titre</th><th>Nature</th><th>Date</th><th>Référence</th><th>Rubriques</th></tr></thead><tbody>
+      ${docs.map(d => `<tr><td>${echapper(d.id)}</td><td><a href="${echapper(d.lien || `https://drive.google.com/file/d/${d.fichier}/view`)}" target="_blank" rel="noopener">${echapper(d.titre)}</a></td>
+        <td><span class="nature ${d.nature}">${echapper(NATURES_BIB[d.nature] || d.nature)}</span></td><td>${echapper(d.date || "")}</td><td>${echapper(d.reference || "")}</td>
+        <td>${d.rubriques?.length ? d.rubriques.map(x => echapper(titreRub(x))).join("<br>") : "<i>aucune</i>"}</td></tr>`).join("")}</tbody></table>`
+      : `<p class="vide">La bibliothèque de ce type d'acte est vide. Déposez un premier document ci-dessus.</p>`;
+  } catch (e) { z.innerHTML = `<p class="vide">${echapper(e.message)}</p>`; }
+}
+async function analyserDocument(f) {
+  const z = $("bib-saisie"); if (!bib.type) await chargerBibliotheque();
+  z.innerHTML = `<div class="bib-carte"><p class="note-moteur">Lecture des premières lignes de « ${echapper(f.name)} »…</p></div>`;
+  try {
+    let lu = await extraireTexte(f);
+    let texte = sansMarques(lu.texte || "");
+    if (lu.sansTexte?.includes(1) || texte.replace(/\s/g, "").length < 200) {   // scan : reconnaissance gratuite de la première page
+      z.querySelector(".note-moteur").textContent = "Document scanné : reconnaissance gratuite de la première page…";
+      await chargerTesseract();
+      const w = await Tesseract.createWorker("fra", 1);
+      try { const cv = await rendrePage(lu.pdf, 1, 2); texte = (await w.recognize(cv)).data.text || ""; } finally { try { await w.terminate(); } catch { } }
+    }
+    const debut = texte.split("\n").map(l => l.trim()).filter(Boolean).slice(0, 20).join("\n");
+    if (debut.replace(/\s/g, "").length < 40) throw new Error("aucun texte lisible dans les premières lignes");
+    bib.index = await lireBiblio(bib.type);
+    const deja = (bib.index.documents || []).map(d => ({ d, sim: ressemblance(debut, d.debut || "") })).sort((a, b) => b.sim - a.sim)[0];
+    if (deja && deja.sim >= SEUIL_DEJA_PRESENT) {
+      z.innerHTML = `<div class="bib-carte refus"><b>Versement refusé : ce document est déjà dans la bibliothèque.</b>
+        <p>Ses premières lignes correspondent à ${Math.round(deja.sim * 100)} % à <b>${echapper(deja.d.id)} — ${echapper(deja.d.titre)}</b>${deja.d.date ? ` (${echapper(deja.d.date)})` : ""}.</p>
+        <div class="actions"><button class="bouton secondaire" id="bib-ok">Compris</button></div></div>`;
+      $("bib-ok").addEventListener("click", () => { z.innerHTML = ""; }); return;
+    }
+    const pre = preRemplir(debut);
+    const cla = await chargerType(bib.type);
+    const rubriques = Object.values(cla.donnees.rubriques).map(x => ({ id: x.id, titre: x.titre, article: x.article,
+      article_titre: cla.donnees.articles.find(a => a.num === x.article)?.titre || "", mots_cles: x.mots_cles }));
+    let cand = [];
+    try { const r = await appelerMoteur("ranger", { points: [{ num: "1", texte: texte.slice(0, 6000), titres: [] }], rubriques, texte_acte: texte.slice(0, 6000) }); cand = r.rangement.propositions[0]?.candidats || []; } catch { }
+    bib.encours = { fichier: f, debut, cand, rubs: cla.donnees.rubriques };
+    const options = Object.values(cla.donnees.rubriques).map(r => `<option value="${r.id}">${echapper(r.id)} · ${echapper(r.titre)}</option>`).join("");
+    z.innerHTML = `<div class="bib-carte"><b>${echapper(f.name)}</b> — absent de la bibliothèque, prêt à verser. Vérifiez la fiche :
+      <div class="grille">
+        <div class="large"><div class="lib">Titre</div><input id="bib-titre" value="${echapper(pre.titre)}"></div>
+        <div><div class="lib">Nature</div><select id="bib-nature">${Object.entries(NATURES_BIB).map(([k, v]) => `<option value="${k}"${k === pre.nature ? " selected" : ""}>${v}</option>`).join("")}</select></div>
+        <div><div class="lib">Date</div><input id="bib-date" value="${echapper(pre.date)}" placeholder="12 mars 2024"></div>
+        <div><div class="lib">Référence</div><input id="bib-ref" value="${echapper(pre.reference)}" placeholder="Cass. 3e civ., n° 22-12.345 · ou revue"></div>
+      </div>
+      <div class="lib">Premières lignes lues</div><div class="debut">${echapper(debut)}</div>
+      <div class="lib" style="margin-top:10px">Rubriques de rattachement (proposées d'après les mots-clés)</div>
+      <div class="rubs" id="bib-rubs">${cand.map((c, i) => `<label><input type="checkbox" value="${c.id}"${i === 0 ? " checked" : ""}> ${echapper(c.id)} · ${echapper(cla.donnees.rubriques[c.id]?.titre || "")}${c.mots?.length ? ` <span class="aide">(${echapper(c.mots.slice(0, 4).join(", "))})</span>` : ""}</label>`).join("") || `<p class="aide">Aucune rubrique évidente : choisissez-en une ci-dessous.</p>`}</div>
+      <select id="bib-ajout"><option value="">Ajouter une autre rubrique…</option>${options}</select>
+      <div class="actions"><button class="bouton" id="bib-verser">Verser dans la bibliothèque</button><button class="bouton discret" id="bib-abandon">Abandonner</button></div></div>`;
+    $("bib-ajout").addEventListener("change", e => { const v = e.target.value; if (!v || $("bib-rubs").querySelector(`input[value="${v}"]`)) return;
+      $("bib-rubs").insertAdjacentHTML("beforeend", `<label><input type="checkbox" value="${v}" checked> ${echapper(v)} · ${echapper(cla.donnees.rubriques[v]?.titre || "")}</label>`); e.target.value = ""; });
+    $("bib-abandon").addEventListener("click", () => { bib.encours = null; z.innerHTML = ""; });
+    $("bib-verser").addEventListener("click", verserDocument);
+  } catch (e) { z.innerHTML = `<div class="bib-carte refus">Lecture impossible : ${echapper(e.message)}.</div>`; }
+}
+async function verserDocument() {
+  const e = bib.encours; if (!e) return;
+  const b = $("bib-verser"); b.disabled = true; b.textContent = "Versement…";
+  try {
+    const titre = $("bib-titre").value.trim() || e.fichier.name;
+    const rubriques = [...$("bib-rubs").querySelectorAll("input:checked")].map(x => x.value);
+    const t = await trouverBiblio(bib.type, true);
+    const dossierFichiers = await dossier(DOSSIER_BIBLIO, t.idType);
+    const envoi = await televerser(e.fichier, dossierFichiers);
+    const prefixe = PLANS[bib.type]?.prefixe || "DOC";
+    let cree = null;
+    await modifierBiblio(bib.type, d => {
+      d.prochain ||= 1;
+      cree = { id: `${prefixe}-B${String(d.prochain++).padStart(4, "0")}`, titre, nature: $("bib-nature").value, date: $("bib-date").value.trim(),
+        reference: $("bib-ref").value.trim(), fichier: envoi.id, lien: envoi.webViewLink || null, nom_fichier: e.fichier.name,
+        debut: e.debut, rubriques, verse_le: new Date().toISOString() };
+      (d.documents ||= []).push(cree);
+    });
+    bib.encours = null;
+    $("bib-saisie").innerHTML = `<div class="bib-carte"><b>${echapper(cree.id)}</b> versé dans la bibliothèque${rubriques.length ? `, rattaché à ${pl(rubriques.length, "rubrique")}` : ""}.</div>`;
+    chargerBibliotheque();
+  } catch (err) { montrerErreur("Versement impossible : " + err.message); b.disabled = false; b.textContent = "Verser dans la bibliothèque"; }
+}
+(() => {
+  const zone = $("bib-zone"), entree = $("bib-fichier");
+  entree.addEventListener("change", () => { if (entree.files[0]) analyserDocument(entree.files[0]); entree.value = ""; });
+  ["dragover", "dragenter"].forEach(t => zone.addEventListener(t, ev => { ev.preventDefault(); zone.classList.add("survol"); }));
+  ["dragleave", "drop"].forEach(t => zone.addEventListener(t, ev => { ev.preventDefault(); zone.classList.remove("survol"); }));
+  zone.addEventListener("drop", ev => { const f = ev.dataTransfer.files[0]; if (f) analyserDocument(f); });
+})();
+// Section « Appui » de la rubrique : documents rattachés, rattacher, retirer (mode travail seulement)
+function blocAppui(r) {
+  const docs = (cl.biblio?.documents || []).filter(d => d.rubriques?.includes(r.id));
+  const autres = (cl.biblio?.documents || []).filter(d => !d.rubriques?.includes(r.id));
+  return `<div class="cl-appui"><h4>Bibliothèque d'appui${docs.length ? ` (${docs.length})` : ""}</h4>
+    ${docs.length ? docs.map(d => `<div class="doc"><span class="nature ${d.nature}">${echapper(NATURES_BIB[d.nature] || d.nature)}</span>
+      <a href="${echapper(d.lien || `https://drive.google.com/file/d/${d.fichier}/view`)}" target="_blank" rel="noopener">${echapper(d.titre)}</a>
+      <div class="ref">${echapper([d.reference, d.date].filter(Boolean).join(" — "))} · ${echapper(d.id)}${etat.lecture ? "" : `<button data-retirer-doc="${echapper(d.id)}" title="Retirer de cette rubrique (le document reste dans la bibliothèque)">retirer</button>`}</div></div>`).join("")
+      : `<p class="aide">Aucun document rattaché. ${etat.lecture ? "" : "Versez-en par l'onglet « Bibliothèque », ou rattachez-en un déjà versé."}</p>`}
+    ${!etat.lecture && autres.length ? `<select data-rattacher><option value="">Rattacher un document de la bibliothèque…</option>${autres.map(d => `<option value="${echapper(d.id)}">${echapper(d.id)} · ${echapper(d.titre.slice(0, 70))}</option>`).join("")}</select>` : ""}</div>`;
+}
+function brancherAppui(zone, r) {
+  if (etat.lecture || !zone) return;
+  const changer = async (id, ajout) => {
+    try {
+      const { index } = await modifierBiblio(cl.type, d => { const doc = d.documents.find(x => x.id === id); if (!doc) return;
+        doc.rubriques = ajout ? [...new Set([...(doc.rubriques || []), r.id])] : (doc.rubriques || []).filter(x => x !== r.id); });
+      cl.biblio = index; dessinerRubrique();
+    } catch (e) { montrerErreur("Bibliothèque non modifiée : " + e.message); }
+  };
+  zone.querySelector("[data-rattacher]")?.addEventListener("change", ev => { if (ev.target.value) changer(ev.target.value, true); });
+  zone.querySelectorAll("[data-retirer-doc]").forEach(b => b.addEventListener("click", () => changer(b.dataset.retirerDoc, false)));
 }
 
 /* ---------- démarrage ---------- */
