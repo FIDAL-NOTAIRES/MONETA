@@ -130,6 +130,15 @@ table.file tr.ouvert td{background:#EAFAFB}
 #zone-cote label{font-size:.88rem;margin-bottom:4px;display:block}
 #zone-cote input{width:100%;max-width:520px;padding:6px 10px;margin-bottom:8px}
 
+/* ---------- 2.2 — propositions de l'IA ---------- */
+.cl-prop .prop{border:1px solid var(--trait);border-left:4px solid var(--orange);border-radius:4px;background:#fff;padding:10px 12px;margin-bottom:10px}
+.cl-prop .prop .texte{font-family:Georgia,serif;font-size:.88rem;line-height:1.5;white-space:pre-wrap}
+.cl-prop .prop .apport{font-style:italic;color:var(--nuit);font-size:.86rem;margin:6px 0}
+.cl-prop .prop ul{margin:4px 0 6px 18px;font-size:.82rem;color:var(--doux)}
+.cl-prop .prop .gestes{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.cl-prop .prop .gestes .bouton{font-size:.82rem;padding:4px 10px}
+.cl-prop .bilan{font-size:.8rem;color:var(--doux)}
+
 /* ---------- 2.1 — bibliothèque d'appui ---------- */
 #bib-saisie .bib-carte{border:1px solid var(--trait);border-left:4px solid var(--canard);border-radius:4px;padding:14px 16px;margin:6px 0 18px;background:#fff}
 #bib-saisie .bib-carte.refus{border-left-color:var(--carmin)}
@@ -404,7 +413,7 @@ mark{background:var(--jaune-forme);color:inherit;padding:0 1px}
 <body>
 <header>
   <h1>MONETA</h1>
-  <small>Le clausier du cabinet, version 2.1</small>
+  <small>Le clausier du cabinet, version 2.2</small>
   <span id="etat-connexion">Connexion au Drive…</span>
   <button id="btn-connexion">Autoriser l'accès au Drive</button>
 </header>
@@ -510,7 +519,7 @@ mark{background:var(--jaune-forme);color:inherit;padding:0 1px}
 
 <script>
 /* ============================================================
-   MONETA — version 2.1 du 10/10/2026 (BIBLIOTHÈQUE D'APPUI, une par type d'acte : onglet « Bibliothèque », lecture des vingt premières lignes et refus d'un article déjà présent, fiche pré-remplie, rubriques proposées par mots-clés, section « Appui » dans chaque rubrique avec rattachement et retrait) ; 2.0 du 10/10/2026 (« POURQUOI CETTE VARIANTE » : à chaque point gardé comme variante, Claude rédige en une ligne ce qu'elle change sur le fond par rapport à la clause étoile ou à la plus proche ; affichée dans le clausier, corrigeable dans la fiche) ; 1.9 du 10/10/2026 (NEUTRALISATION PAR CLAUDE à l'amorçage : bouton dans le rangement, estimatif, points neutralisés par lots, champs [ ] en couleur, texte neutralisé rangé et comparé, original gardé caché dans la clause) ; 1.8 du 10/10/2026 (seconde passe, par le sens, aussi dans le TRAITEMENT SIMULTANÉ) ; 1.7 du 10/10/2026 (RACCOURCIS CLAVIER dans le rangement, désactivés par défaut : D doublon, V variante, Entrée valider la proposée, E écarter, flèches pour changer de point) ; 1.6 du 10/10/2026 (SECONDE PASSE DE COMPARAISON, PAR LE SENS : empreintes fabriquées par un seul petit modèle dans le navigateur, gardées par type d'acte sur le Drive, appliquées aux seuls points que la première passe n'a pas tranchés) ; 1.5 du 09/10/2026 (MOTEUR DE COMPARAISON, première passe mot à mot : verdict doublon / variante / nouvelle pour chaque point, AFFICHAGE CÔTE À CÔTE avec la clause de référence et ses différences, toutes les candidates proches quand le moteur hésite, doublon confirmé = une occurrence de plus sur la clause existante, verdict en couleur dans la file après première consultation) ; 1.4 du 09/10/2026 (article « Clôture et signature » ajouté aux deux plans, y compris aux clausiers déjà créés ; partie finale de l'acte versée ; mentions techniques de signature électronique et pieds de page répétés retirés avant découpe ; reconnaissance gratuite lancée d'office sur un scan, lecture par Claude proposée seulement pour les pages mal reconnues, avec le détail de ce qui manque) ; 1.3 du 09/10/2026 (DOUBLE PASSE SUR LES ACTES SCANNÉS, méthode reprise de TRENTE : pages sans texte détectées une à une, reconnaissance gratuite Tesseract dans le navigateur, puis lecture par Claude pour compléter, sur validation et après estimatif de coût ; texte reconnu signalé à relire dans la fiche) ; 1.2 du 09/10/2026 (MODE LECTURE SEULE : onglet « Consulter le clausier » en teinte de consultation, adresse directe ?consulter, bandeau avec retour au mode travail, aucun geste de modification ; sélection de clauses et envoi par mail d'un fichier Word aux champs entre crochets colorisés) ; 1.1 du 09/10/2026 (TRAITEMENT SIMULTANÉ : tous les points restants des dépôts d'un même type d'acte regroupés par rubrique proposée, tranchés en bloc ou un à un ; bascule avec l'ordre d'arrivée) ; 1.0 du 09/10/2026 (file « À traiter » : tableau de bord de la file, avancement de chaque dépôt, bouton « Mettre de côté » et liste des dépôts en attente ; compteurs d'usage dissociés du classement des clauses) ; 0.9 du 09/10/2026 (couverture du clausier par rubrique et par article, fiche éditable de la clause, journal de relecture avec rangement défait seul ou par lot, signal d'un acte non numéroté versé dans un clausier pauvre) ; 0.8 du 09/10/2026 (ciseau : coupe manuelle d'un point entre paragraphes ou puces, partie détachée lettrée, phrase d'annonce reprise, coupes conservées à la redécoupe, recollage) ; 0.7 du 09/10/2026 (ergonomie : fil d'Ariane collant, clause étoile choisie à la main et épinglée, compteurs indicatifs d'actes versés et de reprises en rédaction, comparaison côte à côte de deux variantes, recherche plein texte et filtres par contexte, sens, nature et texte visé, étapes du versement) ; 0.6 du 08/10/2026 (rangement des points d'un dépôt dans le clausier : proposition et deuxième candidate, contexte coché, validation point par point ou en bloc, journal des mouvements) ; 0.5 du 08/10/2026 (module Clausier, première tranche : plans de référence PSV AKZO et PUV R3S, numéros permanents, page Clausier) ; 0.4 du 08/10/2026 (titres des PDF non numérotés déduits de la mise en forme) ; 0.3 du 08/10/2026 (lecture Word avec numérotation automatique, contrôles de vraisemblance) ; 0.2 : moteur de découpe en service ; squelette du 07/10/2026
+   MONETA — version 2.2 du 10/10/2026 (PROPOSITIONS DE L'IA pour challenger la clause étoile : bouton dans la rubrique, estimatif, au plus deux rédactions fondées sur la seule bibliothèque d'appui rattachée, à adopter comme variante ou à écarter) ; 2.1 du 10/10/2026 (BIBLIOTHÈQUE D'APPUI, une par type d'acte : onglet « Bibliothèque », lecture des vingt premières lignes et refus d'un article déjà présent, fiche pré-remplie, rubriques proposées par mots-clés, section « Appui » dans chaque rubrique avec rattachement et retrait) ; 2.0 du 10/10/2026 (« POURQUOI CETTE VARIANTE » : à chaque point gardé comme variante, Claude rédige en une ligne ce qu'elle change sur le fond par rapport à la clause étoile ou à la plus proche ; affichée dans le clausier, corrigeable dans la fiche) ; 1.9 du 10/10/2026 (NEUTRALISATION PAR CLAUDE à l'amorçage : bouton dans le rangement, estimatif, points neutralisés par lots, champs [ ] en couleur, texte neutralisé rangé et comparé, original gardé caché dans la clause) ; 1.8 du 10/10/2026 (seconde passe, par le sens, aussi dans le TRAITEMENT SIMULTANÉ) ; 1.7 du 10/10/2026 (RACCOURCIS CLAVIER dans le rangement, désactivés par défaut : D doublon, V variante, Entrée valider la proposée, E écarter, flèches pour changer de point) ; 1.6 du 10/10/2026 (SECONDE PASSE DE COMPARAISON, PAR LE SENS : empreintes fabriquées par un seul petit modèle dans le navigateur, gardées par type d'acte sur le Drive, appliquées aux seuls points que la première passe n'a pas tranchés) ; 1.5 du 09/10/2026 (MOTEUR DE COMPARAISON, première passe mot à mot : verdict doublon / variante / nouvelle pour chaque point, AFFICHAGE CÔTE À CÔTE avec la clause de référence et ses différences, toutes les candidates proches quand le moteur hésite, doublon confirmé = une occurrence de plus sur la clause existante, verdict en couleur dans la file après première consultation) ; 1.4 du 09/10/2026 (article « Clôture et signature » ajouté aux deux plans, y compris aux clausiers déjà créés ; partie finale de l'acte versée ; mentions techniques de signature électronique et pieds de page répétés retirés avant découpe ; reconnaissance gratuite lancée d'office sur un scan, lecture par Claude proposée seulement pour les pages mal reconnues, avec le détail de ce qui manque) ; 1.3 du 09/10/2026 (DOUBLE PASSE SUR LES ACTES SCANNÉS, méthode reprise de TRENTE : pages sans texte détectées une à une, reconnaissance gratuite Tesseract dans le navigateur, puis lecture par Claude pour compléter, sur validation et après estimatif de coût ; texte reconnu signalé à relire dans la fiche) ; 1.2 du 09/10/2026 (MODE LECTURE SEULE : onglet « Consulter le clausier » en teinte de consultation, adresse directe ?consulter, bandeau avec retour au mode travail, aucun geste de modification ; sélection de clauses et envoi par mail d'un fichier Word aux champs entre crochets colorisés) ; 1.1 du 09/10/2026 (TRAITEMENT SIMULTANÉ : tous les points restants des dépôts d'un même type d'acte regroupés par rubrique proposée, tranchés en bloc ou un à un ; bascule avec l'ordre d'arrivée) ; 1.0 du 09/10/2026 (file « À traiter » : tableau de bord de la file, avancement de chaque dépôt, bouton « Mettre de côté » et liste des dépôts en attente ; compteurs d'usage dissociés du classement des clauses) ; 0.9 du 09/10/2026 (couverture du clausier par rubrique et par article, fiche éditable de la clause, journal de relecture avec rangement défait seul ou par lot, signal d'un acte non numéroté versé dans un clausier pauvre) ; 0.8 du 09/10/2026 (ciseau : coupe manuelle d'un point entre paragraphes ou puces, partie détachée lettrée, phrase d'annonce reprise, coupes conservées à la redécoupe, recollage) ; 0.7 du 09/10/2026 (ergonomie : fil d'Ariane collant, clause étoile choisie à la main et épinglée, compteurs indicatifs d'actes versés et de reprises en rédaction, comparaison côte à côte de deux variantes, recherche plein texte et filtres par contexte, sens, nature et texte visé, étapes du versement) ; 0.6 du 08/10/2026 (rangement des points d'un dépôt dans le clausier : proposition et deuxième candidate, contexte coché, validation point par point ou en bloc, journal des mouvements) ; 0.5 du 08/10/2026 (module Clausier, première tranche : plans de référence PSV AKZO et PUV R3S, numéros permanents, page Clausier) ; 0.4 du 08/10/2026 (titres des PDF non numérotés déduits de la mise en forme) ; 0.3 du 08/10/2026 (lecture Word avec numérotation automatique, contrôles de vraisemblance) ; 0.2 : moteur de découpe en service ; squelette du 07/10/2026
    Arbitrages (fiche clausier) : une application, deux moteurs ;
    on VERSE d'un côté (file d'attente sur le Drive), on TRAITE quand on veut ;
    le DÉCOUPAGE (neutralisation en champs, coupe en clauses, destination
@@ -2477,13 +2486,12 @@ function dessinerRubrique() {
         ${clauses.length ? clauses.map(c => carteClause(c, c.id === etoile, { comparable: clauses.length > 1, comparee: cl.comparer.includes(c.id), choisieLe: c.id === etoile ? r.etoile.choisie_le : null, edition: !etat.lecture && cl.edition === c.id })).join("")
           : `<p class="vide" style="text-align:left;padding:10px 0">Aucune clause rangée ici pour l'instant. Les clauses arrivent par l'onglet « À traiter », une fois validées.</p>`}
       </div>
-      <aside class="cl-ia">${blocAppui(r)}<h4>Propositions de l'IA</h4>
-        ${r.propositions?.length ? r.propositions.map(p => `<article class="clause"><div class="texte">${echapper(p.texte)}</div><p class="source">${echapper(p.fondement || "")}</p></article>`).join("")
-          : `<p class="vide">Ici viendront les rédactions que l'IA propose pour améliorer la clause étoile ou une variante, avec la doctrine ou la jurisprudence qui les fonde. Prochaine tranche.</p>`}
+      <aside class="cl-ia">${blocAppui(r)}${blocPropositions(r)}
       </aside>
     </div></section>`;
   const zoneR = $("cl-rubrique");
   brancherAppui(zoneR, r);
+  brancherPropositions(zoneR, r);
   zoneR.querySelector('[data-ariane="type"]').addEventListener("click", () => { $("cl-type").scrollIntoView({ behavior: "smooth", block: "start" }); $("cl-type").focus(); });
   zoneR.querySelector('[data-ariane="article"]').addEventListener("click", () => {
     const det = $("cl-corps").querySelectorAll(".cl-plan details")[art.num - 1];
@@ -2787,6 +2795,89 @@ async function verserDocument() {
   ["dragleave", "drop"].forEach(t => zone.addEventListener(t, ev => { ev.preventDefault(); zone.classList.remove("survol"); }));
   zone.addEventListener("drop", ev => { const f = ev.dataTransfer.files[0]; if (f) analyserDocument(f); });
 })();
+/* ---------- PROPOSITIONS DE L'IA (2.2) — principe validé par JFD le 10/10/2026 ----------
+   Bouton dans la rubrique (mode travail) ; Claude reçoit l'étoile (à défaut la clause la plus récente),
+   les variantes et le TEXTE des documents d'appui rattachés (lu sur le Drive, gratuitement) ;
+   il rend au plus deux rédactions, chacune fondée sur ces seuls documents. Gardées dans la rubrique
+   (« propositions »), elles ne touchent jamais au clausier : adopter comme variante, ou écarter. */
+cl.textesAppui = new Map();
+async function texteDocument(d) {
+  if (cl.textesAppui.has(d.id)) return cl.textesAppui.get(d.id);
+  let t = d.debut || "";
+  try {
+    const rep = await fetch(`${DRIVE}/${d.fichier}?alt=media`, { headers: { Authorization: `Bearer ${await jeton()}` } });
+    if (rep.ok) { const f = new File([await rep.blob()], d.nom_fichier || "document.pdf"); const lu = await extraireTexte(f); const x = sansMarques(lu.texte || ""); if (x.replace(/\s/g, "").length > t.replace(/\s/g, "").length) t = x; }
+  } catch { }
+  t = t.slice(0, 12000); cl.textesAppui.set(d.id, t); return t;
+}
+function referenceEtoile(r) { return (r.etoile && r.clauses.find(c => c.id === r.etoile.clause)) || trierClauses(r.clauses)[0] || null; }
+function blocPropositions(r) {
+  const props = r.propositions || [], ouvertes = props.filter(p => (p.statut || "proposée") === "proposée");
+  const adoptees = props.filter(p => p.statut === "adoptée").length, ecartees = props.filter(p => p.statut === "écartée").length;
+  const ref = referenceEtoile(r), docs = (cl.biblio?.documents || []).filter(d => d.rubriques?.includes(r.id));
+  const titreDoc = id => { const d = (cl.biblio?.documents || []).find(x => x.id === id); return d ? `${d.id} — ${d.titre}` : id; };
+  return `<div class="cl-prop"><h4>Propositions de l'IA</h4>
+    ${ouvertes.map(p => `<div class="prop" data-prop="${echapper(p.id)}">
+      <div class="texte">${colorerChamps(echapper(p.texte))}</div>
+      ${p.apport ? `<p class="apport">${echapper(p.apport)}</p>` : ""}
+      ${p.fondements?.length ? `<ul>${p.fondements.map(f => `<li><b>${echapper(titreDoc(f.document))}</b> : ${echapper(f.explication)}</li>`).join("")}</ul>` : `<p class="bilan">Sans appui documentaire : amélioration de rédaction seulement.</p>`}
+      ${etat.lecture ? "" : `<div class="gestes"><button class="bouton secondaire" data-adopter="${echapper(p.id)}">Adopter comme variante</button><button class="bouton discret" data-ecarter-prop="${echapper(p.id)}">Écarter</button></div>`}
+    </div>`).join("")}
+    ${!ouvertes.length ? `<p class="aide">${ref ? "Aucune proposition en attente." : "Les propositions viendront quand la rubrique aura au moins une clause."}</p>` : ""}
+    ${adoptees || ecartees ? `<p class="bilan">${adoptees ? `${pl(adoptees, "proposition adoptée", "propositions adoptées")}` : ""}${adoptees && ecartees ? " · " : ""}${ecartees ? `${pl(ecartees, "écartée", "écartées")}` : ""}</p>` : ""}
+    ${!etat.lecture && ref ? `<button class="bouton secondaire" data-proposer>Proposer une amélioration</button>
+      <p class="aide">Claude s'appuie sur ${ref.id === r.etoile?.clause ? "la clause étoile" : `la clause ${echapper(ref.id)} (aucune étoile choisie)`}, ${pl(r.clauses.length - 1, "variante")} et ${pl(docs.length, "document")} de la bibliothèque d'appui.</p>` : ""}
+  </div>`;
+}
+function brancherPropositions(zone, r) {
+  if (etat.lecture || !zone) return;
+  zone.querySelector("[data-proposer]")?.addEventListener("click", e => lancerProposition(r, e.target));
+  zone.querySelectorAll("[data-adopter]").forEach(b => b.addEventListener("click", () => { b.disabled = true; adopterProposition(r.id, b.dataset.adopter); }));
+  zone.querySelectorAll("[data-ecarter-prop]").forEach(b => b.addEventListener("click", () => { b.disabled = true; ecarterProposition(r.id, b.dataset.ecarterProp); }));
+}
+async function lancerProposition(r, bouton) {
+  const ref = referenceEtoile(r); if (!ref) return;
+  bouton.disabled = true; bouton.textContent = "Lecture des documents d'appui…";
+  try {
+    const docs = (cl.biblio?.documents || []).filter(d => d.rubriques?.includes(r.id)).slice(0, 6);
+    const appui = []; for (const d of docs) appui.push({ id: d.id, titre: d.titre, reference: d.reference, date: d.date, texte: await texteDocument(d) });
+    const variantes = r.clauses.filter(c => c.id !== ref.id).slice(0, 6).map(c => c.texte);
+    const signes = ref.texte.length + variantes.join("").length + appui.reduce((n, d) => n + d.texte.length, 0);
+    const t = await lireTarif(), dol = ((Math.ceil(signes / 3.2) + 900) * (t?.entree ?? 3) + 1500 * (t?.sortie ?? 15)) / 1e6;
+    if (!confirm(`Propositions de Claude pour « ${r.titre} » : il lira la clause de référence, ${pl(variantes.length, "variante")} et ${pl(appui.length, "document")} d'appui. Coût estimé : environ ${dollars(dol)}. Continuer ?`)) { bouton.disabled = false; bouton.textContent = "Proposer une amélioration"; return; }
+    bouton.textContent = "Claude rédige…";
+    const rep = await appelerMoteur("proposer", { rubrique: r.titre, etoile: ref.texte, variantes, appui });
+    const p = rep.proposition;
+    await modifierClausier(f => {
+      const x = f.rubriques[r.id]; if (!x) return;
+      x.prochaine_prop = (x.prochaine_prop || 0) + 1;
+      for (const q of p.propositions) (x.propositions ||= []).push({ id: `${r.id}-P${x.prochaine_prop++}`, texte: q.texte, apport: q.apport, fondements: q.fondements,
+        reference: ref.id, modele: p.modele, cout: p.cout / Math.max(1, p.propositions.length), le: new Date().toISOString(), statut: "proposée" });
+      (f.journal ||= []).push({ quand: new Date().toISOString(), quoi: "proposer", rubrique: r.id, nombre: p.propositions.length, cout: p.cout });
+    });
+    if (!p.propositions.length) montrerErreur("Claude estime la clause de référence satisfaisante en l'état : aucune proposition.");
+    dessinerRubrique();
+  } catch (e) { montrerErreur("Propositions non obtenues : " + e.message); bouton.disabled = false; bouton.textContent = "Proposer une amélioration"; }
+}
+async function adopterProposition(rid, pid) {
+  try {
+    await modifierClausier(f => {
+      const r = f.rubriques[rid], p = r?.propositions?.find(x => x.id === pid); if (!p || p.statut !== "proposée" && p.statut) return;
+      const ref = r.clauses.find(c => c.id === p.reference);
+      ajouterClause(f, { depot: { id: `ia-${pid}`, nom: "Proposition de Claude", verse_le: p.le }, num: pid, texte: p.texte, contextes: ref?.contextes || [], rubriqueId: rid });
+      const c = r.clauses.at(-1);
+      if (c && c.point === pid) { c.indication = { texte: p.apport, par: "Claude", reference: p.reference, le: p.le }; c.proposee_par_ia = { fondements: p.fondements, modele: p.modele }; p.clause = c.id; }
+      p.statut = "adoptée"; p.tranchee_le = new Date().toISOString();
+    });
+    dessinerRubrique();
+  } catch (e) { montrerErreur("Proposition non adoptée : " + e.message); dessinerRubrique(); }
+}
+async function ecarterProposition(rid, pid) {
+  try {
+    await modifierClausier(f => { const p = f.rubriques[rid]?.propositions?.find(x => x.id === pid); if (p) { p.statut = "écartée"; p.tranchee_le = new Date().toISOString(); } });
+    dessinerRubrique();
+  } catch (e) { montrerErreur("Proposition non écartée : " + e.message); dessinerRubrique(); }
+}
 // Section « Appui » de la rubrique : documents rattachés, rattacher, retirer (mode travail seulement)
 function blocAppui(r) {
   const docs = (cl.biblio?.documents || []).filter(d => d.rubriques?.includes(r.id));
