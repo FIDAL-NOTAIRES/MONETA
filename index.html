@@ -395,6 +395,7 @@ mark{background:var(--jaune-forme);color:inherit;padding:0 1px}
 .rp-haut .num{font-size:.78rem;color:var(--doux);font-variant-numeric:tabular-nums;min-width:4em}
 .rp-haut .verdict{margin-left:auto;font-size:.82rem;color:var(--doux)}
 .rp-haut .verdict.ok{color:var(--vert)}
+.rp-haut .corriger{margin-left:8px;padding:2px 8px;font-size:.78rem}
 .rp-texte{padding:8px 12px;font-family:Georgia,serif;font-size:.92rem;line-height:1.55;max-height:7em;overflow:auto}
 .rp-prop{padding:0 12px 10px}
 .rp-choix{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0}
@@ -413,7 +414,7 @@ mark{background:var(--jaune-forme);color:inherit;padding:0 1px}
 <body>
 <header>
   <h1>MONETA</h1>
-  <small>Le clausier du cabinet, version 2.2</small>
+  <small>Le clausier du cabinet, version 2.3</small>
   <span id="etat-connexion">Connexion au Drive…</span>
   <button id="btn-connexion">Autoriser l'accès au Drive</button>
 </header>
@@ -519,7 +520,7 @@ mark{background:var(--jaune-forme);color:inherit;padding:0 1px}
 
 <script>
 /* ============================================================
-   MONETA — version 2.2 du 10/10/2026 (PROPOSITIONS DE L'IA pour challenger la clause étoile : bouton dans la rubrique, estimatif, au plus deux rédactions fondées sur la seule bibliothèque d'appui rattachée, à adopter comme variante ou à écarter) ; 2.1 du 10/10/2026 (BIBLIOTHÈQUE D'APPUI, une par type d'acte : onglet « Bibliothèque », lecture des vingt premières lignes et refus d'un article déjà présent, fiche pré-remplie, rubriques proposées par mots-clés, section « Appui » dans chaque rubrique avec rattachement et retrait) ; 2.0 du 10/10/2026 (« POURQUOI CETTE VARIANTE » : à chaque point gardé comme variante, Claude rédige en une ligne ce qu'elle change sur le fond par rapport à la clause étoile ou à la plus proche ; affichée dans le clausier, corrigeable dans la fiche) ; 1.9 du 10/10/2026 (NEUTRALISATION PAR CLAUDE à l'amorçage : bouton dans le rangement, estimatif, points neutralisés par lots, champs [ ] en couleur, texte neutralisé rangé et comparé, original gardé caché dans la clause) ; 1.8 du 10/10/2026 (seconde passe, par le sens, aussi dans le TRAITEMENT SIMULTANÉ) ; 1.7 du 10/10/2026 (RACCOURCIS CLAVIER dans le rangement, désactivés par défaut : D doublon, V variante, Entrée valider la proposée, E écarter, flèches pour changer de point) ; 1.6 du 10/10/2026 (SECONDE PASSE DE COMPARAISON, PAR LE SENS : empreintes fabriquées par un seul petit modèle dans le navigateur, gardées par type d'acte sur le Drive, appliquées aux seuls points que la première passe n'a pas tranchés) ; 1.5 du 09/10/2026 (MOTEUR DE COMPARAISON, première passe mot à mot : verdict doublon / variante / nouvelle pour chaque point, AFFICHAGE CÔTE À CÔTE avec la clause de référence et ses différences, toutes les candidates proches quand le moteur hésite, doublon confirmé = une occurrence de plus sur la clause existante, verdict en couleur dans la file après première consultation) ; 1.4 du 09/10/2026 (article « Clôture et signature » ajouté aux deux plans, y compris aux clausiers déjà créés ; partie finale de l'acte versée ; mentions techniques de signature électronique et pieds de page répétés retirés avant découpe ; reconnaissance gratuite lancée d'office sur un scan, lecture par Claude proposée seulement pour les pages mal reconnues, avec le détail de ce qui manque) ; 1.3 du 09/10/2026 (DOUBLE PASSE SUR LES ACTES SCANNÉS, méthode reprise de TRENTE : pages sans texte détectées une à une, reconnaissance gratuite Tesseract dans le navigateur, puis lecture par Claude pour compléter, sur validation et après estimatif de coût ; texte reconnu signalé à relire dans la fiche) ; 1.2 du 09/10/2026 (MODE LECTURE SEULE : onglet « Consulter le clausier » en teinte de consultation, adresse directe ?consulter, bandeau avec retour au mode travail, aucun geste de modification ; sélection de clauses et envoi par mail d'un fichier Word aux champs entre crochets colorisés) ; 1.1 du 09/10/2026 (TRAITEMENT SIMULTANÉ : tous les points restants des dépôts d'un même type d'acte regroupés par rubrique proposée, tranchés en bloc ou un à un ; bascule avec l'ordre d'arrivée) ; 1.0 du 09/10/2026 (file « À traiter » : tableau de bord de la file, avancement de chaque dépôt, bouton « Mettre de côté » et liste des dépôts en attente ; compteurs d'usage dissociés du classement des clauses) ; 0.9 du 09/10/2026 (couverture du clausier par rubrique et par article, fiche éditable de la clause, journal de relecture avec rangement défait seul ou par lot, signal d'un acte non numéroté versé dans un clausier pauvre) ; 0.8 du 09/10/2026 (ciseau : coupe manuelle d'un point entre paragraphes ou puces, partie détachée lettrée, phrase d'annonce reprise, coupes conservées à la redécoupe, recollage) ; 0.7 du 09/10/2026 (ergonomie : fil d'Ariane collant, clause étoile choisie à la main et épinglée, compteurs indicatifs d'actes versés et de reprises en rédaction, comparaison côte à côte de deux variantes, recherche plein texte et filtres par contexte, sens, nature et texte visé, étapes du versement) ; 0.6 du 08/10/2026 (rangement des points d'un dépôt dans le clausier : proposition et deuxième candidate, contexte coché, validation point par point ou en bloc, journal des mouvements) ; 0.5 du 08/10/2026 (module Clausier, première tranche : plans de référence PSV AKZO et PUV R3S, numéros permanents, page Clausier) ; 0.4 du 08/10/2026 (titres des PDF non numérotés déduits de la mise en forme) ; 0.3 du 08/10/2026 (lecture Word avec numérotation automatique, contrôles de vraisemblance) ; 0.2 : moteur de découpe en service ; squelette du 07/10/2026
+   MONETA — version 2.3 du 17/10/2026 (CLASSEMENT D'OFFICE, tranché par JFD : les propositions du moteur ne sont plus validées une à une ; dès que la comparaison est complète, chaque point qui a une rubrique proposée et n'est pas un doublon est rangé d'office en une seule écriture, le collaborateur ne retouche que les erreurs par « Corriger », les doublons et les points sans rubrique évidente restent à trancher à la main) ; 2.2 du 10/10/2026 (PROPOSITIONS DE L'IA pour challenger la clause étoile : bouton dans la rubrique, estimatif, au plus deux rédactions fondées sur la seule bibliothèque d'appui rattachée, à adopter comme variante ou à écarter) ; 2.1 du 10/10/2026 (BIBLIOTHÈQUE D'APPUI, une par type d'acte : onglet « Bibliothèque », lecture des vingt premières lignes et refus d'un article déjà présent, fiche pré-remplie, rubriques proposées par mots-clés, section « Appui » dans chaque rubrique avec rattachement et retrait) ; 2.0 du 10/10/2026 (« POURQUOI CETTE VARIANTE » : à chaque point gardé comme variante, Claude rédige en une ligne ce qu'elle change sur le fond par rapport à la clause étoile ou à la plus proche ; affichée dans le clausier, corrigeable dans la fiche) ; 1.9 du 10/10/2026 (NEUTRALISATION PAR CLAUDE à l'amorçage : bouton dans le rangement, estimatif, points neutralisés par lots, champs [ ] en couleur, texte neutralisé rangé et comparé, original gardé caché dans la clause) ; 1.8 du 10/10/2026 (seconde passe, par le sens, aussi dans le TRAITEMENT SIMULTANÉ) ; 1.7 du 10/10/2026 (RACCOURCIS CLAVIER dans le rangement, désactivés par défaut : D doublon, V variante, Entrée valider la proposée, E écarter, flèches pour changer de point) ; 1.6 du 10/10/2026 (SECONDE PASSE DE COMPARAISON, PAR LE SENS : empreintes fabriquées par un seul petit modèle dans le navigateur, gardées par type d'acte sur le Drive, appliquées aux seuls points que la première passe n'a pas tranchés) ; 1.5 du 09/10/2026 (MOTEUR DE COMPARAISON, première passe mot à mot : verdict doublon / variante / nouvelle pour chaque point, AFFICHAGE CÔTE À CÔTE avec la clause de référence et ses différences, toutes les candidates proches quand le moteur hésite, doublon confirmé = une occurrence de plus sur la clause existante, verdict en couleur dans la file après première consultation) ; 1.4 du 09/10/2026 (article « Clôture et signature » ajouté aux deux plans, y compris aux clausiers déjà créés ; partie finale de l'acte versée ; mentions techniques de signature électronique et pieds de page répétés retirés avant découpe ; reconnaissance gratuite lancée d'office sur un scan, lecture par Claude proposée seulement pour les pages mal reconnues, avec le détail de ce qui manque) ; 1.3 du 09/10/2026 (DOUBLE PASSE SUR LES ACTES SCANNÉS, méthode reprise de TRENTE : pages sans texte détectées une à une, reconnaissance gratuite Tesseract dans le navigateur, puis lecture par Claude pour compléter, sur validation et après estimatif de coût ; texte reconnu signalé à relire dans la fiche) ; 1.2 du 09/10/2026 (MODE LECTURE SEULE : onglet « Consulter le clausier » en teinte de consultation, adresse directe ?consulter, bandeau avec retour au mode travail, aucun geste de modification ; sélection de clauses et envoi par mail d'un fichier Word aux champs entre crochets colorisés) ; 1.1 du 09/10/2026 (TRAITEMENT SIMULTANÉ : tous les points restants des dépôts d'un même type d'acte regroupés par rubrique proposée, tranchés en bloc ou un à un ; bascule avec l'ordre d'arrivée) ; 1.0 du 09/10/2026 (file « À traiter » : tableau de bord de la file, avancement de chaque dépôt, bouton « Mettre de côté » et liste des dépôts en attente ; compteurs d'usage dissociés du classement des clauses) ; 0.9 du 09/10/2026 (couverture du clausier par rubrique et par article, fiche éditable de la clause, journal de relecture avec rangement défait seul ou par lot, signal d'un acte non numéroté versé dans un clausier pauvre) ; 0.8 du 09/10/2026 (ciseau : coupe manuelle d'un point entre paragraphes ou puces, partie détachée lettrée, phrase d'annonce reprise, coupes conservées à la redécoupe, recollage) ; 0.7 du 09/10/2026 (ergonomie : fil d'Ariane collant, clause étoile choisie à la main et épinglée, compteurs indicatifs d'actes versés et de reprises en rédaction, comparaison côte à côte de deux variantes, recherche plein texte et filtres par contexte, sens, nature et texte visé, étapes du versement) ; 0.6 du 08/10/2026 (rangement des points d'un dépôt dans le clausier : proposition et deuxième candidate, contexte coché, validation point par point ou en bloc, journal des mouvements) ; 0.5 du 08/10/2026 (module Clausier, première tranche : plans de référence PSV AKZO et PUV R3S, numéros permanents, page Clausier) ; 0.4 du 08/10/2026 (titres des PDF non numérotés déduits de la mise en forme) ; 0.3 du 08/10/2026 (lecture Word avec numérotation automatique, contrôles de vraisemblance) ; 0.2 : moteur de découpe en service ; squelette du 07/10/2026
    Arbitrages (fiche clausier) : une application, deux moteurs ;
    on VERSE d'un côté (file d'attente sur le Drive), on TRAITE quand on veut ;
    le DÉCOUPAGE (neutralisation en champs, coupe en clauses, destination
@@ -1387,7 +1388,8 @@ $("btn-fermer").addEventListener("click", () => { $("fiche-depot").style.display
    clause et enrichit les mots-clés de la rubrique (origine « auto ») ; seuls
    les points validés enrichissent. Chaque mouvement va au journal du clausier.
    ============================================================ */
-const rg = { depot: null, clausier: null, fichier: null, points: [], propositions: [], contextes: [], choix: {}, dejaRanges: new Set() };
+const rg = { depot: null, clausier: null, fichier: null, points: [], propositions: [], contextes: [], choix: {}, dejaRanges: new Set(),
+  office: new Set(), manuel: new Set(), officeFait: false, officeBilan: 0 };   // 2.3 — classement d'office
 const normMot = m => String(m).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 const STOP_AUTO = new Set(["les","des","une","aux","par","pour","sur","dans","avec","sans","que","qui","est","sont","sera","seront","son","ses","leur","leurs","cette","ces","tout","tous","toute","toutes","elle","present","presentes","partie","parties","article","declare","vendeur","acquereur","promettant","beneficiaire","bien","biens","notaire","termes","conditions","presente"]);
 function motsAuto(texte) {
@@ -1657,6 +1659,7 @@ async function ouvrirRangement() {
   try {
     const r = await chargerType(d.type_acte);
     rg.depot = d; rg.clausier = r.donnees; rg.fichier = r.fichier; rg.choix = {}; rg.sensEtat = null; rg.neutreEtat = null;
+    rg.office = new Set(); rg.manuel = new Set(); rg.officeFait = false; rg.officeBilan = 0;
     lireTarif();
     rg.points = d.decoupe.structure.filter(e => e.t === "point")
       .map(e => ({ num: e.num, texte: e.paras.join("\n").replace(/\u200b/g, ""), titres: titresDuPoint(d.decoupe, e.num) }));
@@ -1670,6 +1673,11 @@ async function ouvrirRangement() {
     for (const e of rg.clausier.journal || []) if (e.depot === d.id && !rg.dejaRanges.has(e.point)) {
       if (e.quoi === "ecarter") rg.choix[e.point] = null; else if (e.quoi === "doublon") rg.choix[e.point] = { doublon: e.clause };
     }
+    // 2.3 — ce qui a été rangé d'office reste marqué tel ; ce qui a été défait ou corrigé n'est plus jamais repris d'office
+    for (const e of rg.clausier.journal || []) if (e.depot === d.id) {
+      if (e.quoi === "ranger" && e.office && rg.dejaRanges.has(e.point)) rg.office.add(e.point);
+      if (e.quoi === "annuler") { if (e.points === "tous") rg.points.forEach(p => rg.manuel.add(p.num)); else (e.points || []).forEach(n => rg.manuel.add(n)); }
+    }
     // 1.5 — première passe de comparaison : chaque point contre tout le clausier du type (sans ses propres clauses)
     const autres = { rubriques: Object.fromEntries(Object.entries(rg.clausier.rubriques).map(([k, r]) => [k, { ...r, clauses: r.clauses.filter(c => c.source?.depot !== d.id) }])) };
     rg.cmp = Object.fromEntries(rg.points.map(p => [p.num, comparerPoint(p.texte, autres)]));
@@ -1678,7 +1686,11 @@ async function ouvrirRangement() {
       d.comparaison = bilan; reecrireJson(etat.ouvert.id, d).catch(() => {});
     }
     dessinerRangement();
-    if (sensDejaUtilise() && aTrancherSens().length && nbClausesAutres()) lancerSens();   // modèle déjà en réserve : seconde passe d'office
+    const sensAttendue = aTrancherSens().length && nbClausesAutres();
+    if (sensAttendue && sensDejaUtilise()) lancerSens();   // modèle déjà en réserve : seconde passe d'office, puis classement d'office
+    else if (!sensAttendue && d.neutralisation) classerOffice();   // textes neutralisés et rien à comparer par le sens : classement d'office tout de suite
+    // sinon : textes non neutralisés (les vrais noms et prix n'entrent pas d'office au clausier), ou modèle de sens pas encore en réserve ;
+    // les barres proposent « Neutraliser par Claude » et « Comparer le sens » ; le bouton de tête permet de classer sans attendre
   } catch (e) { zone.innerHTML = `<p class="note-moteur">Rangement impossible : ${echapper(e.message)}</p>`; }
 }
 function dessinerRangement() {
@@ -1694,9 +1706,11 @@ function dessinerRangement() {
       <div id="rg-ctx">${ctx}<input class="ajout" id="rg-ctx-ajout" placeholder="autre contexte" aria-label="Ajouter un contexte"></div></div>
     ${barreNeutre()}
     ${barreSens()}
-    <div class="cl-ranger-tete"><b>Ranger les points</b><span class="avance" id="rg-avance">${faits} sur ${total} classés</span>
-      <button class="bouton secondaire" id="rg-tout">Valider toutes les propositions</button>
+    <div class="cl-ranger-tete"><b>Ranger les points</b><span class="avance" id="rg-avance">${faits} sur ${total} classés${rg.office.size ? ` · ${rg.office.size} d'office` : ""}</span>
+      ${rg.officeFait ? "" : `<button class="bouton secondaire" id="rg-tout" title="Le classement d'office se lance tout seul dès que les textes sont neutralisés et la comparaison complète ; ce bouton permet de passer outre">Classer d'office sans attendre</button>`}
       <label class="clavier"><input type="checkbox" id="rg-clavier"${clavierActif() ? " checked" : ""}> Raccourcis clavier</label></div>
+    ${!rg.officeFait && rg.points.some(p => !rg.dejaRanges.has(p.num) && rg.choix[p.num] === undefined) ? `<p class="note-moteur" style="margin-top:0">Classement d'office en attente : il se lance tout seul ${!rg.depot.neutralisation ? "une fois les textes neutralisés" : "une fois la passe de sens faite"}. Les points restent affichés tels que le moteur les propose.</p>` : ""}
+    ${rg.officeFait ? `<p class="note-moteur" style="margin-top:0">${rg.officeBilan ? `<b>${pl(rg.officeBilan, "point classé", "points classés")} d'office</b> dans la rubrique proposée par le moteur. ` : ""}Ne retouchez que les erreurs : <b>Corriger</b> ressort le point du clausier et le rend à trancher à la main ; il n'est alors plus jamais repris d'office. Restent présentés les doublons et les points sans rubrique évidente.</p>` : ""}
     ${clavierActif() ? `<p class="aide-clavier"><kbd>D</kbd> doublon · <kbd>V</kbd> variante · <kbd>Entrée</kbd> valider la proposée · <kbd>E</kbd> écarter · <kbd>↓</kbd> <kbd>↑</kbd> point suivant ou précédent</p>` : ""}
     <div id="rg-liste">${rg.points.map(p => {
       const cand = propo.get(p.num) || [], deja = rg.dejaRanges.has(p.num), choix = rg.choix[p.num];
@@ -1704,10 +1718,11 @@ function dessinerRangement() {
       const verdict = deja ? '<span class="verdict ok">déjà rangé</span>'
         : choix === null ? '<span class="verdict">écarté</span>'
         : choix?.doublon ? `<span class="verdict">doublon de ${echapper(choix.doublon)}</span>`
-        : choix ? `<span class="verdict ok">→ ${echapper(libRub(choix))}</span>`
+        : choix ? `<span class="verdict ok">→ ${echapper(libRub(choix))}${rg.office.has(p.num) ? " · d'office" : ""}</span>`
         : cand.length ? "" : '<span class="verdict">aucune rubrique évidente</span>';
+      const corriger = (deja || (choix && !choix.doublon)) ? `<button class="bouton discret corriger" title="La clause ressort du clausier ; le point redevient à trancher à la main">Corriger</button>` : "";
       return `<div class="ranger-point${classee ? " classee" : ""}" data-point="${echapper(p.num)}">
-        <div class="rp-haut"><span class="num">Point ${echapper(p.num)}</span>${verdict}</div>
+        <div class="rp-haut"><span class="num">Point ${echapper(p.num)}</span>${verdict}${corriger}</div>
         ${classee || !rg.cmp?.[p.num] ? `<div class="rp-texte">${colorerChamps(echapper(p.texte.slice(0, 600)))}${p.texte.length > 600 ? "…" : ""}</div>` : blocComparaison(rg.cmp[p.num], p.texte)}
         ${classee ? "" : `<div class="rp-prop">
           <div class="rp-choix">${cand.map((c, i) => `<button data-choisir="${echapper(c.id)}" class="${i ? "second" : ""}" aria-pressed="false">${i ? "2ᵉ candidate" : "Proposée"}<span class="r-id">${echapper(libRub(c.id))}</span>${c.mots?.length ? `<span class="r-mots">${echapper(c.mots.slice(0, 4).join(", "))}</span>` : ""}</button>`).join("")}</div>
@@ -1747,11 +1762,12 @@ function brancherRangement() {
     sel?.addEventListener("change", () => { bloc.querySelectorAll("[data-choisir]").forEach(b => b.setAttribute("aria-pressed", "false")); poser(sel.value); });
     valider?.addEventListener("click", () => choisi && validerPoint(num, choisi));
     bloc.querySelector(".ecarter")?.addEventListener("click", () => ecarterPoint(num));
+    bloc.querySelector(".corriger")?.addEventListener("click", () => corrigerPoint(num));
   });
-  $("rg-tout")?.addEventListener("click", validerTout);
+  $("rg-tout")?.addEventListener("click", classerOffice);
 }
 // Ajout d'une clause dans le clausier (en mémoire) + journal ; partagé par le rangement d'un dépôt et le traitement simultané (1.1)
-function ajouterClause(f, { depot, num, texte, origine, contextes, rubriqueId }) {
+function ajouterClause(f, { depot, num, texte, origine, contextes, rubriqueId, office = false }) {
   const r = f.rubriques[rubriqueId]; if (!r) throw new Error("rubrique " + rubriqueId + " introuvable");
   if (!r.clauses.some(c => c.source?.depot === depot.id && c.point === num)) {
     f.prochaine_clause = (f.prochaine_clause || 0) + 1;
@@ -1762,7 +1778,7 @@ function ajouterClause(f, { depot, num, texte, origine, contextes, rubriqueId })
       source: { depot: depot.id, nom: depot.nom, date: depot.verse_le.slice(0, 10) }, admise_le: new Date().toISOString(),
       mots_ajoutes: ajoutes, ...(origine && origine !== texte ? { texte_origine: origine, neutralisee: true } : {}) });
   }
-  (f.journal ||= []).push({ quand: new Date().toISOString(), quoi: "ranger", point: num, rubrique: rubriqueId, depot: depot.id, depot_nom: depot.nom });
+  (f.journal ||= []).push({ quand: new Date().toISOString(), quoi: "ranger", point: num, rubrique: rubriqueId, depot: depot.id, depot_nom: depot.nom, ...(office ? { office: true } : {}) });
 }
 async function enregistrerClause(num, rubriqueId) {
   const p = rg.points.find(x => x.num === num), texte = p?.texte || "";
@@ -1835,6 +1851,7 @@ async function lancerSens() {
     const v = Object.values(res); rg.sensEtat = `Seconde passe faite sur ${pl(v.length, "point")} : ${v.filter(x => x.verdict === "doublon").length} même sens, ${v.filter(x => x.verdict === "variante").length} même sujet, ${v.filter(x => x.verdict === "nouvelle").length} sans équivalent.`;
   } catch (e) { rg.sensEtat = `Seconde passe impossible : ${echapper(e.message)}. La première passe reste valable.`; }
   dessinerRangement();
+  if (rg.depot.neutralisation) classerOffice();   // 2.3 — comparaison complète et textes neutralisés : ce qui n'est pas un doublon entre d'office
 }
 async function confirmerDoublon(num, clauseId) {
   try { rg.clausier = await modifierClausier(f => noterDoublon(f, { depot: rg.depot, num, clauseId }), rg.fichier); rg.choix[num] = { doublon: clauseId }; }
@@ -1845,14 +1862,45 @@ async function ecarterPoint(num) {
   try { rg.clausier = await modifierClausier(f => { (f.journal ||= []).push({ quand: new Date().toISOString(), quoi: "ecarter", point: num, depot: rg.depot.id }); }, rg.fichier); } catch (e) { montrerErreur("Écart non enregistré : " + e.message); }
   rg.choix[num] = null; dessinerRangement();
 }
-async function validerTout() {
-  const b = $("rg-tout"); if (b) { b.disabled = true; b.textContent = "Rangement…"; }
-  for (const p of rg.propositions) {
-    if (rg.dejaRanges.has(p.num) || rg.choix[p.num] !== undefined || !p.candidats[0]) continue;
-    if (rg.cmp?.[p.num]?.verdict === "doublon") continue;   // 1.5 — un doublon n'entre jamais au clausier sans décision
-    try { await enregistrerClause(p.num, p.candidats[0].id); rg.choix[p.num] = p.candidats[0].id; rg.dejaRanges.add(p.num); } catch {}
-  }
-  dessinerRangement();
+/* ---------- CLASSEMENT D'OFFICE (2.3) — tranché par JFD le 17/10/2026 ----------
+   Les propositions du moteur ne sont plus validées une à une. Dès que la comparaison est complète
+   (première passe mot à mot, et seconde passe par le sens quand le modèle est en réserve), chaque
+   point qui a une rubrique proposée et n'est pas un doublon est rangé d'office, en UNE SEULE écriture
+   du clausier. Le collaborateur ne retouche que les erreurs : « Corriger » ressort le point du clausier
+   et le rend à trancher à la main ; un point corrigé ou défait n'est plus jamais repris d'office.
+   Restent présentés, à trancher à la main : les doublons (mot à mot ou de sens) et les points sans
+   rubrique évidente. Motif JFD : les recoupements de sécurité laissent très peu de défauts. */
+async function classerOffice() {
+  if (rg.officeFait || !rg.points.length) return;
+  rg.officeFait = true;
+  const aRanger = rg.propositions.filter(p => !rg.dejaRanges.has(p.num) && rg.choix[p.num] === undefined && !rg.manuel.has(p.num)
+    && p.candidats[0] && rg.cmp?.[p.num]?.verdict !== "doublon");   // 1.5 — un doublon n'entre jamais au clausier sans décision
+  if (!aRanger.length) { dessinerRangement(); return; }
+  const b = $("rg-tout"); if (b) { b.disabled = true; b.textContent = `Classement d'office de ${aRanger.length} points…`; }
+  try {
+    rg.clausier = await modifierClausier(f => {
+      for (const p of aRanger) { const pt = rg.points.find(x => x.num === p.num);
+        ajouterClause(f, { depot: rg.depot, num: p.num, texte: pt?.texte || "", origine: pt?.origine, contextes: rg.contextes, rubriqueId: p.candidats[0].id, office: true }); }
+    }, rg.fichier);
+    for (const p of aRanger) { rg.choix[p.num] = p.candidats[0].id; rg.dejaRanges.add(p.num); rg.office.add(p.num); }
+    rg.officeBilan = aRanger.length;
+    dessinerRangement();
+    // 2.0 — une variante probable rangée d'office dans la rubrique de sa clause proche reçoit son « pourquoi », comme à la main (en arrière-plan)
+    (async () => { for (const p of aRanger) { const c = rg.cmp?.[p.num], ref = c?.proches?.[0];
+      if (c?.verdict === "variante" && ref && ref.rubrique.id === p.candidats[0].id) {
+        const f = await indiquerVariante({ fichier: rg.fichier, depotId: rg.depot.id, num: p.num, rid: p.candidats[0].id, refId: ref.clause.id }).catch(() => null);
+        if (f) rg.clausier = f; } } })();
+  } catch (e) { rg.officeFait = false; montrerErreur("Classement d'office impossible : " + e.message); dessinerRangement(); }
+}
+// « Corriger » : la clause ressort du clausier (même mécanique que « défaire » au journal), le point redevient à trancher à la main
+async function corrigerPoint(num) {
+  const bloc = $("fiche-ranger").querySelector(`.ranger-point[data-point="${CSS.escape(num)}"]`);
+  bloc?.querySelectorAll("button,select").forEach(b => b.disabled = true);
+  try {
+    rg.clausier = await modifierClausier(f => retirerClauses(f, rg.depot.id, [num], rg.depot.nom), rg.fichier);
+    delete rg.choix[num]; rg.dejaRanges.delete(num); rg.office.delete(num); rg.manuel.add(num);
+    rg.courant = num; rg.defiler = true; dessinerRangement();
+  } catch (e) { montrerErreur("Correction impossible : " + e.message); dessinerRangement(); }
 }
 /* ============================================================
    TRAITEMENT SIMULTANÉ (1.1) — piste retenue le 09/10/2026 au soir
@@ -2295,7 +2343,7 @@ function dessinerJournal(d) {
         ${encore ? `<button class="bouton discret" data-annuler-lot="${echapper(depot)}">${encore > 1 ? `Défaire les ${encore} rangements de ce lot` : "Défaire le rangement de ce lot"}</button>` : ""}</div>
         <ul>${[...es].reverse().slice(0, 300).map(e => {
           const r = d.rubriques[e.rubrique], vivant = e.quoi === "ranger" && vivantes.has(`${depot}|${e.point}`);
-          return `<li><span class="q">${q(e.quand)}</span><span class="${e.quoi === "ranger" && !vivant ? "annule" : ""}">Point ${echapper(e.point)} ${LIB_MOUVEMENT[e.quoi] || e.quoi}${r ? ` dans ${echapper(r.id)}, ${echapper(r.titre)}` : ""}</span>
+          return `<li><span class="q">${q(e.quand)}</span><span class="${e.quoi === "ranger" && !vivant ? "annule" : ""}">Point ${echapper(e.point)} ${LIB_MOUVEMENT[e.quoi] || e.quoi}${e.office ? " d'office" : ""}${r ? ` dans ${echapper(r.id)}, ${echapper(r.titre)}` : ""}</span>
             ${vivant ? `<button data-annuler-un="${echapper(depot)}" data-point="${echapper(e.point)}">défaire</button>` : ""}</li>`;
         }).join("")}</ul></div>`;
     }).join("")}
@@ -2311,6 +2359,22 @@ function brancherJournal() {
   z.querySelectorAll("[data-annuler-lot]").forEach(b => b.addEventListener("click", () => defaireRangements(b.dataset.annulerLot, null)));
   z.querySelectorAll("[data-annuler-un]").forEach(b => b.addEventListener("click", () => defaireRangements(b.dataset.annulerUn, [b.dataset.point])));
 }
+// Sortie de clauses du clausier (défaire au journal, ou « Corriger » dans le rangement) : la clause part, ses mots-clés auto partent
+// sauf s'ils sont partagés, l'étoile est retirée si c'était elle, les numéros ne sont jamais réutilisés ; mouvement « annuler » au journal
+function retirerClauses(f, depot, points, nom) {
+  let nb = 0;
+  for (const r of Object.values(f.rubriques)) {
+    const partent = r.clauses.filter(c => c.source?.depot === depot && (!points || points.includes(c.point)));
+    if (!partent.length) continue;
+    r.clauses = r.clauses.filter(c => !partent.includes(c)); nb += partent.length;
+    if (r.etoile && partent.some(c => c.id === r.etoile.clause)) delete r.etoile;
+    const encore = new Set(r.clauses.flatMap(c => c.mots_ajoutes || []).map(normMot));
+    const aRetirer = new Set(partent.flatMap(c => c.mots_ajoutes || []).map(normMot).filter(m => !encore.has(m)));
+    r.mots_cles = r.mots_cles.filter(k => !(k.origine === "auto" && aRetirer.has(normMot(k.mot))));
+  }
+  (f.journal ||= []).push({ quand: new Date().toISOString(), quoi: "annuler", depot, depot_nom: nom, points: points || "tous", nb });
+  return nb;
+}
 async function defaireRangements(depot, points) {
   const d = cl.donnees, cibles = Object.values(d.rubriques).flatMap(r => r.clauses).filter(c => c.source?.depot === depot && (!points || points.includes(c.point)));
   if (!cibles.length) return;
@@ -2318,19 +2382,7 @@ async function defaireRangements(depot, points) {
   if (!confirm(points ? `Défaire le rangement du point ${points[0]} (${cibles[0].id}) ? La clause sort de sa rubrique ; le point redeviendra rangeable depuis « À traiter ».`
                       : `Défaire les ${cibles.length} rangements de « ${nom} » ? Les clauses sortent de leurs rubriques ; les points redeviendront rangeables depuis « À traiter ».`)) return;
   try {
-    await modifierClausier(f => {
-      let nb = 0;
-      for (const r of Object.values(f.rubriques)) {
-        const partent = r.clauses.filter(c => c.source?.depot === depot && (!points || points.includes(c.point)));
-        if (!partent.length) continue;
-        r.clauses = r.clauses.filter(c => !partent.includes(c)); nb += partent.length;
-        if (r.etoile && partent.some(c => c.id === r.etoile.clause)) delete r.etoile;
-        const encore = new Set(r.clauses.flatMap(c => c.mots_ajoutes || []).map(normMot));
-        const aRetirer = new Set(partent.flatMap(c => c.mots_ajoutes || []).map(normMot).filter(m => !encore.has(m)));
-        r.mots_cles = r.mots_cles.filter(k => !(k.origine === "auto" && aRetirer.has(normMot(k.mot))));
-      }
-      (f.journal ||= []).push({ quand: new Date().toISOString(), quoi: "annuler", depot, depot_nom: nom, points: points || "tous", nb });
-    });
+    await modifierClausier(f => retirerClauses(f, depot, points, nom));
     if (cl.ouverte && !cl.donnees.rubriques[cl.ouverte]) cl.ouverte = null;
     cl.journalOuvert = true; dessinerType();
   } catch (e) { montrerErreur("Rangement non défait : " + e.message); }
