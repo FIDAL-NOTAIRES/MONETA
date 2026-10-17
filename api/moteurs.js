@@ -14,25 +14,43 @@ import { lire, tarif, VERSION_LECTURE } from "./_lecture.js";
 import { neutraliser, VERSION_NEUTRALISATION } from "./_neutraliser.js";
 import { indiquer, VERSION_INDICATION } from "./_indication.js";
 import { proposer, VERSION_PROPOSITION } from "./_proposer.js";
+import { timingSafeEqual } from "node:crypto";
 
-const ACTIONS = { decouper: "découpe", ranger: "rangement", lire: "lecture des pages scannées", neutraliser: "neutralisation", indication: "indication de variante", proposer: "propositions de l'IA", comparer: "comparaison" };
+const ACTIONS = { decouper: "découpe", ranger: "rangement", lire: "lecture des pages scannées", neutraliser: "neutralisation", indication: "indication de variante", proposer: "propositions de l'IA", comparer: "comparaison", acces: "contrôle du code d'administrateur" };
+// 2.4 — code d'administrateur : posé dans la variable MONETA_CODE_ADMIN du projet Vercel, jamais dans la page.
+// Sans variable, personne n'est administrateur (refus par défaut).
+function codeValide(code) {
+  const attendu = process.env.MONETA_CODE_ADMIN || "";
+  if (!attendu || typeof code !== "string" || !code) return false;
+  const a = Buffer.from(code), b = Buffer.from(attendu);
+  return a.length === b.length && timingSafeEqual(a, b);
+}
 const TAILLE_MAX = 3_000_000;   // caractères : un acte fait rarement plus de 300 000
 
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
-  if (req.method === "GET") return res.status(200).json({ moneta: { version: "2.3",
+  if (req.method === "GET") return res.status(200).json({ moneta: { version: "2.4",
     moteurs: { decouper: { etat: "en service", version: VERSION_DECOUPE },
                ranger: { etat: "en service", version: VERSION_RANGEMENT },
                lire: { etat: tarif().disponible ? "en service" : "clé API absente", version: VERSION_LECTURE, ...tarif() },
                neutraliser: { etat: tarif().disponible ? "en service" : "clé API absente", version: VERSION_NEUTRALISATION },
                indication: { etat: tarif().disponible ? "en service" : "clé API absente", version: VERSION_INDICATION },
                proposer: { etat: tarif().disponible ? "en service" : "clé API absente", version: VERSION_PROPOSITION },
-               comparer: { etat: "dans le navigateur", version: "mot à mot 1.0 + sens 1.0" } } } });
+               comparer: { etat: "dans le navigateur", version: "mot à mot 1.0 + sens 1.0" },
+               acces: { etat: process.env.MONETA_CODE_ADMIN ? "en service" : "code absent" } } } });
   if (req.method !== "POST") return res.status(405).json({ erreur: { code: "methode", message: "GET ou POST seulement." } });
   let corps = req.body;
   if (typeof corps === "string") { try { corps = JSON.parse(corps); } catch { corps = null; } }
   const action = corps?.action;
   if (!ACTIONS[action]) return res.status(400).json({ erreur: { code: "action", message: `Action inconnue : ${action ?? "(aucune)"}. Attendu : ${Object.keys(ACTIONS).join(", ")}.` } });
+
+  if (action === "acces") {
+    if (!process.env.MONETA_CODE_ADMIN) return res.status(503).json({ erreur: { code: "code-absent", message: "Le code d'administrateur n'est pas encore posé sur le serveur (variable MONETA_CODE_ADMIN du projet Vercel)." } });
+    if (codeValide(corps.code)) return res.status(200).json({ acces: { ok: true } });
+    await new Promise(r => setTimeout(r, 600));   // ralentit les essais au hasard
+    return res.status(403).json({ erreur: { code: "code", message: "Code incorrect." } });
+  }
+  if (action === "proposer" && !codeValide(corps.code)) return res.status(403).json({ erreur: { code: "droits", message: "Cette action est réservée aux administrateurs : identifiez-vous avec votre code." } });
 
   if (action === "decouper") {
     const texte = corps.texte;
