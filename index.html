@@ -226,6 +226,11 @@ body.sans-droit #panier.plein{display:flex}
 .qui-boite select,.qui-boite input{width:100%;padding:9px 10px;margin:4px 0 12px;box-sizing:border-box}
 .qui-boite label{font-weight:600;font-size:.88rem;color:var(--nuit)}
 .qui-boite .qui-msg{color:var(--carmin);min-height:1.2em;margin:0 0 8px}
+.qui-boite.diag{max-width:640px;max-height:84vh;overflow:auto}
+.diag-liste{list-style:none;margin:0 0 12px;padding:0}
+.diag-liste li{padding:5px 0;border-bottom:1px dotted #d6dde2;font-size:.92rem}
+.diag-attention{color:#8a5a00}
+.diag-erreur{color:#b3261e}
 .qui-boite .qui-actions{display:flex;gap:10px;justify-content:flex-end}
 .clause .gestes label.panier-case{color:var(--nuit);font-weight:600}
 .clause.choisie{border-color:var(--cyan);box-shadow:inset 4px 0 0 var(--cyan)}
@@ -427,6 +432,8 @@ details.reglages label{display:inline-block;margin:4px 16px 4px 0}
 .rappel li .id{font-weight:600;min-width:3.2rem}
 .rappel li .nb{color:var(--doux);margin-left:auto;white-space:nowrap}
 .rappel li button{font-size:.8rem;padding:2px 10px}
+.sauv-liste{list-style:none;margin:8px 0 0;padding:0}
+.sauv-liste li{display:flex;gap:10px;align-items:baseline;padding:3px 0;border-bottom:1px dotted #d6dde2}
 .taille{font-size:.85rem;margin:4px 0 8px}
 .taille-orange{color:#8a5a00}
 .taille-rouge{color:#b3261e}
@@ -461,7 +468,7 @@ details.ecartes ul{margin:6px 0 0 18px;padding:0}
 <body>
 <header>
   <h1>MONETA</h1>
-  <small>Le clausier du cabinet, version 3.2</small>
+  <small>Le clausier du cabinet, version 3.3</small>
   <span id="qui"></span>
   <span id="etat-connexion">Connexion au Drive…</span>
   <button id="btn-connexion">Autoriser l'accès au Drive</button>
@@ -569,7 +576,7 @@ details.ecartes ul{margin:6px 0 0 18px;padding:0}
 
 <script>
 /* ============================================================
-   MONETA — version 3.2 du 18/10/2026 (HUIT AMÉLIORATIONS : 1) APERÇU avant le classement d'office, actif par défaut — rien n'est écrit avant « Appliquer » ; 2) CONTRÔLE DE FUITE après la neutralisation — courriel, IBAN, téléphone, SIREN, sécurité sociale, montant, date, référence cadastrale, adresse : un point suspect n'est jamais rangé d'office ; 3) BILAN des décisions automatiques avec export CSV ; 4) TAUX de correction et de rétablissement par mois ; 5) CONFIANCE minimale du moteur, réglable, « aucune » par défaut ; 6) SECOND AVIS par le sens pour les points sans proposition ; 7) SAUVEGARDE automatique du clausier, trente copies gardées ; 8) TÉMOIN de taille du clausier et du journal) ; 3.1 du 18/10/2026 (RAPPROCHEMENT DES DÉPÔTS D'UN MÊME LOT au traitement simultané : le classement d'office traite les dépôts un par un et compare chacun aux clauses que les précédents viennent d'écrire — un texte identique ou quasi identique présent dans plusieurs dépôts n'entre qu'une fois) ; 3.0 du 18/10/2026 (FIABILISATION : au traitement simultané, un point corrigé ou rétabli reste à la main après un rechargement de la page — la lecture du journal est commune au rangement d'un dépôt ; chaque doublon écarté d'office peut être RÉTABLI (rangement et simultané) : il redevient à trancher et n'est plus jamais écarté d'office) ; 2.9 du 18/10/2026 (NEUTRALISATION 1.1 : les durées et taux CONVENUS deviennent [DURÉE] et [TAUX], les quotités [QUOTITÉ], les délais et taux fixés par la loi restent tels quels ; chaque rubrique peut protéger des champs (CHAMPS_EN_CLAIR, vide pour l'instant, à remplir par JFD) d'après la rubrique proposée par le moteur ; un dépôt neutralisé selon l'ancienne règle peut être neutralisé à nouveau tant que rien n'y est rangé) ; 2.8 du 18/10/2026 (RAPPEL TRIMESTRIEL DE NETTOYAGE : première échéance le 15 janvier 2027 puis tous les trois mois ; bandeau réservé aux administrateurs, pour les types de leur matière, listant les rubriques de 5 clauses ou plus ; non reportable, il reste affiché tant que ces rubriques n'ont pas été ouvertes depuis l'échéance ; l'ouverture est gardée au clausier ; rien n'est lu sur le Drive avant la première échéance ; ?aujourdhui=AAAA-MM-JJ simule la date) ; 2.7 du 17/10/2026 (TRAITEMENT SIMULTANÉ aligné sur le rangement d'un dépôt : doublons identiques écartés d'office sans rien montrer, quasi identiques écartés après vérification du sens, puis classement d'office des points restants — dépôts neutralisés seulement — en une seule écriture, « Corriger » pour reprendre un point à la main) ; 2.6 du 17/10/2026 (JOURNAL DES CORRECTIONS : tout point rangé à la main ailleurs que dans la rubrique proposée en premier est gardé — texte, rubrique proposée, rubrique retenue, auteur — ; le moteur de rangement relit ce journal avant de proposer : un point presque identique, à 80 % de ressemblance, à un point déjà corrigé reçoit en tête la rubrique retenue par l'humain, ce qui vaut aussi pour le classement d'office ; liste visible et retirable par les administrateurs) ; 2.5 du 17/10/2026 (RÈGLE DES DOUBLONS : identiques à 100 % des mots écartés d'office sans rien montrer ; quasi identiques — moins de 10 % de mots changés et au plus 5 — écartés d'office après vérification du sens (garde-fou par les mots, puis comparaison de sens des phrases modifiées), sinon gardés comme variantes ; au-delà de la tolérance, variante gardée ; doublon de sens présenté pour confirmation ; aucun compteur de fréquence ; chiffres provisoires à caler sur DUVAL) ; 2.4 du 17/10/2026 (RÔLES : trois rôles d'administrateur par matière — famille, immobilier, général —, JFD seul administrateur de chacun pour l'instant ; nom choisi dans une liste à l'entrée, code demandé aux seuls administrateurs et contrôlé par le serveur ; tout le cabinet consulte et verse, le collaborateur qui verse arbitre son dépôt, seuls les administrateurs modifient le clausier constitué, lancent « Proposer une amélioration » et ouvrent le traitement simultané ; auteur noté au journal) ; 2.3 du 17/10/2026 (CLASSEMENT D'OFFICE, tranché par JFD : les propositions du moteur ne sont plus validées une à une ; dès que la comparaison est complète, chaque point qui a une rubrique proposée et n'est pas un doublon est rangé d'office en une seule écriture, le collaborateur ne retouche que les erreurs par « Corriger », les doublons et les points sans rubrique évidente restent à trancher à la main) ; 2.2 du 10/10/2026 (PROPOSITIONS DE L'IA pour challenger la clause étoile : bouton dans la rubrique, estimatif, au plus deux rédactions fondées sur la seule bibliothèque d'appui rattachée, à adopter comme variante ou à écarter) ; 2.1 du 10/10/2026 (BIBLIOTHÈQUE D'APPUI, une par type d'acte : onglet « Bibliothèque », lecture des vingt premières lignes et refus d'un article déjà présent, fiche pré-remplie, rubriques proposées par mots-clés, section « Appui » dans chaque rubrique avec rattachement et retrait) ; 2.0 du 10/10/2026 (« POURQUOI CETTE VARIANTE » : à chaque point gardé comme variante, Claude rédige en une ligne ce qu'elle change sur le fond par rapport à la clause étoile ou à la plus proche ; affichée dans le clausier, corrigeable dans la fiche) ; 1.9 du 10/10/2026 (NEUTRALISATION PAR CLAUDE à l'amorçage : bouton dans le rangement, estimatif, points neutralisés par lots, champs [ ] en couleur, texte neutralisé rangé et comparé, original gardé caché dans la clause) ; 1.8 du 10/10/2026 (seconde passe, par le sens, aussi dans le TRAITEMENT SIMULTANÉ) ; 1.7 du 10/10/2026 (RACCOURCIS CLAVIER dans le rangement, désactivés par défaut : D doublon, V variante, Entrée valider la proposée, E écarter, flèches pour changer de point) ; 1.6 du 10/10/2026 (SECONDE PASSE DE COMPARAISON, PAR LE SENS : empreintes fabriquées par un seul petit modèle dans le navigateur, gardées par type d'acte sur le Drive, appliquées aux seuls points que la première passe n'a pas tranchés) ; 1.5 du 09/10/2026 (MOTEUR DE COMPARAISON, première passe mot à mot : verdict doublon / variante / nouvelle pour chaque point, AFFICHAGE CÔTE À CÔTE avec la clause de référence et ses différences, toutes les candidates proches quand le moteur hésite, doublon confirmé = une occurrence de plus sur la clause existante, verdict en couleur dans la file après première consultation) ; 1.4 du 09/10/2026 (article « Clôture et signature » ajouté aux deux plans, y compris aux clausiers déjà créés ; partie finale de l'acte versée ; mentions techniques de signature électronique et pieds de page répétés retirés avant découpe ; reconnaissance gratuite lancée d'office sur un scan, lecture par Claude proposée seulement pour les pages mal reconnues, avec le détail de ce qui manque) ; 1.3 du 09/10/2026 (DOUBLE PASSE SUR LES ACTES SCANNÉS, méthode reprise de TRENTE : pages sans texte détectées une à une, reconnaissance gratuite Tesseract dans le navigateur, puis lecture par Claude pour compléter, sur validation et après estimatif de coût ; texte reconnu signalé à relire dans la fiche) ; 1.2 du 09/10/2026 (MODE LECTURE SEULE : onglet « Consulter le clausier » en teinte de consultation, adresse directe ?consulter, bandeau avec retour au mode travail, aucun geste de modification ; sélection de clauses et envoi par mail d'un fichier Word aux champs entre crochets colorisés) ; 1.1 du 09/10/2026 (TRAITEMENT SIMULTANÉ : tous les points restants des dépôts d'un même type d'acte regroupés par rubrique proposée, tranchés en bloc ou un à un ; bascule avec l'ordre d'arrivée) ; 1.0 du 09/10/2026 (file « À traiter » : tableau de bord de la file, avancement de chaque dépôt, bouton « Mettre de côté » et liste des dépôts en attente ; compteurs d'usage dissociés du classement des clauses) ; 0.9 du 09/10/2026 (couverture du clausier par rubrique et par article, fiche éditable de la clause, journal de relecture avec rangement défait seul ou par lot, signal d'un acte non numéroté versé dans un clausier pauvre) ; 0.8 du 09/10/2026 (ciseau : coupe manuelle d'un point entre paragraphes ou puces, partie détachée lettrée, phrase d'annonce reprise, coupes conservées à la redécoupe, recollage) ; 0.7 du 09/10/2026 (ergonomie : fil d'Ariane collant, clause étoile choisie à la main et épinglée, compteurs indicatifs d'actes versés et de reprises en rédaction, comparaison côte à côte de deux variantes, recherche plein texte et filtres par contexte, sens, nature et texte visé, étapes du versement) ; 0.6 du 08/10/2026 (rangement des points d'un dépôt dans le clausier : proposition et deuxième candidate, contexte coché, validation point par point ou en bloc, journal des mouvements) ; 0.5 du 08/10/2026 (module Clausier, première tranche : plans de référence PSV AKZO et PUV R3S, numéros permanents, page Clausier) ; 0.4 du 08/10/2026 (titres des PDF non numérotés déduits de la mise en forme) ; 0.3 du 08/10/2026 (lecture Word avec numérotation automatique, contrôles de vraisemblance) ; 0.2 : moteur de découpe en service ; squelette du 07/10/2026
+   MONETA — version 3.3 du 18/10/2026 (RESTAURATION d'une sauvegarde du clausier, administrateur général : copie « avant-restauration » obligatoire, abandon si elle échoue ; DIAGNOSTIC pour les administrateurs : versions de la page, du serveur et de la règle de neutralisation, moteurs, code d'administrateur, taille des clausiers, bouton Copier) ; 3.2 du 18/10/2026 (HUIT AMÉLIORATIONS : 1) APERÇU avant le classement d'office, actif par défaut — rien n'est écrit avant « Appliquer » ; 2) CONTRÔLE DE FUITE après la neutralisation — courriel, IBAN, téléphone, SIREN, sécurité sociale, montant, date, référence cadastrale, adresse : un point suspect n'est jamais rangé d'office ; 3) BILAN des décisions automatiques avec export CSV ; 4) TAUX de correction et de rétablissement par mois ; 5) CONFIANCE minimale du moteur, réglable, « aucune » par défaut ; 6) SECOND AVIS par le sens pour les points sans proposition ; 7) SAUVEGARDE automatique du clausier, trente copies gardées ; 8) TÉMOIN de taille du clausier et du journal) ; 3.1 du 18/10/2026 (RAPPROCHEMENT DES DÉPÔTS D'UN MÊME LOT au traitement simultané : le classement d'office traite les dépôts un par un et compare chacun aux clauses que les précédents viennent d'écrire — un texte identique ou quasi identique présent dans plusieurs dépôts n'entre qu'une fois) ; 3.0 du 18/10/2026 (FIABILISATION : au traitement simultané, un point corrigé ou rétabli reste à la main après un rechargement de la page — la lecture du journal est commune au rangement d'un dépôt ; chaque doublon écarté d'office peut être RÉTABLI (rangement et simultané) : il redevient à trancher et n'est plus jamais écarté d'office) ; 2.9 du 18/10/2026 (NEUTRALISATION 1.1 : les durées et taux CONVENUS deviennent [DURÉE] et [TAUX], les quotités [QUOTITÉ], les délais et taux fixés par la loi restent tels quels ; chaque rubrique peut protéger des champs (CHAMPS_EN_CLAIR, vide pour l'instant, à remplir par JFD) d'après la rubrique proposée par le moteur ; un dépôt neutralisé selon l'ancienne règle peut être neutralisé à nouveau tant que rien n'y est rangé) ; 2.8 du 18/10/2026 (RAPPEL TRIMESTRIEL DE NETTOYAGE : première échéance le 15 janvier 2027 puis tous les trois mois ; bandeau réservé aux administrateurs, pour les types de leur matière, listant les rubriques de 5 clauses ou plus ; non reportable, il reste affiché tant que ces rubriques n'ont pas été ouvertes depuis l'échéance ; l'ouverture est gardée au clausier ; rien n'est lu sur le Drive avant la première échéance ; ?aujourdhui=AAAA-MM-JJ simule la date) ; 2.7 du 17/10/2026 (TRAITEMENT SIMULTANÉ aligné sur le rangement d'un dépôt : doublons identiques écartés d'office sans rien montrer, quasi identiques écartés après vérification du sens, puis classement d'office des points restants — dépôts neutralisés seulement — en une seule écriture, « Corriger » pour reprendre un point à la main) ; 2.6 du 17/10/2026 (JOURNAL DES CORRECTIONS : tout point rangé à la main ailleurs que dans la rubrique proposée en premier est gardé — texte, rubrique proposée, rubrique retenue, auteur — ; le moteur de rangement relit ce journal avant de proposer : un point presque identique, à 80 % de ressemblance, à un point déjà corrigé reçoit en tête la rubrique retenue par l'humain, ce qui vaut aussi pour le classement d'office ; liste visible et retirable par les administrateurs) ; 2.5 du 17/10/2026 (RÈGLE DES DOUBLONS : identiques à 100 % des mots écartés d'office sans rien montrer ; quasi identiques — moins de 10 % de mots changés et au plus 5 — écartés d'office après vérification du sens (garde-fou par les mots, puis comparaison de sens des phrases modifiées), sinon gardés comme variantes ; au-delà de la tolérance, variante gardée ; doublon de sens présenté pour confirmation ; aucun compteur de fréquence ; chiffres provisoires à caler sur DUVAL) ; 2.4 du 17/10/2026 (RÔLES : trois rôles d'administrateur par matière — famille, immobilier, général —, JFD seul administrateur de chacun pour l'instant ; nom choisi dans une liste à l'entrée, code demandé aux seuls administrateurs et contrôlé par le serveur ; tout le cabinet consulte et verse, le collaborateur qui verse arbitre son dépôt, seuls les administrateurs modifient le clausier constitué, lancent « Proposer une amélioration » et ouvrent le traitement simultané ; auteur noté au journal) ; 2.3 du 17/10/2026 (CLASSEMENT D'OFFICE, tranché par JFD : les propositions du moteur ne sont plus validées une à une ; dès que la comparaison est complète, chaque point qui a une rubrique proposée et n'est pas un doublon est rangé d'office en une seule écriture, le collaborateur ne retouche que les erreurs par « Corriger », les doublons et les points sans rubrique évidente restent à trancher à la main) ; 2.2 du 10/10/2026 (PROPOSITIONS DE L'IA pour challenger la clause étoile : bouton dans la rubrique, estimatif, au plus deux rédactions fondées sur la seule bibliothèque d'appui rattachée, à adopter comme variante ou à écarter) ; 2.1 du 10/10/2026 (BIBLIOTHÈQUE D'APPUI, une par type d'acte : onglet « Bibliothèque », lecture des vingt premières lignes et refus d'un article déjà présent, fiche pré-remplie, rubriques proposées par mots-clés, section « Appui » dans chaque rubrique avec rattachement et retrait) ; 2.0 du 10/10/2026 (« POURQUOI CETTE VARIANTE » : à chaque point gardé comme variante, Claude rédige en une ligne ce qu'elle change sur le fond par rapport à la clause étoile ou à la plus proche ; affichée dans le clausier, corrigeable dans la fiche) ; 1.9 du 10/10/2026 (NEUTRALISATION PAR CLAUDE à l'amorçage : bouton dans le rangement, estimatif, points neutralisés par lots, champs [ ] en couleur, texte neutralisé rangé et comparé, original gardé caché dans la clause) ; 1.8 du 10/10/2026 (seconde passe, par le sens, aussi dans le TRAITEMENT SIMULTANÉ) ; 1.7 du 10/10/2026 (RACCOURCIS CLAVIER dans le rangement, désactivés par défaut : D doublon, V variante, Entrée valider la proposée, E écarter, flèches pour changer de point) ; 1.6 du 10/10/2026 (SECONDE PASSE DE COMPARAISON, PAR LE SENS : empreintes fabriquées par un seul petit modèle dans le navigateur, gardées par type d'acte sur le Drive, appliquées aux seuls points que la première passe n'a pas tranchés) ; 1.5 du 09/10/2026 (MOTEUR DE COMPARAISON, première passe mot à mot : verdict doublon / variante / nouvelle pour chaque point, AFFICHAGE CÔTE À CÔTE avec la clause de référence et ses différences, toutes les candidates proches quand le moteur hésite, doublon confirmé = une occurrence de plus sur la clause existante, verdict en couleur dans la file après première consultation) ; 1.4 du 09/10/2026 (article « Clôture et signature » ajouté aux deux plans, y compris aux clausiers déjà créés ; partie finale de l'acte versée ; mentions techniques de signature électronique et pieds de page répétés retirés avant découpe ; reconnaissance gratuite lancée d'office sur un scan, lecture par Claude proposée seulement pour les pages mal reconnues, avec le détail de ce qui manque) ; 1.3 du 09/10/2026 (DOUBLE PASSE SUR LES ACTES SCANNÉS, méthode reprise de TRENTE : pages sans texte détectées une à une, reconnaissance gratuite Tesseract dans le navigateur, puis lecture par Claude pour compléter, sur validation et après estimatif de coût ; texte reconnu signalé à relire dans la fiche) ; 1.2 du 09/10/2026 (MODE LECTURE SEULE : onglet « Consulter le clausier » en teinte de consultation, adresse directe ?consulter, bandeau avec retour au mode travail, aucun geste de modification ; sélection de clauses et envoi par mail d'un fichier Word aux champs entre crochets colorisés) ; 1.1 du 09/10/2026 (TRAITEMENT SIMULTANÉ : tous les points restants des dépôts d'un même type d'acte regroupés par rubrique proposée, tranchés en bloc ou un à un ; bascule avec l'ordre d'arrivée) ; 1.0 du 09/10/2026 (file « À traiter » : tableau de bord de la file, avancement de chaque dépôt, bouton « Mettre de côté » et liste des dépôts en attente ; compteurs d'usage dissociés du classement des clauses) ; 0.9 du 09/10/2026 (couverture du clausier par rubrique et par article, fiche éditable de la clause, journal de relecture avec rangement défait seul ou par lot, signal d'un acte non numéroté versé dans un clausier pauvre) ; 0.8 du 09/10/2026 (ciseau : coupe manuelle d'un point entre paragraphes ou puces, partie détachée lettrée, phrase d'annonce reprise, coupes conservées à la redécoupe, recollage) ; 0.7 du 09/10/2026 (ergonomie : fil d'Ariane collant, clause étoile choisie à la main et épinglée, compteurs indicatifs d'actes versés et de reprises en rédaction, comparaison côte à côte de deux variantes, recherche plein texte et filtres par contexte, sens, nature et texte visé, étapes du versement) ; 0.6 du 08/10/2026 (rangement des points d'un dépôt dans le clausier : proposition et deuxième candidate, contexte coché, validation point par point ou en bloc, journal des mouvements) ; 0.5 du 08/10/2026 (module Clausier, première tranche : plans de référence PSV AKZO et PUV R3S, numéros permanents, page Clausier) ; 0.4 du 08/10/2026 (titres des PDF non numérotés déduits de la mise en forme) ; 0.3 du 08/10/2026 (lecture Word avec numérotation automatique, contrôles de vraisemblance) ; 0.2 : moteur de découpe en service ; squelette du 07/10/2026
    Arbitrages (fiche clausier) : une application, deux moteurs ;
    on VERSE d'un côté (file d'attente sur le Drive), on TRAITE quand on veut ;
    le DÉCOUPAGE (neutralisation en champs, coupe en clauses, destination
@@ -2051,6 +2058,54 @@ async function verifierTolerance() {
   });
   await ecarterDoublons(aEcarter);
 }
+/* ---------- DIAGNOSTIC (3.3) — administrateurs ----------
+   Un clic dit ce qui est réellement en ligne : version de la page, version du serveur et de la règle de neutralisation, moteurs, code
+   d'administrateur posé ou non, clé de l'API, réglages du navigateur, taille de chaque clausier. Un décalage entre la page et le serveur
+   (fichier du dossier api oublié) est signalé. « Copier » met le texte dans le presse-papiers pour le coller dans un message. */
+const VERSION_PAGE = "3.3", SERVEUR_ATTENDU = "2.4", NEUTRALISATION_ATTENDUE = "1.1";
+async function diagnostic() {
+  const r = [], ajouter = (niveau, libelle, detail) => r.push({ niveau, libelle, detail });
+  ajouter("ok", "Page", `version ${VERSION_PAGE}`);
+  try {
+    const rep = await fetch(MOTEURS), j = await rep.json(), m = j?.moneta;
+    if (!rep.ok || !m) throw new Error("réponse inattendue du serveur");
+    ajouter(m.version === SERVEUR_ATTENDU ? "ok" : "attention", "Serveur", `version ${m.version}` + (m.version === SERVEUR_ATTENDU ? "" : ` (attendue : ${SERVEUR_ATTENDU}) : un fichier du dossier api n'a peut-être pas été téléversé`));
+    const mo = m.moteurs || {}, vn = mo.neutraliser?.version;
+    ajouter(vn === NEUTRALISATION_ATTENDUE ? "ok" : "attention", "Règle de neutralisation", `version ${vn || "inconnue"}` + (vn === NEUTRALISATION_ATTENDUE ? "" : ` (attendue : ${NEUTRALISATION_ATTENDUE}) : api/_neutraliser.js n'est pas à jour`));
+    const hors = Object.entries(mo).filter(([k, v]) => k !== "acces" && !/en service|navigateur/.test(v?.etat || ""));
+    ajouter(hors.length ? "erreur" : "ok", "Moteurs", hors.length ? hors.map(([k, v]) => `${k} : ${v.etat}`).join(" ; ") : `${Object.keys(mo).filter(k => k !== "acces").length} moteurs en service`);
+    const acces = mo.acces?.etat;
+    ajouter(acces === "en service" ? "ok" : "erreur", "Code d'administrateur", acces === "en service" ? "posé sur le serveur" : "ABSENT du serveur (variable MONETA_CODE_ADMIN) : personne ne peut être administrateur");
+  } catch (e) { ajouter("erreur", "Serveur", "injoignable : " + e.message); }
+  ajouter(etat.jeton ? "ok" : "attention", "Drive", etat.jeton ? "connecté" : "pas de jeton : connectez-vous au Drive");
+  let modele = false; try { modele = localStorage.getItem("moneta-sens") === MODELE_SENS; } catch { }
+  ajouter("ok", "Navigateur", `modèle de sens ${modele ? "en réserve" : "pas encore téléchargé"} ; aperçu ${apercuActif() ? "actif" : "coupé"} ; confiance « ${confianceActive()} »`);
+  ajouter(dernieresSauvegardes.size ? "ok" : "attention", "Sauvegarde du clausier", dernieresSauvegardes.size ? "faite dans cette session" : "pas encore faite dans cette session (la première écriture la déclenche)");
+  for (const t of TYPES_ACTE.filter(t => PLANS[t.code])) {
+    try {
+      const d = await clausierExistant(t.code);
+      if (!d) { ajouter("ok", t.libelle, "clausier pas encore créé"); continue; }
+      const rubs = Object.values(d.rubriques), garnies = rubs.filter(x => x.clauses.length).length, nb = rubs.reduce((n, x) => n + x.clauses.length, 0), tt = temoinTaille(d);
+      ajouter(tt.niveau === "ok" ? "ok" : tt.niveau === "orange" ? "attention" : "erreur", t.libelle, `${pl(nb, "clause")} dans ${garnies} rubriques garnies sur ${rubs.length} ; ${tt.texte}${tt.avis ? " — " + tt.avis : ""}`);
+    } catch (e) { ajouter("erreur", t.libelle, "clausier illisible : " + e.message); }
+  }
+  return r;
+}
+function afficherDiagnostic() {
+  const fond = document.createElement("div"); fond.className = "qui-fond";
+  fond.innerHTML = `<div class="qui-boite diag" role="dialog" aria-modal="true" aria-labelledby="diag-titre"><h2 id="diag-titre">Diagnostic de MONETA</h2><div id="diag-corps"><p>Vérification en cours…</p></div>
+    <div class="qui-actions"><button class="bouton discret" id="diag-copier" disabled>Copier</button><button class="bouton valider" id="diag-fermer">Fermer</button></div></div>`;
+  document.body.appendChild(fond);
+  const fermer = () => fond.remove(); fond.querySelector("#diag-fermer").addEventListener("click", fermer); fond.addEventListener("keydown", e => { if (e.key === "Escape") fermer(); });
+  return diagnostic().then(r => {
+    const icone = { ok: "✓", attention: "⚠", erreur: "✖" };
+    fond.querySelector("#diag-corps").innerHTML = `<ul class="diag-liste">${r.map(x => `<li class="diag-${x.niveau}"><b>${icone[x.niveau]} ${echapper(x.libelle)}</b> — ${echapper(x.detail)}</li>`).join("")}</ul>`;
+    const texte = `Diagnostic MONETA du ${new Date().toLocaleString("fr-FR")}\n` + r.map(x => `${icone[x.niveau]} ${x.libelle} — ${x.detail}`).join("\n");
+    const b = fond.querySelector("#diag-copier"); b.disabled = false;
+    b.addEventListener("click", async () => { try { await navigator.clipboard.writeText(texte); b.textContent = "Copié"; } catch { b.textContent = "Copie impossible"; } });
+    return r;
+  });
+}
 /* ---------- APERÇU AVANT LE CLASSEMENT D'OFFICE (3.2) ----------
    Réglage actif PAR DÉFAUT (mémorisé dans le navigateur) : à l'ouverture d'un dépôt ou du traitement simultané, MONETA n'écrit rien
    toute seule ; elle montre ce qu'elle ferait (doublons à écarter, points à ranger d'office par rubrique, ce qui reste à la main)
@@ -2686,22 +2741,62 @@ async function chargerType(code) {
    au plus toutes les deux heures, une copie datée est déposée dans le sous-dossier « Sauvegardes » du dossier du type d'acte ; les trente
    plus récentes sont gardées, les autres vont à la corbeille du Drive (récupérables). Un échec ne bloque jamais l'écriture : il est signalé une fois. */
 const SAUVEGARDES_GARDEES = 30, DELAI_SAUVEGARDE_MS = 2 * 3600 * 1000, dernieresSauvegardes = new Map();
+// Copie datée du fichier dans le sous-dossier « Sauvegardes » ; lève une erreur si elle échoue. prefixe : « avant-restauration_ » pour la copie de sûreté d'une restauration.
+async function copierClausier(fichier, prefixe = "") {
+  const meta = await drive(`${DRIVE}/${fichier}?fields=name,parents`), parent = meta?.parents?.[0]; if (!parent) throw new Error("dossier du clausier introuvable");
+  const dos = await dossier("Sauvegardes", parent), n = new Date(), p2 = x => String(x).padStart(2, "0");
+  const nom = `clausier_${prefixe}${n.getFullYear()}-${p2(n.getMonth() + 1)}-${p2(n.getDate())}_${p2(n.getHours())}h${p2(n.getMinutes())}.json`;
+  await drive(`${DRIVE}/${fichier}/copy`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name: nom, parents: [dos] }) });
+  const toutes = (await lister(dos, " and name contains 'clausier_'")).sort((x, y) => String(x.createdTime).localeCompare(String(y.createdTime)));
+  for (const f of toutes.slice(0, Math.max(0, toutes.length - SAUVEGARDES_GARDEES)))
+    await drive(`${DRIVE}/${f.id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ trashed: true }) });
+  return { dos, nom };
+}
 async function sauvegarderClausier(fichier) {
   const dernier = dernieresSauvegardes.get(fichier);
   if (dernier && Date.now() - dernier < DELAI_SAUVEGARDE_MS) return;
   dernieresSauvegardes.set(fichier, Date.now());   // posé avant : un échec n'est pas retenté à chaque geste
-  try {
-    const meta = await drive(`${DRIVE}/${fichier}?fields=name,parents`), parent = meta?.parents?.[0]; if (!parent) return;
-    const dos = await dossier("Sauvegardes", parent), n = new Date(), p2 = x => String(x).padStart(2, "0");
-    const nom = `clausier_${n.getFullYear()}-${p2(n.getMonth() + 1)}-${p2(n.getDate())}_${p2(n.getHours())}h${p2(n.getMinutes())}.json`;
-    await drive(`${DRIVE}/${fichier}/copy`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name: nom, parents: [dos] }) });
-    const toutes = (await lister(dos, " and name contains 'clausier_'")).sort((a, b) => String(a.createdTime).localeCompare(String(b.createdTime)));
-    for (const f of toutes.slice(0, Math.max(0, toutes.length - SAUVEGARDES_GARDEES)))
-      await drive(`${DRIVE}/${f.id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ trashed: true }) });
-  } catch (e) {
+  try { await copierClausier(fichier); }
+  catch (e) {
     console.warn("Sauvegarde du clausier impossible :", e);
     if (!etat.sauvegardeSignalee) { etat.sauvegardeSignalee = true; montrerErreur("Sauvegarde automatique du clausier impossible (" + e.message + "). L'écriture continue ; prévenez l'administrateur."); }
   }
+}
+/* RESTAURATION (3.3) — administrateur général seulement. Remet le contenu d'une sauvegarde dans clausier.json (même fichier, même identifiant).
+   Avant d'écraser, le clausier actuel est copié en « avant-restauration » : si cette copie échoue, la restauration est ABANDONNÉE.
+   Les mouvements faits depuis la sauvegarde sont perdus (un mouvement « restaurer » reste au journal). */
+async function listerSauvegardes() {
+  const meta = await drive(`${DRIVE}/${cl.fichier}?fields=parents`), parent = meta?.parents?.[0]; if (!parent) return [];
+  const dos = await dossier("Sauvegardes", parent);
+  return (await lister(dos, " and name contains 'clausier_'")).sort((x, y) => String(y.createdTime).localeCompare(String(x.createdTime)));
+}
+async function restaurerSauvegarde(id, nom) {
+  if (!droits.admin.has("general")) return;
+  if (!confirm(`Restaurer la sauvegarde « ${nom} » ?\n\nLe clausier actuel sera d'abord copié (« avant-restauration »). Tout ce qui a été fait depuis cette sauvegarde sera perdu dans le clausier.`)) return;
+  try {
+    const sauv = await lireJson(id);
+    if (!sauv || typeof sauv.rubriques !== "object" || !Array.isArray(sauv.articles)) throw new Error("ce fichier n'est pas un clausier");
+    await copierClausier(cl.fichier, "avant-restauration_");
+    (sauv.journal ||= []).push({ quand: new Date().toISOString(), quoi: "restaurer", source: nom, ...(droits.nom ? { par: droits.nom } : {}) });
+    sauv.modifie_le = new Date().toISOString();
+    await reecrireJson(cl.fichier, sauv);
+    cl.donnees = sauv; cl.ouverte = null; cl.journalOuvert = true; dessinerType();
+  } catch (e) { montrerErreur("Restauration abandonnée : " + e.message); }
+}
+function dessinerSauvegardes() {
+  if (!droits.admin.has("general")) return "";
+  return `<details class="cl-journal cl-sauvegardes"><summary>Sauvegardes du clausier</summary><div class="corps">
+    <p class="aide">Une copie datée est faite avant la première écriture de chaque session, puis au plus toutes les deux heures ; les trente plus récentes sont gardées dans le sous-dossier « Sauvegardes » du Drive.</p>
+    <button class="bouton secondaire" data-sauv-liste>Afficher les sauvegardes</button><ul class="sauv-liste" id="sauv-liste"></ul></div></details>`;
+}
+async function afficherSauvegardes() {
+  const ul = $("sauv-liste"); if (!ul) return;
+  ul.innerHTML = "<li>Lecture du Drive…</li>";
+  try {
+    const l = await listerSauvegardes();
+    ul.innerHTML = l.length ? l.map(f => `<li><span>${echapper(f.name.replace(/^clausier_/, "").replace(/\.json$/, ""))}</span> <button class="bouton discret" data-sauv-id="${echapper(f.id)}" data-sauv-nom="${echapper(f.name)}">Restaurer</button></li>`).join("") : "<li>Aucune sauvegarde pour l'instant.</li>";
+    ul.querySelectorAll("[data-sauv-id]").forEach(b => b.addEventListener("click", () => restaurerSauvegarde(b.dataset.sauvId, b.dataset.sauvNom)));
+  } catch (e) { ul.innerHTML = `<li>Lecture impossible : ${echapper(e.message)}</li>`; }
 }
 // Toute modification relit d'abord le fichier : un collègue a pu l'enrichir entre-temps
 async function modifierClausier(changement, fichier = cl.fichier) {
@@ -2848,7 +2943,7 @@ function dessinerType() {
    posée sur elle est retirée ; les numéros de clauses ne sont jamais réutilisés.
    Le point redevient rangeable depuis « À traiter ». Tout va au journal.
    ============================================================ */
-const LIB_MOUVEMENT = { ranger: "rangé", ecarter: "écarté", doublon: "doublon confirmé", "choisir-etoile": "étoile choisie", "retirer-etoile": "étoile retirée", fiche: "fiche modifiée", annuler: "rangement défait", retablir: "doublon écarté d'office remis à trancher" };
+const LIB_MOUVEMENT = { ranger: "rangé", ecarter: "écarté", doublon: "doublon confirmé", "choisir-etoile": "étoile choisie", "retirer-etoile": "étoile retirée", fiche: "fiche modifiée", annuler: "rangement défait", retablir: "doublon écarté d'office remis à trancher", restaurer: "clausier restauré depuis une sauvegarde" };
 /* ---------- BILAN DES DÉCISIONS AUTOMATIQUES ET TAUX DE CORRECTION (3.2) ----------
    Réservé aux administrateurs (même zone que le journal). Il liste les décisions prises d'office — points rangés, doublons écartés — avec
    le texte, la rubrique ou la clause en regard, le motif et la ressemblance, et mesure, mois par mois, combien ont été corrigées ou
@@ -2925,7 +3020,7 @@ function dessinerCorrections(d) {
       <button data-retirer-cor="${echapper(x.depot)}" data-point="${echapper(x.point)}">retirer</button></li>`).join("")}</ul></div></details>`;
 }
 function dessinerJournal(d) {
-  const j = d.journal || []; if (!j.length) return `<details class="cl-journal"><summary>Journal des mouvements (aucun pour l'instant)</summary></details>` + dessinerCorrections(d);
+  const j = d.journal || []; if (!j.length) return `<details class="cl-journal"><summary>Journal des mouvements (aucun pour l'instant)</summary></details>` + dessinerCorrections(d) + dessinerSauvegardes();
   const taille = temoinTaille(d);
   const vivantes = new Set(Object.values(d.rubriques).flatMap(r => r.clauses).map(c => `${c.source?.depot}|${c.point}`));
   const noms = {}; Object.values(d.rubriques).forEach(r => r.clauses.forEach(c => { if (c.source?.depot) noms[c.source.depot] = c.source.nom; }));
@@ -2955,7 +3050,7 @@ function dessinerJournal(d) {
       const r = d.rubriques[e.rubrique];
       return `<li><span class="q">${q(e.quand)}</span><span>${LIB_MOUVEMENT[e.quoi] || echapper(e.quoi)}${e.clause ? ` : ${echapper(e.clause)}` : ""}${e.nb ? ` : ${e.nb} clause${e.nb > 1 ? "s" : ""} de « ${echapper(noms[e.depot] || "dépôt")} »` : ""}${r ? `, ${echapper(r.id)} ${echapper(r.titre)}` : ""}</span></li>`;
     }).join("")}</ul></div>` : ""}
-  </div></details>${dessinerBilan(d)}${dessinerCorrections(d)}`;
+  </div></details>${dessinerBilan(d)}${dessinerCorrections(d)}${dessinerSauvegardes()}`;
 }
 function brancherJournal() {
   const z = $("cl-corps"), det = z.querySelector(".cl-journal");
@@ -2964,6 +3059,7 @@ function brancherJournal() {
   z.querySelectorAll("[data-retirer-cor]").forEach(b => b.addEventListener("click", () => retirerCorrection(b.dataset.retirerCor, b.dataset.point)));
   z.querySelector("[data-bilan-filtre]")?.addEventListener("change", e => z.querySelectorAll(".bilan-liste li[data-genre]").forEach(li => { li.hidden = !!e.target.value && li.dataset.genre !== e.target.value; }));
   z.querySelector("[data-bilan-csv]")?.addEventListener("click", () => exporterBilanCsv(cl.donnees));
+  z.querySelector("[data-sauv-liste]")?.addEventListener("click", afficherSauvegardes);
   z.querySelectorAll("[data-annuler-un]").forEach(b => b.addEventListener("click", () => defaireRangements(b.dataset.annulerUn, [b.dataset.point])));
 }
 // Sortie de clauses du clausier (défaire au journal, ou « Corriger » dans le rangement) : la clause part, ses mots-clés auto partent
@@ -3603,9 +3699,10 @@ function majDroits() {
   document.body.classList.toggle("sans-droit", !peutModifier(cl.type));
   const q = $("qui"); if (!q) return;
   q.innerHTML = droits.nom
-    ? `${echapper(droits.nom)} · ${droits.admin.size ? "administrateur" + (droits.admin.has("general") ? " général" : "") : "collaborateur"} <button id="btn-qui">Changer</button>`
+    ? `${echapper(droits.nom)} · ${droits.admin.size ? "administrateur" + (droits.admin.has("general") ? " général" : "") : "collaborateur"} <button id="btn-qui">Changer</button>${droits.admin.size ? ' <button id="btn-diag">Diagnostic</button>' : ""}`
     : `Consultation <button id="btn-qui">S'identifier</button>`;
   $("btn-qui")?.addEventListener("click", () => demanderIdentite(true));
+  $("btn-diag")?.addEventListener("click", afficherDiagnostic);
 }
 function demanderIdentite(peutAnnuler) {
   return new Promise(fin => {
