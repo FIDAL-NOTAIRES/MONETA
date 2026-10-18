@@ -408,6 +408,16 @@ mark{background:var(--jaune-forme);color:inherit;padding:0 1px}
 .rp-haut .num{font-size:.78rem;color:var(--doux);font-variant-numeric:tabular-nums;min-width:4em}
 .rp-haut .verdict{margin-left:auto;font-size:.82rem;color:var(--doux)}
 .rp-haut .verdict.ok{color:var(--vert)}
+details.reglages{margin:0 0 10px;font-size:.85rem;color:var(--doux)}
+details.reglages label{display:inline-block;margin:4px 16px 4px 0}
+.apercu details.reglages{margin:8px 0 0}
+.apercu{background:#eaf3f4;border:1px solid #9cc5c9;border-left:5px solid var(--canard)}
+.apercu ul{margin:6px 0 6px 18px;padding:0}
+.apercu details{margin:6px 0}
+.apercu-actions{display:flex;gap:16px;align-items:center;margin-top:8px;flex-wrap:wrap}
+.apercu-actions label{font-size:.85rem;color:var(--doux)}
+.fuite{background:#fdecea;border:1px solid #e0a8a0;border-left:4px solid #b3261e;border-radius:5px;padding:8px 12px;margin:6px 0;font-size:.88rem}
+.fuite button{margin-left:8px;font-size:.78rem}
 .rappel{background:#fff7e0;border:1px solid #e3c36b;border-left:5px solid #c9972b;border-radius:6px;padding:12px 16px;margin:0 0 14px;font-size:.92rem}
 .rappel[hidden],body.lecture #rappel{display:none}
 .rappel details{margin-top:8px}
@@ -417,6 +427,16 @@ mark{background:var(--jaune-forme);color:inherit;padding:0 1px}
 .rappel li .id{font-weight:600;min-width:3.2rem}
 .rappel li .nb{color:var(--doux);margin-left:auto;white-space:nowrap}
 .rappel li button{font-size:.8rem;padding:2px 10px}
+.taille{font-size:.85rem;margin:4px 0 8px}
+.taille-orange{color:#8a5a00}
+.taille-rouge{color:#b3261e}
+table.bilan{border-collapse:collapse;font-size:.85rem;margin:6px 0}
+table.bilan th,table.bilan td{border:1px solid #d6dde2;padding:3px 8px;text-align:right}
+table.bilan th:first-child,table.bilan td:first-child{text-align:left}
+table.bilan tr.total td{font-weight:700;background:#eef3f5}
+.bilan-liste{list-style:none;margin:6px 0;padding:0}
+.bilan-liste li{margin-bottom:6px}
+.bilan-liste .extrait{display:block;color:var(--doux);font-size:.82rem}
 .cl-corrections li{margin-bottom:8px}
 .cl-corrections .extrait{display:block;color:var(--doux);font-size:.82rem;margin:2px 0 0 0}
 .cl-corrections button{margin-left:8px;font-size:.78rem}
@@ -441,7 +461,7 @@ details.ecartes ul{margin:6px 0 0 18px;padding:0}
 <body>
 <header>
   <h1>MONETA</h1>
-  <small>Le clausier du cabinet, version 3.1</small>
+  <small>Le clausier du cabinet, version 3.2</small>
   <span id="qui"></span>
   <span id="etat-connexion">Connexion au Drive…</span>
   <button id="btn-connexion">Autoriser l'accès au Drive</button>
@@ -549,7 +569,7 @@ details.ecartes ul{margin:6px 0 0 18px;padding:0}
 
 <script>
 /* ============================================================
-   MONETA — version 3.1 du 18/10/2026 (RAPPROCHEMENT DES DÉPÔTS D'UN MÊME LOT au traitement simultané : le classement d'office traite les dépôts un par un et compare chacun aux clauses que les précédents viennent d'écrire — un texte identique ou quasi identique présent dans plusieurs dépôts n'entre qu'une fois) ; 3.0 du 18/10/2026 (FIABILISATION : au traitement simultané, un point corrigé ou rétabli reste à la main après un rechargement de la page — la lecture du journal est commune au rangement d'un dépôt ; chaque doublon écarté d'office peut être RÉTABLI (rangement et simultané) : il redevient à trancher et n'est plus jamais écarté d'office) ; 2.9 du 18/10/2026 (NEUTRALISATION 1.1 : les durées et taux CONVENUS deviennent [DURÉE] et [TAUX], les quotités [QUOTITÉ], les délais et taux fixés par la loi restent tels quels ; chaque rubrique peut protéger des champs (CHAMPS_EN_CLAIR, vide pour l'instant, à remplir par JFD) d'après la rubrique proposée par le moteur ; un dépôt neutralisé selon l'ancienne règle peut être neutralisé à nouveau tant que rien n'y est rangé) ; 2.8 du 18/10/2026 (RAPPEL TRIMESTRIEL DE NETTOYAGE : première échéance le 15 janvier 2027 puis tous les trois mois ; bandeau réservé aux administrateurs, pour les types de leur matière, listant les rubriques de 5 clauses ou plus ; non reportable, il reste affiché tant que ces rubriques n'ont pas été ouvertes depuis l'échéance ; l'ouverture est gardée au clausier ; rien n'est lu sur le Drive avant la première échéance ; ?aujourdhui=AAAA-MM-JJ simule la date) ; 2.7 du 17/10/2026 (TRAITEMENT SIMULTANÉ aligné sur le rangement d'un dépôt : doublons identiques écartés d'office sans rien montrer, quasi identiques écartés après vérification du sens, puis classement d'office des points restants — dépôts neutralisés seulement — en une seule écriture, « Corriger » pour reprendre un point à la main) ; 2.6 du 17/10/2026 (JOURNAL DES CORRECTIONS : tout point rangé à la main ailleurs que dans la rubrique proposée en premier est gardé — texte, rubrique proposée, rubrique retenue, auteur — ; le moteur de rangement relit ce journal avant de proposer : un point presque identique, à 80 % de ressemblance, à un point déjà corrigé reçoit en tête la rubrique retenue par l'humain, ce qui vaut aussi pour le classement d'office ; liste visible et retirable par les administrateurs) ; 2.5 du 17/10/2026 (RÈGLE DES DOUBLONS : identiques à 100 % des mots écartés d'office sans rien montrer ; quasi identiques — moins de 10 % de mots changés et au plus 5 — écartés d'office après vérification du sens (garde-fou par les mots, puis comparaison de sens des phrases modifiées), sinon gardés comme variantes ; au-delà de la tolérance, variante gardée ; doublon de sens présenté pour confirmation ; aucun compteur de fréquence ; chiffres provisoires à caler sur DUVAL) ; 2.4 du 17/10/2026 (RÔLES : trois rôles d'administrateur par matière — famille, immobilier, général —, JFD seul administrateur de chacun pour l'instant ; nom choisi dans une liste à l'entrée, code demandé aux seuls administrateurs et contrôlé par le serveur ; tout le cabinet consulte et verse, le collaborateur qui verse arbitre son dépôt, seuls les administrateurs modifient le clausier constitué, lancent « Proposer une amélioration » et ouvrent le traitement simultané ; auteur noté au journal) ; 2.3 du 17/10/2026 (CLASSEMENT D'OFFICE, tranché par JFD : les propositions du moteur ne sont plus validées une à une ; dès que la comparaison est complète, chaque point qui a une rubrique proposée et n'est pas un doublon est rangé d'office en une seule écriture, le collaborateur ne retouche que les erreurs par « Corriger », les doublons et les points sans rubrique évidente restent à trancher à la main) ; 2.2 du 10/10/2026 (PROPOSITIONS DE L'IA pour challenger la clause étoile : bouton dans la rubrique, estimatif, au plus deux rédactions fondées sur la seule bibliothèque d'appui rattachée, à adopter comme variante ou à écarter) ; 2.1 du 10/10/2026 (BIBLIOTHÈQUE D'APPUI, une par type d'acte : onglet « Bibliothèque », lecture des vingt premières lignes et refus d'un article déjà présent, fiche pré-remplie, rubriques proposées par mots-clés, section « Appui » dans chaque rubrique avec rattachement et retrait) ; 2.0 du 10/10/2026 (« POURQUOI CETTE VARIANTE » : à chaque point gardé comme variante, Claude rédige en une ligne ce qu'elle change sur le fond par rapport à la clause étoile ou à la plus proche ; affichée dans le clausier, corrigeable dans la fiche) ; 1.9 du 10/10/2026 (NEUTRALISATION PAR CLAUDE à l'amorçage : bouton dans le rangement, estimatif, points neutralisés par lots, champs [ ] en couleur, texte neutralisé rangé et comparé, original gardé caché dans la clause) ; 1.8 du 10/10/2026 (seconde passe, par le sens, aussi dans le TRAITEMENT SIMULTANÉ) ; 1.7 du 10/10/2026 (RACCOURCIS CLAVIER dans le rangement, désactivés par défaut : D doublon, V variante, Entrée valider la proposée, E écarter, flèches pour changer de point) ; 1.6 du 10/10/2026 (SECONDE PASSE DE COMPARAISON, PAR LE SENS : empreintes fabriquées par un seul petit modèle dans le navigateur, gardées par type d'acte sur le Drive, appliquées aux seuls points que la première passe n'a pas tranchés) ; 1.5 du 09/10/2026 (MOTEUR DE COMPARAISON, première passe mot à mot : verdict doublon / variante / nouvelle pour chaque point, AFFICHAGE CÔTE À CÔTE avec la clause de référence et ses différences, toutes les candidates proches quand le moteur hésite, doublon confirmé = une occurrence de plus sur la clause existante, verdict en couleur dans la file après première consultation) ; 1.4 du 09/10/2026 (article « Clôture et signature » ajouté aux deux plans, y compris aux clausiers déjà créés ; partie finale de l'acte versée ; mentions techniques de signature électronique et pieds de page répétés retirés avant découpe ; reconnaissance gratuite lancée d'office sur un scan, lecture par Claude proposée seulement pour les pages mal reconnues, avec le détail de ce qui manque) ; 1.3 du 09/10/2026 (DOUBLE PASSE SUR LES ACTES SCANNÉS, méthode reprise de TRENTE : pages sans texte détectées une à une, reconnaissance gratuite Tesseract dans le navigateur, puis lecture par Claude pour compléter, sur validation et après estimatif de coût ; texte reconnu signalé à relire dans la fiche) ; 1.2 du 09/10/2026 (MODE LECTURE SEULE : onglet « Consulter le clausier » en teinte de consultation, adresse directe ?consulter, bandeau avec retour au mode travail, aucun geste de modification ; sélection de clauses et envoi par mail d'un fichier Word aux champs entre crochets colorisés) ; 1.1 du 09/10/2026 (TRAITEMENT SIMULTANÉ : tous les points restants des dépôts d'un même type d'acte regroupés par rubrique proposée, tranchés en bloc ou un à un ; bascule avec l'ordre d'arrivée) ; 1.0 du 09/10/2026 (file « À traiter » : tableau de bord de la file, avancement de chaque dépôt, bouton « Mettre de côté » et liste des dépôts en attente ; compteurs d'usage dissociés du classement des clauses) ; 0.9 du 09/10/2026 (couverture du clausier par rubrique et par article, fiche éditable de la clause, journal de relecture avec rangement défait seul ou par lot, signal d'un acte non numéroté versé dans un clausier pauvre) ; 0.8 du 09/10/2026 (ciseau : coupe manuelle d'un point entre paragraphes ou puces, partie détachée lettrée, phrase d'annonce reprise, coupes conservées à la redécoupe, recollage) ; 0.7 du 09/10/2026 (ergonomie : fil d'Ariane collant, clause étoile choisie à la main et épinglée, compteurs indicatifs d'actes versés et de reprises en rédaction, comparaison côte à côte de deux variantes, recherche plein texte et filtres par contexte, sens, nature et texte visé, étapes du versement) ; 0.6 du 08/10/2026 (rangement des points d'un dépôt dans le clausier : proposition et deuxième candidate, contexte coché, validation point par point ou en bloc, journal des mouvements) ; 0.5 du 08/10/2026 (module Clausier, première tranche : plans de référence PSV AKZO et PUV R3S, numéros permanents, page Clausier) ; 0.4 du 08/10/2026 (titres des PDF non numérotés déduits de la mise en forme) ; 0.3 du 08/10/2026 (lecture Word avec numérotation automatique, contrôles de vraisemblance) ; 0.2 : moteur de découpe en service ; squelette du 07/10/2026
+   MONETA — version 3.2 du 18/10/2026 (HUIT AMÉLIORATIONS : 1) APERÇU avant le classement d'office, actif par défaut — rien n'est écrit avant « Appliquer » ; 2) CONTRÔLE DE FUITE après la neutralisation — courriel, IBAN, téléphone, SIREN, sécurité sociale, montant, date, référence cadastrale, adresse : un point suspect n'est jamais rangé d'office ; 3) BILAN des décisions automatiques avec export CSV ; 4) TAUX de correction et de rétablissement par mois ; 5) CONFIANCE minimale du moteur, réglable, « aucune » par défaut ; 6) SECOND AVIS par le sens pour les points sans proposition ; 7) SAUVEGARDE automatique du clausier, trente copies gardées ; 8) TÉMOIN de taille du clausier et du journal) ; 3.1 du 18/10/2026 (RAPPROCHEMENT DES DÉPÔTS D'UN MÊME LOT au traitement simultané : le classement d'office traite les dépôts un par un et compare chacun aux clauses que les précédents viennent d'écrire — un texte identique ou quasi identique présent dans plusieurs dépôts n'entre qu'une fois) ; 3.0 du 18/10/2026 (FIABILISATION : au traitement simultané, un point corrigé ou rétabli reste à la main après un rechargement de la page — la lecture du journal est commune au rangement d'un dépôt ; chaque doublon écarté d'office peut être RÉTABLI (rangement et simultané) : il redevient à trancher et n'est plus jamais écarté d'office) ; 2.9 du 18/10/2026 (NEUTRALISATION 1.1 : les durées et taux CONVENUS deviennent [DURÉE] et [TAUX], les quotités [QUOTITÉ], les délais et taux fixés par la loi restent tels quels ; chaque rubrique peut protéger des champs (CHAMPS_EN_CLAIR, vide pour l'instant, à remplir par JFD) d'après la rubrique proposée par le moteur ; un dépôt neutralisé selon l'ancienne règle peut être neutralisé à nouveau tant que rien n'y est rangé) ; 2.8 du 18/10/2026 (RAPPEL TRIMESTRIEL DE NETTOYAGE : première échéance le 15 janvier 2027 puis tous les trois mois ; bandeau réservé aux administrateurs, pour les types de leur matière, listant les rubriques de 5 clauses ou plus ; non reportable, il reste affiché tant que ces rubriques n'ont pas été ouvertes depuis l'échéance ; l'ouverture est gardée au clausier ; rien n'est lu sur le Drive avant la première échéance ; ?aujourdhui=AAAA-MM-JJ simule la date) ; 2.7 du 17/10/2026 (TRAITEMENT SIMULTANÉ aligné sur le rangement d'un dépôt : doublons identiques écartés d'office sans rien montrer, quasi identiques écartés après vérification du sens, puis classement d'office des points restants — dépôts neutralisés seulement — en une seule écriture, « Corriger » pour reprendre un point à la main) ; 2.6 du 17/10/2026 (JOURNAL DES CORRECTIONS : tout point rangé à la main ailleurs que dans la rubrique proposée en premier est gardé — texte, rubrique proposée, rubrique retenue, auteur — ; le moteur de rangement relit ce journal avant de proposer : un point presque identique, à 80 % de ressemblance, à un point déjà corrigé reçoit en tête la rubrique retenue par l'humain, ce qui vaut aussi pour le classement d'office ; liste visible et retirable par les administrateurs) ; 2.5 du 17/10/2026 (RÈGLE DES DOUBLONS : identiques à 100 % des mots écartés d'office sans rien montrer ; quasi identiques — moins de 10 % de mots changés et au plus 5 — écartés d'office après vérification du sens (garde-fou par les mots, puis comparaison de sens des phrases modifiées), sinon gardés comme variantes ; au-delà de la tolérance, variante gardée ; doublon de sens présenté pour confirmation ; aucun compteur de fréquence ; chiffres provisoires à caler sur DUVAL) ; 2.4 du 17/10/2026 (RÔLES : trois rôles d'administrateur par matière — famille, immobilier, général —, JFD seul administrateur de chacun pour l'instant ; nom choisi dans une liste à l'entrée, code demandé aux seuls administrateurs et contrôlé par le serveur ; tout le cabinet consulte et verse, le collaborateur qui verse arbitre son dépôt, seuls les administrateurs modifient le clausier constitué, lancent « Proposer une amélioration » et ouvrent le traitement simultané ; auteur noté au journal) ; 2.3 du 17/10/2026 (CLASSEMENT D'OFFICE, tranché par JFD : les propositions du moteur ne sont plus validées une à une ; dès que la comparaison est complète, chaque point qui a une rubrique proposée et n'est pas un doublon est rangé d'office en une seule écriture, le collaborateur ne retouche que les erreurs par « Corriger », les doublons et les points sans rubrique évidente restent à trancher à la main) ; 2.2 du 10/10/2026 (PROPOSITIONS DE L'IA pour challenger la clause étoile : bouton dans la rubrique, estimatif, au plus deux rédactions fondées sur la seule bibliothèque d'appui rattachée, à adopter comme variante ou à écarter) ; 2.1 du 10/10/2026 (BIBLIOTHÈQUE D'APPUI, une par type d'acte : onglet « Bibliothèque », lecture des vingt premières lignes et refus d'un article déjà présent, fiche pré-remplie, rubriques proposées par mots-clés, section « Appui » dans chaque rubrique avec rattachement et retrait) ; 2.0 du 10/10/2026 (« POURQUOI CETTE VARIANTE » : à chaque point gardé comme variante, Claude rédige en une ligne ce qu'elle change sur le fond par rapport à la clause étoile ou à la plus proche ; affichée dans le clausier, corrigeable dans la fiche) ; 1.9 du 10/10/2026 (NEUTRALISATION PAR CLAUDE à l'amorçage : bouton dans le rangement, estimatif, points neutralisés par lots, champs [ ] en couleur, texte neutralisé rangé et comparé, original gardé caché dans la clause) ; 1.8 du 10/10/2026 (seconde passe, par le sens, aussi dans le TRAITEMENT SIMULTANÉ) ; 1.7 du 10/10/2026 (RACCOURCIS CLAVIER dans le rangement, désactivés par défaut : D doublon, V variante, Entrée valider la proposée, E écarter, flèches pour changer de point) ; 1.6 du 10/10/2026 (SECONDE PASSE DE COMPARAISON, PAR LE SENS : empreintes fabriquées par un seul petit modèle dans le navigateur, gardées par type d'acte sur le Drive, appliquées aux seuls points que la première passe n'a pas tranchés) ; 1.5 du 09/10/2026 (MOTEUR DE COMPARAISON, première passe mot à mot : verdict doublon / variante / nouvelle pour chaque point, AFFICHAGE CÔTE À CÔTE avec la clause de référence et ses différences, toutes les candidates proches quand le moteur hésite, doublon confirmé = une occurrence de plus sur la clause existante, verdict en couleur dans la file après première consultation) ; 1.4 du 09/10/2026 (article « Clôture et signature » ajouté aux deux plans, y compris aux clausiers déjà créés ; partie finale de l'acte versée ; mentions techniques de signature électronique et pieds de page répétés retirés avant découpe ; reconnaissance gratuite lancée d'office sur un scan, lecture par Claude proposée seulement pour les pages mal reconnues, avec le détail de ce qui manque) ; 1.3 du 09/10/2026 (DOUBLE PASSE SUR LES ACTES SCANNÉS, méthode reprise de TRENTE : pages sans texte détectées une à une, reconnaissance gratuite Tesseract dans le navigateur, puis lecture par Claude pour compléter, sur validation et après estimatif de coût ; texte reconnu signalé à relire dans la fiche) ; 1.2 du 09/10/2026 (MODE LECTURE SEULE : onglet « Consulter le clausier » en teinte de consultation, adresse directe ?consulter, bandeau avec retour au mode travail, aucun geste de modification ; sélection de clauses et envoi par mail d'un fichier Word aux champs entre crochets colorisés) ; 1.1 du 09/10/2026 (TRAITEMENT SIMULTANÉ : tous les points restants des dépôts d'un même type d'acte regroupés par rubrique proposée, tranchés en bloc ou un à un ; bascule avec l'ordre d'arrivée) ; 1.0 du 09/10/2026 (file « À traiter » : tableau de bord de la file, avancement de chaque dépôt, bouton « Mettre de côté » et liste des dépôts en attente ; compteurs d'usage dissociés du classement des clauses) ; 0.9 du 09/10/2026 (couverture du clausier par rubrique et par article, fiche éditable de la clause, journal de relecture avec rangement défait seul ou par lot, signal d'un acte non numéroté versé dans un clausier pauvre) ; 0.8 du 09/10/2026 (ciseau : coupe manuelle d'un point entre paragraphes ou puces, partie détachée lettrée, phrase d'annonce reprise, coupes conservées à la redécoupe, recollage) ; 0.7 du 09/10/2026 (ergonomie : fil d'Ariane collant, clause étoile choisie à la main et épinglée, compteurs indicatifs d'actes versés et de reprises en rédaction, comparaison côte à côte de deux variantes, recherche plein texte et filtres par contexte, sens, nature et texte visé, étapes du versement) ; 0.6 du 08/10/2026 (rangement des points d'un dépôt dans le clausier : proposition et deuxième candidate, contexte coché, validation point par point ou en bloc, journal des mouvements) ; 0.5 du 08/10/2026 (module Clausier, première tranche : plans de référence PSV AKZO et PUV R3S, numéros permanents, page Clausier) ; 0.4 du 08/10/2026 (titres des PDF non numérotés déduits de la mise en forme) ; 0.3 du 08/10/2026 (lecture Word avec numérotation automatique, contrôles de vraisemblance) ; 0.2 : moteur de découpe en service ; squelette du 07/10/2026
    Arbitrages (fiche clausier) : une application, deux moteurs ;
    on VERSE d'un côté (file d'attente sur le Drive), on TRAITE quand on veut ;
    le DÉCOUPAGE (neutralisation en champs, coupe en clauses, destination
@@ -1418,7 +1438,7 @@ $("btn-fermer").addEventListener("click", () => { $("fiche-depot").style.display
    les points validés enrichissent. Chaque mouvement va au journal du clausier.
    ============================================================ */
 const rg = { depot: null, clausier: null, fichier: null, points: [], propositions: [], contextes: [], choix: {}, dejaRanges: new Set(),
-  office: new Set(), manuel: new Set(), officeFait: false, officeBilan: 0, ecartes: new Map(), appris: 0 };   // 2.3 — classement d'office
+  office: new Set(), manuel: new Set(), officeFait: false, officeBilan: 0, ecartes: new Map(), appris: 0, fuites: new Map() };   // 2.3 — classement d'office
 const normMot = m => String(m).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 const STOP_AUTO = new Set(["les","des","une","aux","par","pour","sur","dans","avec","sans","que","qui","est","sont","sera","seront","son","ses","leur","leurs","cette","ces","tout","tous","toute","toutes","elle","present","presentes","partie","parties","article","declare","vendeur","acquereur","promettant","beneficiaire","bien","biens","notaire","termes","conditions","presente"]);
 function motsAuto(texte) {
@@ -1765,7 +1785,7 @@ async function ouvrirRangement() {
   try {
     const r = await chargerType(d.type_acte);
     rg.depot = d; rg.clausier = r.donnees; rg.fichier = r.fichier; rg.choix = {}; rg.sensEtat = null; rg.neutreEtat = null;
-    rg.office = new Set(); rg.manuel = new Set(); rg.officeFait = false; rg.officeBilan = 0; rg.ecartes = new Map();
+    rg.office = new Set(); rg.manuel = new Set(); rg.officeFait = false; rg.officeBilan = 0; rg.ecartes = new Map(); rg.apercuLeve = false;
     lireTarif();
     rg.points = d.decoupe.structure.filter(e => e.t === "point")
       .map(e => ({ num: e.num, texte: e.paras.join("\n").replace(/\u200b/g, ""), titres: titresDuPoint(d.decoupe, e.num) }));
@@ -1774,6 +1794,7 @@ async function ouvrirRangement() {
     const rep = await appelerMoteur("ranger", { points: rg.points, rubriques, texte_acte: sansMarques(d.texte) });
     neutraliserPoints(rg.points, d);   // 1.9 — le texte rangé et comparé est le texte neutralisé, s'il existe
     rg.propositions = rep.rangement.propositions;
+    rg.fuites = lireFuites(rg.points, d);   // 3.2 — contrôle de fuite sur les textes neutralisés
     rg.appris = appliquerCorrections(rg.propositions, rg.points, rg.clausier);   // 2.6 — le moteur relit les corrections passées avant de proposer
     rg.contextes = (d.contextes && d.contextes.length) ? d.contextes : (rep.rangement.contextes || []);
     rg.dejaRanges = new Set(Object.values(rg.clausier.rubriques).flatMap(x => x.clauses).filter(c => c.source?.depot === d.id).map(c => c.point));
@@ -1793,16 +1814,22 @@ async function ouvrirRangement() {
     if (JSON.stringify({ ...bilan, le: 0 }) !== JSON.stringify({ ...(d.comparaison || {}), le: 0 })) {
       d.comparaison = bilan; reecrireJson(etat.ouvert.id, d).catch(() => {});
     }
-    await ecarterStricts();                                // 2.5 — identiques à 100 % : écartés d'office, sans rien montrer
-    if (sensDejaUtilise()) await verifierTolerance();      // quasi identiques : sens vérifié si le modèle est en réserve
-    dessinerRangement();
-    const sensAttendue = aTrancherSens().length && nbClausesAutres();
-    if (sensAttendue && sensDejaUtilise()) lancerSens();   // modèle déjà en réserve : seconde passe d'office, puis classement d'office
-    else if (!sensAttendue && d.neutralisation) classerOffice();   // textes neutralisés et rien à comparer par le sens : classement d'office tout de suite
-    // sinon : textes non neutralisés (les vrais noms et prix n'entrent pas d'office au clausier), ou modèle de sens pas encore en réserve ;
-    // les barres proposent « Neutraliser par Claude » et « Comparer le sens » ; le bouton de tête permet de classer sans attendre
+    if (apercuEnAttenteRg()) { dessinerRangement(); return; }   // 3.2 — l'aperçu s'affiche ; rien n'est écrit avant « Appliquer »
+    await suiteRangement();
   } catch (e) { zone.innerHTML = `<p class="note-moteur">Rangement impossible : ${echapper(e.message)}</p>`; }
 }
+// Tout ce qui écrit d'office au clausier : doublons identiques, quasi identiques vérifiés, puis classement d'office
+async function suiteRangement() {
+  await ecarterStricts();                                // 2.5 — identiques à 100 % : écartés d'office, sans rien montrer
+  if (sensDejaUtilise()) await verifierTolerance();      // quasi identiques : sens vérifié si le modèle est en réserve
+  dessinerRangement();
+  const sensAttendue = aTrancherSens().length && nbClausesAutres();
+  if (sensAttendue && sensDejaUtilise()) lancerSens();   // modèle déjà en réserve : seconde passe d'office, puis classement d'office
+  else if (!sensAttendue && rg.depot.neutralisation) classerOffice();   // textes neutralisés et rien à comparer par le sens : classement d'office tout de suite
+  // sinon : textes non neutralisés (les vrais noms et prix n'entrent pas d'office au clausier), ou modèle de sens pas encore en réserve ;
+  // les barres proposent « Neutraliser par Claude » et « Comparer le sens » ; le bouton de tête permet de classer sans attendre
+}
+async function appliquerApercuRg() { rg.apercuLeve = true; await suiteRangement(); }
 function dessinerRangement() {
   const zone = $("fiche-ranger"), rubs = rg.clausier.rubriques;
   const propo = new Map(rg.propositions.map(p => [p.num, p.candidats]));
@@ -1817,10 +1844,13 @@ function dessinerRangement() {
     ${barreNeutre()}
     ${barreSens()}
     <div class="cl-ranger-tete"><b>Ranger les points</b><span class="avance" id="rg-avance">${faits} sur ${total} classés${rg.office.size ? ` · ${rg.office.size} d'office` : ""}${rg.ecartes.size ? ` · ${pl(rg.ecartes.size, "doublon écarté", "doublons écartés")}` : ""}${rg.appris ? ` · ${pl(rg.appris, "proposition reprend", "propositions reprennent")} une correction passée` : ""}</span>
-      ${rg.officeFait ? "" : `<button class="bouton secondaire" id="rg-tout" title="Le classement d'office se lance tout seul dès que les textes sont neutralisés et la comparaison complète ; ce bouton permet de passer outre">Classer d'office sans attendre</button>`}
+      ${rg.officeFait || apercuEnAttenteRg() ? "" : `<button class="bouton secondaire" id="rg-tout" title="Le classement d'office se lance tout seul dès que les textes sont neutralisés et la comparaison complète ; ce bouton permet de passer outre">Classer d'office sans attendre</button>`}
       <label class="clavier"><input type="checkbox" id="rg-clavier"${clavierActif() ? " checked" : ""}> Raccourcis clavier</label></div>
-    ${!rg.officeFait && rg.points.some(p => !rg.dejaRanges.has(p.num) && rg.choix[p.num] === undefined) ? `<p class="note-moteur" style="margin-top:0">Classement d'office en attente : il se lance tout seul ${!rg.depot.neutralisation ? "une fois les textes neutralisés" : "une fois la passe de sens faite"}. Les points restent affichés tels que le moteur les propose.</p>` : ""}
+    ${reglagesOffice()}
+    ${apercuEnAttenteRg() ? blocApercu(planRangement(), "rg", p => libRub(rg.propositions.find(x => x.num === p.num).candidats[0].id), p => "point " + p.num) : ""}
+    ${!apercuEnAttenteRg() && !rg.officeFait && rg.points.some(p => !rg.dejaRanges.has(p.num) && rg.choix[p.num] === undefined) ? `<p class="note-moteur" style="margin-top:0">Classement d'office en attente : il se lance tout seul ${!rg.depot.neutralisation ? "une fois les textes neutralisés" : "une fois la passe de sens faite"}. Les points restent affichés tels que le moteur les propose.</p>` : ""}
     ${rg.officeFait ? `<p class="note-moteur" style="margin-top:0">${rg.officeBilan ? `<b>${pl(rg.officeBilan, "point classé", "points classés")} d'office</b> dans la rubrique proposée par le moteur. ` : ""}Ne retouchez que les erreurs : <b>Corriger</b> ressort le point du clausier et le rend à trancher à la main ; il n'est alors plus jamais repris d'office. Restent présentés : les doublons de sens, les quasi identiques dont le sens n'a pas pu être vérifié, et les points sans rubrique évidente.</p>` : ""}
+    ${[...rg.fuites.keys()].filter(n => !rg.dejaRanges.has(n) && rg.choix[n] === undefined).length ? `<p class="note-moteur" style="margin-top:0">⚠ <b>${pl([...rg.fuites.keys()].filter(n => !rg.dejaRanges.has(n) && rg.choix[n] === undefined).length, "point", "points")} à vérifier</b> : un élément propre au dossier semble avoir échappé à la neutralisation. Ces points ne sont pas rangés d'office.</p>` : ""}
     ${rg.ecartes.size ? `<details class="ecartes"><summary>${pl(rg.ecartes.size, "doublon écarté d'office", "doublons écartés d'office")}, non montrés : identiques, ou quasi identiques de même sens</summary><ul>${[...rg.ecartes].map(([num, e]) => `<li>Point ${echapper(num)} — ${e.motif === "tolerance" ? "quasi identique, même sens, à" : "identique à"} ${echapper(e.clause)} <button class="bouton discret" data-retablir="${echapper(num)}" title="Le point redevient à trancher à la main et n'est plus jamais écarté d'office">Rétablir</button></li>`).join("")}</ul></details>` : ""}
     ${clavierActif() ? `<p class="aide-clavier"><kbd>D</kbd> doublon · <kbd>V</kbd> variante · <kbd>Entrée</kbd> valider la proposée · <kbd>E</kbd> écarter · <kbd>↓</kbd> <kbd>↑</kbd> point suivant ou précédent</p>` : ""}
     <div id="rg-liste">${rg.points.filter(p => !rg.ecartes.has(p.num)).map(p => {
@@ -1835,6 +1865,7 @@ function dessinerRangement() {
       return `<div class="ranger-point${classee ? " classee" : ""}" data-point="${echapper(p.num)}">
         <div class="rp-haut"><span class="num">Point ${echapper(p.num)}</span>${verdict}${corriger}</div>
         ${classee || !rg.cmp?.[p.num] ? `<div class="rp-texte">${colorerChamps(echapper(p.texte.slice(0, 600)))}${p.texte.length > 600 ? "…" : ""}</div>` : blocComparaison(rg.cmp[p.num], p.texte)}
+        ${!classee && rg.fuites.has(p.num) ? blocFuite(rg.fuites.get(p.num)) : ""}
         ${classee ? "" : `<div class="rp-prop">
           <div class="rp-choix">${cand.map((c, i) => `<button data-choisir="${echapper(c.id)}" class="${i ? "second" : ""}" aria-pressed="false">${i ? "2ᵉ candidate" : "Proposée"}<span class="r-id">${echapper(libRub(c.id))}</span>${c.appris ? `<span class="r-mots">d'après la correction du ${dateCourte(c.appris.le).slice(0, 10)}${c.appris.par ? " (" + echapper(c.appris.par) + ")" : ""}</span>` : ""}${c.mots?.length ? `<span class="r-mots">${echapper(c.mots.slice(0, 4).join(", "))}</span>` : ""}</button>`).join("")}</div>
           <div class="rp-actions">
@@ -1874,8 +1905,12 @@ function brancherRangement() {
     valider?.addEventListener("click", () => choisi && validerPoint(num, choisi));
     bloc.querySelector(".ecarter")?.addEventListener("click", () => ecarterPoint(num));
     bloc.querySelector(".corriger")?.addEventListener("click", () => corrigerPoint(num));
+    bloc.querySelector(".fuite-ok")?.addEventListener("click", () => leverFuite(num));
   });
   $("rg-tout")?.addEventListener("click", classerOffice);
+  brancherReglages("fiche-ranger", dessinerRangement);
+  $("rg-appliquer")?.addEventListener("click", appliquerApercuRg);
+  $("rg-sans-apercu")?.addEventListener("change", e => poserApercu(!e.target.checked));
   $("fiche-ranger").querySelectorAll("[data-retablir]").forEach(b => b.addEventListener("click", () => retablirDoublon(b.dataset.retablir)));
 }
 // Ajout d'une clause dans le clausier (en mémoire) + journal ; partagé par le rangement d'un dépôt et le traitement simultané (1.1)
@@ -1962,13 +1997,15 @@ async function lancerSens() {
     const rang = { nouvelle: 0, variante: 1, doublon: 2 };
     for (const [num, x] of Object.entries(res)) { const avant = rg.cmp[num];
       rg.cmp[num] = !avant || rang[x.verdict] >= rang[avant.verdict] ? x : { ...avant, sensVu: true }; }
+    for (const prop of rg.propositions) secondAvis(prop.candidats, rg.cmp[prop.num]);   // 3.2 — second avis par le sens
     try { localStorage.setItem("moneta-sens", MODELE_SENS); } catch { }
     const b = bilanComparaison(Object.values(rg.cmp)); rg.depot.comparaison = { ...b, sens: true }; reecrireJson(etat.ouvert.id, rg.depot).catch(() => {});
     const v = Object.values(res); rg.sensEtat = `Seconde passe faite sur ${pl(v.length, "point")} : ${v.filter(x => x.verdict === "doublon").length} même sens, ${v.filter(x => x.verdict === "variante").length} même sujet, ${v.filter(x => x.verdict === "nouvelle").length} sans équivalent.`;
   } catch (e) { rg.sensEtat = `Seconde passe impossible : ${echapper(e.message)}. La première passe reste valable.`; }
-  try { await verifierTolerance(); } catch (e) { console.warn(e); }   // 2.5 — le modèle est en réserve : sens des quasi identiques
+  const agir = !apercuActif() || rg.apercuLeve;   // 3.2 — sous aperçu, la seconde passe ne fait que COMPARER
+  if (agir) try { await verifierTolerance(); } catch (e) { console.warn(e); }   // 2.5 — le modèle est en réserve : sens des quasi identiques
   dessinerRangement();
-  if (rg.depot.neutralisation) classerOffice();   // 2.3 — comparaison complète et textes neutralisés : ce qui n'est pas un doublon entre d'office
+  if (agir && rg.depot.neutralisation) classerOffice();   // 2.3 — comparaison complète et textes neutralisés : ce qui n'est pas un doublon entre d'office
 }
 async function confirmerDoublon(num, clauseId) {
   try { rg.clausier = await modifierClausier(f => noterDoublon(f, { depot: rg.depot, num, clauseId }), rg.fichier); rg.choix[num] = { doublon: clauseId }; }
@@ -1984,14 +2021,15 @@ async function ecarterDoublons(items) {
   if (!items.length) return;
   try {
     rg.clausier = await modifierClausier(f => {
-      for (const x of items) (f.journal ||= []).push({ quand: new Date().toISOString(), quoi: "doublon", point: x.num, clause: x.clause, depot: rg.depot.id, depot_nom: rg.depot.nom, office: true, motif: x.motif });
+      for (const x of items) (f.journal ||= []).push({ quand: new Date().toISOString(), quoi: "doublon", point: x.num, clause: x.clause, depot: rg.depot.id, depot_nom: rg.depot.nom, office: true, motif: x.motif,
+        ...(x.texte ? { extrait: String(x.texte).slice(0, 400) } : {}), ...(x.nb != null ? { nb: x.nb } : {}), ...(x.sens != null ? { sens: Math.round(x.sens * 1000) / 1000 } : {}) });
     }, rg.fichier);
     for (const x of items) { rg.choix[x.num] = { doublon: x.clause }; rg.ecartes.set(x.num, { clause: x.clause, motif: x.motif }); }
   } catch (e) { montrerErreur("Doublons écartés d'office non enregistrés : " + e.message); }
 }
 async function ecarterStricts() {
   await ecarterDoublons(rg.points.filter(p => rg.choix[p.num] === undefined && !rg.dejaRanges.has(p.num) && !rg.manuel.has(p.num) && rg.cmp?.[p.num]?.strict)
-    .map(p => ({ num: p.num, clause: rg.cmp[p.num].proches[0].clause.id, motif: "identique" })));
+    .map(p => ({ num: p.num, clause: rg.cmp[p.num].proches[0].clause.id, motif: "identique", texte: p.texte })));
 }
 const tolAVerifier = () => rg.points.filter(p => rg.choix[p.num] === undefined && !rg.dejaRanges.has(p.num) && !rg.manuel.has(p.num) && rg.cmp?.[p.num]?.tolerance && !rg.cmp[p.num].tolVerifiee);
 // Vérification du sens des phrases modifiées (quasi identiques, sans mot sensible) : comparaison des empreintes des phrases touchées
@@ -2008,10 +2046,140 @@ async function verifierTolerance() {
   const aEcarter = [];
   cands.forEach((p, i) => {
     const c = rg.cmp[p.num], sim = sims[i], ref = c.proches[0];
-    if (sim >= SENS_PHRASE) { c.tolVerifiee = true; aEcarter.push({ num: p.num, clause: ref.clause.id, motif: "tolerance" }); }
+    if (sim >= SENS_PHRASE) { c.tolVerifiee = true; aEcarter.push({ num: p.num, clause: ref.clause.id, motif: "tolerance", texte: p.texte, nb: c.tolerance.nb, sens: sim }); }
     else rg.cmp[p.num] = { verdict: "variante", proches: c.proches, hesite: false, sensDiff: { phrase: sim }, tolVerifiee: true };
   });
   await ecarterDoublons(aEcarter);
+}
+/* ---------- APERÇU AVANT LE CLASSEMENT D'OFFICE (3.2) ----------
+   Réglage actif PAR DÉFAUT (mémorisé dans le navigateur) : à l'ouverture d'un dépôt ou du traitement simultané, MONETA n'écrit rien
+   toute seule ; elle montre ce qu'elle ferait (doublons à écarter, points à ranger d'office par rubrique, ce qui reste à la main)
+   et n'agit qu'après « Appliquer ». Le décompte se met à jour après la comparaison par le sens. */
+const libRubDe = (clausier, id) => { const r = clausier?.rubriques?.[id]; return r ? `${id}, ${r.titre}` : String(id); };
+/* ---------- CONFIANCE MINIMALE DU CLASSEMENT D'OFFICE (3.2) ----------
+   Réglage « aucune » PAR DÉFAUT (arbitrage de JFD : tout classer d'office). « moyenne » et « forte » ne rangent d'office que si le moteur est
+   net : score suffisant et écart avec la deuxième proposition. Une proposition reprise d'une correction passée vaut confiance ; une
+   proposition « par le sens » (second avis) n'est jamais rangée d'office. Seuils provisoires, à caler sur DUVAL. */
+const CONFIANCES = { aucune: null, moyenne: { score: 1.0, ecart: 0.3 }, forte: { score: 2.0, ecart: 0.8 } };
+const confianceActive = () => { try { const v = localStorage.getItem("moneta-confiance"); return v in CONFIANCES ? v : "aucune"; } catch { return "aucune"; } };
+const poserConfiance = v => { try { localStorage.setItem("moneta-confiance", v in CONFIANCES ? v : "aucune"); } catch { } };
+function candidatNet(cands) {
+  const c0 = cands?.[0]; if (!c0 || c0.sens) return false;
+  const seuil = CONFIANCES[confianceActive()]; if (!seuil || c0.appris) return true;
+  const c1 = cands[1]; return c0.score >= seuil.score && (!c1 || c0.score - c1.score >= seuil.ecart);
+}
+/* SECOND AVIS PAR LE SENS (3.2) : un point que le moteur de rangement n'a pu proposer nulle part reçoit, une fois la seconde passe faite,
+   la rubrique de la clause la plus proche PAR LE SENS (même sujet ou même sens). C'est une aide, jamais un classement d'office. */
+function secondAvis(candidats, cmp) {
+  if (candidats.length || cmp?.passe !== 2 || !["variante", "doublon"].includes(cmp.verdict)) return false;
+  const x = cmp.proches?.[0]; if (!x?.rubrique?.id) return false;
+  candidats.push({ id: x.rubrique.id, score: 0, mots: [`par le sens : proche de ${x.clause.id}`], sens: true }); return true;
+}
+function brancherReglages(zoneId, redessiner) {
+  const z = $(zoneId); if (!z) return;
+  z.querySelectorAll("[data-reg-apercu]").forEach(c => c.addEventListener("change", e => { poserApercu(e.target.checked); redessiner(); }));
+  z.querySelectorAll("[data-reg-confiance]").forEach(c => c.addEventListener("change", e => { poserConfiance(e.target.value); redessiner(); }));
+}
+function reglagesOffice() {
+  const c = confianceActive();
+  return `<details class="reglages"><summary>Réglages du classement d'office</summary>
+    <label><input type="checkbox" data-reg-apercu ${apercuActif() ? "checked" : ""}> Aperçu avant d'écrire</label>
+    <label>Confiance minimale du moteur : <select data-reg-confiance>${["aucune", "moyenne", "forte"].map(v => `<option value="${v}"${v === c ? " selected" : ""}>${v}</option>`).join("")}</select></label>
+    <span class="aide">« aucune » classe tout ce que le moteur propose ; « moyenne » ou « forte » laissent à la main les propositions peu nettes.</span></details>`;
+}
+const apercuActif = () => { try { return localStorage.getItem("moneta-apercu") !== "0"; } catch { return true; } };
+const poserApercu = v => { try { localStorage.setItem("moneta-apercu", v ? "1" : "0"); } catch { } };
+function planPoints(points, ctx) {   // ctx : { choix(p), cmp(p), cand(p), fuite(p), neutre(p), libre(p), dep(p) }
+  const libres = points.filter(ctx.libre), plan = { stricts: [], quasi: [], office: [], sens: [], suspects: [], sansProposition: [], nonNeutres: [], parSens: [], peuNets: [] };
+  for (const p of libres) {
+    const c = ctx.cmp(p);
+    if (c?.strict) { plan.stricts.push(p); continue; }
+    if (c?.tolerance && !c.tolVerifiee) { plan.quasi.push(p); continue; }
+    if (c?.verdict === "doublon") { plan.sens.push(p); continue; }
+    if (ctx.fuite(p)) { plan.suspects.push(p); continue; }
+    const cs = ctx.cand(p);
+    if (!cs?.[0]) { plan.sansProposition.push(p); continue; }
+    if (cs[0].sens) { plan.parSens.push(p); continue; }
+    if (!candidatNet(cs)) { plan.peuNets.push(p); continue; }
+    if (!ctx.neutre(p)) { plan.nonNeutres.push(p); continue; }
+    plan.office.push(p);
+  }
+  plan.total = plan.stricts.length + plan.quasi.length + plan.office.length;
+  return plan;
+}
+const planRangement = () => planPoints(rg.points, { libre: p => rg.choix[p.num] === undefined && !rg.dejaRanges.has(p.num) && !rg.manuel.has(p.num), cmp: p => rg.cmp?.[p.num],
+  cand: p => rg.propositions.find(x => x.num === p.num)?.candidats, fuite: p => rg.fuites.has(p.num), neutre: () => !!rg.depot.neutralisation });
+const planSimultane = () => planPoints(ts.items, { libre: it => it.etat === undefined && !it.manuel, cmp: it => it.cmp, cand: it => it.candidats, fuite: it => !!it.fuites, neutre: it => !!it.depot.neutralisation });
+const apercuEnAttenteRg = () => apercuActif() && !rg.apercuLeve && !rg.officeFait && planRangement().total > 0;
+const apercuEnAttenteTs = () => apercuActif() && !ts.apercuLeve && !ts.officeFait && planSimultane().total > 0;
+function blocApercu(plan, cible, libRubrique, nomPoint) {   // cible : « rg » ou « ts »
+  const rubs = new Map(); for (const p of plan.office) { const k = libRubrique(p); rubs.set(k, (rubs.get(k) || 0) + 1); }
+  const lignes = [
+    plan.stricts.length ? `écarter <b>${pl(plan.stricts.length, "doublon identique", "doublons identiques")}</b> à une clause existante` : "",
+    plan.quasi.length ? `écarter jusqu'à <b>${pl(plan.quasi.length, "quasi identique", "quasi identiques")}</b>, après vérification du sens (sinon ils restent présentés)` : "",
+    plan.office.length ? `ranger d'office <b>${pl(plan.office.length, "point", "points")}</b> dans ${pl(rubs.size, "rubrique")} (la rubrique proposée par le moteur)` : ""].filter(Boolean);
+  const restent = [
+    plan.sens.length ? `${pl(plan.sens.length, "doublon de sens à confirmer", "doublons de sens à confirmer")}` : "",
+    plan.suspects.length ? `${pl(plan.suspects.length, "point à vérifier", "points à vérifier")} (élément propre au dossier peut-être resté)` : "",
+    plan.sansProposition.length ? `${pl(plan.sansProposition.length, "point sans rubrique évidente", "points sans rubrique évidente")}` : "",
+    plan.parSens.length ? `${pl(plan.parSens.length, "point proposé par le sens seulement", "points proposés par le sens seulement")}` : "",
+    plan.peuNets.length ? `${pl(plan.peuNets.length, "point dont la proposition est peu nette", "points dont la proposition est peu nette")} (confiance « ${confianceActive()} »)` : "",
+    plan.nonNeutres.length ? `${pl(plan.nonNeutres.length, "point d'un dépôt non neutralisé", "points de dépôts non neutralisés")}` : ""].filter(Boolean);
+  return `<div class="note-moteur apercu"><b>Aperçu du classement d'office</b> — rien n'est encore écrit au clausier.
+    <ul>${lignes.map(l => `<li>${l}</li>`).join("")}</ul>
+    ${restent.length ? `<p style="margin:4px 0">Resteront à la main : ${restent.join(" ; ")}.</p>` : ""}
+    <details><summary>Voir le détail</summary>
+      ${plan.stricts.length ? `<p><b>Identiques écartés</b> : ${plan.stricts.slice(0, 60).map(p => echapper(nomPoint(p))).join(", ")}${plan.stricts.length > 60 ? ", …" : ""}</p>` : ""}
+      ${plan.quasi.length ? `<p><b>Quasi identiques à vérifier</b> : ${plan.quasi.slice(0, 60).map(p => echapper(nomPoint(p))).join(", ")}${plan.quasi.length > 60 ? ", …" : ""}</p>` : ""}
+      ${rubs.size ? `<p><b>Rangés d'office</b> :</p><ul>${[...rubs].sort((a, b) => b[1] - a[1]).slice(0, 40).map(([k, n]) => `<li>${echapper(k)} — ${pl(n, "point", "points")}</li>`).join("")}</ul>` : ""}</details>
+    <div class="apercu-actions"><button class="bouton valider" id="${cible}-appliquer">Appliquer le classement d'office</button>
+      <label><input type="checkbox" id="${cible}-sans-apercu"> Ne plus demander l'aperçu</label></div>${reglagesOffice()}</div>`;
+}
+/* ---------- CONTRÔLE DE FUITE (3.2) ----------
+   Après la neutralisation, un contrôle par expressions fixes (sans coût, sans IA) cherche dans le texte neutralisé ce qui ressemble encore
+   à un élément propre au dossier : courriel, IBAN, téléphone, SIREN ou SIRET, numéro de sécurité sociale, montant, date, référence
+   cadastrale, adresse. Un point suspect n'est JAMAIS rangé d'office : il reste à la main, marqué « à vérifier ». Le collaborateur peut
+   dire « rien à craindre » (gardé au dépôt). Une date précédée d'un texte de loi (« loi du 6 juillet 1989 ») et l'adresse de l'office
+   ne sont pas des fuites. Un faux positif coûte un clic ; une fuite non vue coûterait un nom de client dans le clausier partagé. */
+const MOIS_RE = "janvier|février|fevrier|mars|avril|mai|juin|juillet|août|aout|septembre|octobre|novembre|décembre|decembre";
+const FUITES = [
+  ["courriel", /[\w.+-]+@[\w-]+\.[\w.-]{2,}/g],
+  ["IBAN", /\b[A-Z]{2}\d{2}(?: ?[A-Z0-9]{4}){3,7}(?: ?[A-Z0-9]{1,4})?\b/g],
+  ["téléphone", /(?:\+33|\b0) ?[1-9](?:[ .]?\d{2}){4}\b/g],
+  ["numéro de sécurité sociale", /\b[12] ?\d{2} ?(?:0[1-9]|1[0-2]) ?\d{2} ?\d{3} ?\d{3}(?: ?\d{2})?\b/g],
+  ["SIREN ou SIRET", /\b\d{3} ?\d{3} ?\d{3}(?: ?\d{5})?\b/g],
+  ["montant", /\d[\d\u00a0\u202f .,]*\s?(?:€|euros?\b|EUR\b)/gi],
+  ["date", new RegExp(`\\b\\d{1,2}(?:er)? +(?:${MOIS_RE}) +\\d{4}\\b|\\b\\d{1,2}[/.-]\\d{1,2}[/.-]\\d{2,4}\\b`, "gi")],
+  ["référence cadastrale", /\bsection\s+[A-Z]{1,2}\b[^.;\n]{0,40}?\b\d{1,4}\b/gi],
+  ["adresse", /\b\d{5} +[A-ZÀ-Ý][A-Za-zÀ-ÿ'’-]{2,}/g],
+];
+const FUITES_TOLEREES = [/75008/, /75007/];   // l'office lui-même (adresse, CRPCEN)
+const AVANT_UNE_LOI = /(?:loi|décret|decret|ordonnance|arrêté|arrete|règlement|reglement|directive|circulaire|code)[^.;]{0,60}$/i;
+function fuitesDe(texte) {
+  const t = String(texte || ""), trouve = [], vus = new Set();
+  for (const [sorte, re] of FUITES) {
+    re.lastIndex = 0;
+    for (const m of t.matchAll(re)) {
+      const x = m[0].trim(); if (!x || FUITES_TOLEREES.some(r => r.test(x))) continue;
+      if (sorte === "date" && AVANT_UNE_LOI.test(t.slice(Math.max(0, m.index - 80), m.index))) continue;
+      if (sorte === "SIREN ou SIRET" && trouve.some(f => f.extrait.replace(/\D/g, "").includes(x.replace(/\D/g, "")))) continue;
+      const cle = sorte + "|" + x; if (vus.has(cle)) continue; vus.add(cle); trouve.push({ sorte, extrait: x.slice(0, 60) });
+    }
+  }
+  return trouve;
+}
+const lireFuites = (points, depot) => {   // Map numéro → fuites, pour un dépôt neutralisé (les points déjà déclarés « rien à craindre » sont exclus)
+  const m = new Map(); if (!depot?.neutralisation) return m;
+  const ok = new Set(depot.fuites_ok || []);
+  for (const p of points) { if (ok.has(p.num)) continue; const f = fuitesDe(p.texte); if (f.length) m.set(p.num, f); }
+  return m;
+};
+const blocFuite = f => `<div class="fuite" role="alert"><b>À vérifier :</b> ce texte neutralisé contient peut-être encore un élément propre au dossier (${f.slice(0, 4).map(x => `${echapper(x.sorte)} « ${echapper(x.extrait)} »`).join(", ")}${f.length > 4 ? ", …" : ""}). Il ne sera pas rangé d'office.
+  <button class="bouton discret fuite-ok" title="Rien à craindre : le point pourra être rangé d'office">Rien à craindre</button></div>`;
+async function leverFuite(num) {
+  const d = rg.depot; d.fuites_ok = [...new Set([...(d.fuites_ok || []), num])];
+  try { await reecrireJson(etat.ouvert.id, d); } catch (e) { montrerErreur("Déclaration « rien à craindre » non enregistrée : " + e.message); }
+  rg.fuites.delete(num); dessinerRangement();
 }
 /* ---------- REPRISE À LA MAIN (3.0) : ce que le journal dit des points à ne plus ranger ni écarter d'office ----------
    « annuler » (un point corrigé, ou un rangement défait) et « retablir » (un doublon écarté d'office remis à trancher) :
@@ -2086,8 +2254,8 @@ async function retirerCorrection(depot, point) {
 async function classerOffice() {
   if (rg.officeFait || !rg.points.length) return;
   rg.officeFait = true;
-  const aRanger = rg.propositions.filter(p => !rg.dejaRanges.has(p.num) && rg.choix[p.num] === undefined && !rg.manuel.has(p.num)
-    && p.candidats[0] && rg.cmp?.[p.num]?.verdict !== "doublon");   // 1.5 — un doublon n'entre jamais au clausier sans décision
+  const aRanger = rg.propositions.filter(p => !rg.dejaRanges.has(p.num) && rg.choix[p.num] === undefined && !rg.manuel.has(p.num) && !rg.fuites.has(p.num)
+    && candidatNet(p.candidats) && rg.cmp?.[p.num]?.verdict !== "doublon");   // 1.5 — un doublon n'entre jamais au clausier sans décision
   if (!aRanger.length) { dessinerRangement(); return; }
   const b = $("rg-tout"); if (b) { b.disabled = true; b.textContent = `Classement d'office de ${aRanger.length} points…`; }
   try {
@@ -2110,7 +2278,7 @@ async function corrigerPoint(num) {
   const bloc = $("fiche-ranger").querySelector(`.ranger-point[data-point="${CSS.escape(num)}"]`);
   bloc?.querySelectorAll("button,select").forEach(b => b.disabled = true);
   try {
-    rg.clausier = await modifierClausier(f => retirerClauses(f, rg.depot.id, [num], rg.depot.nom), rg.fichier);
+    rg.clausier = await modifierClausier(f => retirerClauses(f, rg.depot.id, [num], rg.depot.nom, true), rg.fichier);
     delete rg.choix[num]; rg.dejaRanges.delete(num); rg.office.delete(num); rg.manuel.add(num);
     rg.courant = num; rg.defiler = true; dessinerRangement();
   } catch (e) { montrerErreur("Correction impossible : " + e.message); dessinerRangement(); }
@@ -2133,7 +2301,7 @@ async function ouvrirSimultane(type) {
   zone.innerHTML = `<h3>Traitement simultané — ${echapper(libelleType(type))}</h3><p class="note-moteur" id="ts-etat">Lecture du clausier…</p>`;
   try {
     const r = await chargerType(type);
-    Object.assign(ts, { type, clausier: r.donnees, fichier: r.fichier, items: [], ouverts: new Set(), officeFait: false });
+    Object.assign(ts, { type, clausier: r.donnees, fichier: r.fichier, items: [], ouverts: new Set(), officeFait: false, apercuLeve: false });
     const rubriques = Object.values(ts.clausier.rubriques).map(x => ({ id: x.id, titre: x.titre, article: x.article,
       article_titre: ts.clausier.articles.find(a => a.num === x.article)?.titre || "", mots_cles: x.mots_cles }));
     for (const [n, d] of depots.entries()) {
@@ -2149,19 +2317,25 @@ async function ouvrirSimultane(type) {
       appliquerCorrections(rep.rangement.propositions, points, ts.clausier);   // 2.6 — relecture des corrections passées
       const propo = new Map(rep.rangement.propositions.map(p => [p.num, p.candidats]));
       const man = manuelDuJournal(ts.clausier.journal, d.id, points.map(p => p.num));   // 3.0 — un point corrigé ou rétabli reste à la main après rechargement
-      for (const p of points) ts.items.push({ depot: d, num: p.num, texte: p.texte, origine: p.origine, contextes, candidats: propo.get(p.num) || [], etat: undefined, manuel: man.has(p.num),
+      const fui = lireFuites(points, d);
+      for (const p of points) ts.items.push({ depot: d, num: p.num, texte: p.texte, origine: p.origine, contextes, candidats: propo.get(p.num) || [], etat: undefined, manuel: man.has(p.num), fuites: fui.get(p.num) || null,
         cmp: comparerPoint(p.texte, { rubriques: Object.fromEntries(Object.entries(ts.clausier.rubriques).map(([k, r]) => [k, { ...r, clauses: r.clauses.filter(c => c.source?.depot !== d.id) }])) }) });
     }
     const premier = groupesSimultane()[0]; if (premier) ts.ouverts.add(premier.cle);
     ts.sensEtat = null;
-    await ecarterStrictsTs();                              // 2.7 — identiques à 100 % : écartés d'office, sans rien montrer
-    if (sensDejaUtilise()) await verifierToleranceTs();    // quasi identiques : sens vérifié si le modèle est en réserve
-    dessinerSimultane();
-    const sensAttenduTs = aTrancherSensTs().length && Object.values(ts.clausier.rubriques).some(r => r.clauses.length);
-    if (sensAttenduTs && sensDejaUtilise()) lancerSensSimultane();   // modèle déjà en réserve : seconde passe d'office, puis classement d'office
-    else if (!sensAttenduTs) classerOfficeSimultane();               // rien à comparer par le sens : classement d'office tout de suite
+    if (apercuEnAttenteTs()) { dessinerSimultane(); return; }   // 3.2 — l'aperçu s'affiche ; rien n'est écrit avant « Appliquer »
+    await suiteSimultane();
   } catch (e) { $("ts-etat").textContent = "Traitement simultané impossible : " + e.message; }
 }
+async function suiteSimultane() {
+  await ecarterStrictsTs();                              // 2.7 — identiques à 100 % : écartés d'office, sans rien montrer
+  if (sensDejaUtilise()) await verifierToleranceTs();    // quasi identiques : sens vérifié si le modèle est en réserve
+  dessinerSimultane();
+  const sensAttenduTs = aTrancherSensTs().length && Object.values(ts.clausier.rubriques).some(r => r.clauses.length);
+  if (sensAttenduTs && sensDejaUtilise()) lancerSensSimultane();   // modèle déjà en réserve : seconde passe d'office, puis classement d'office
+  else if (!sensAttenduTs) classerOfficeSimultane();               // rien à comparer par le sens : classement d'office tout de suite
+}
+async function appliquerApercuTs() { ts.apercuLeve = true; await suiteSimultane(); }
 function groupesSimultane() {
   const ordre = new Map(); let i = 0;
   for (const a of ts.clausier.articles) for (const id of a.rubriques) ordre.set(id, i++);
@@ -2198,6 +2372,7 @@ function dessinerSimultane() {
               <div class="rp-haut"><span class="source">${echapper(it.depot.nom)}</span><span class="num">Point ${echapper(it.num)}</span>${verdict}${typeof it.etat === "string" ? '<button class="bouton discret corriger" title="La clause ressort du clausier ; le point redevient à trancher à la main">Corriger</button>' : ""}
                 ${it.contextes.length ? `<span class="ctx">${echapper(it.contextes.join(", "))}</span>` : ""}</div>
               ${fait || !it.cmp ? `<div class="rp-texte">${echapper(it.texte.slice(0, 600))}${it.texte.length > 600 ? "…" : ""}</div>` : blocComparaison(it.cmp, it.texte)}
+              ${!fait && it.fuites ? `<div class="fuite" role="alert"><b>À vérifier :</b> ce texte neutralisé contient peut-être encore un élément propre au dossier (${it.fuites.slice(0, 4).map(x => `${echapper(x.sorte)} « ${echapper(x.extrait)} »`).join(", ")}). Il ne sera pas rangé d'office ; ouvrez le dépôt (rangement) pour déclarer « rien à craindre ».</div>` : ""}
               ${fait ? "" : `<div class="rp-prop">
                 <div class="rp-choix">${it.candidats.map((c, i) => `<button data-choisir="${echapper(c.id)}" class="${i ? "second" : ""}" aria-pressed="false">${i ? "2ᵉ candidate" : "Proposée"}<span class="r-id">${echapper(libRub(c.id))}</span>${c.appris ? `<span class="r-mots">d'après la correction du ${dateCourte(c.appris.le).slice(0, 10)}${c.appris.par ? " (" + echapper(c.appris.par) + ")" : ""}</span>` : ""}${c.mots?.length ? `<span class="r-mots">${echapper(c.mots.slice(0, 4).join(", "))}</span>` : ""}</button>`).join("")}</div>
                 <div class="rp-actions">
@@ -2216,6 +2391,9 @@ function brancherSimultane() {
   $("ts-fermer").addEventListener("click", () => { zone.style.display = "none"; zone.innerHTML = ""; ts.items = []; chargerFile(); });
   $("ts-sens")?.addEventListener("click", lancerSensSimultane);
   $("ts-office")?.addEventListener("click", classerOfficeSimultane);
+  brancherReglages("simultane", dessinerSimultane);
+  $("ts-appliquer")?.addEventListener("click", appliquerApercuTs);
+  $("ts-sans-apercu")?.addEventListener("change", e => poserApercu(!e.target.checked));
   zone.querySelectorAll("[data-ts-retablir]").forEach(b => b.addEventListener("click", () => retablirDoublonTs(ts.items[+b.dataset.tsRetablir])));
   zone.querySelectorAll(".ts-groupe").forEach(d => d.addEventListener("toggle", () => { d.open ? ts.ouverts.add(d.dataset.groupe) : ts.ouverts.delete(d.dataset.groupe); }));
   zone.querySelectorAll("[data-tout]").forEach(b => b.addEventListener("click", () => { b.disabled = true; b.textContent = "Rangement…"; validerGroupe(b.dataset.tout); }));
@@ -2262,12 +2440,14 @@ async function lancerSensSimultane() {
       for (const it of lot) { const x = res[it.num]; if (!x) continue; bilan[x.verdict]++;
         it.cmp = rang[x.verdict] >= rang[it.cmp.verdict] ? x : { ...it.cmp, sensVu: true }; }
     }
+    for (const it of ts.items) secondAvis(it.candidats, it.cmp);   // 3.2 — second avis par le sens
     try { localStorage.setItem("moneta-sens", MODELE_SENS); } catch { }
     ts.sensEtat = `Seconde passe faite sur ${pl(items.length, "point")} : ${bilan.doublon} même sens, ${bilan.variante} même sujet, ${bilan.nouvelle} sans équivalent.`;
   } catch (e) { ts.sensEtat = `Seconde passe impossible : ${echapper(e.message)}. La première passe reste valable.`; }
-  try { await verifierToleranceTs(); } catch (e) { console.warn(e); }   // 2.7 — le modèle est en réserve : sens des quasi identiques
+  const agir = !apercuActif() || ts.apercuLeve;   // 3.2 — sous aperçu, la seconde passe ne fait que COMPARER
+  if (agir) try { await verifierToleranceTs(); } catch (e) { console.warn(e); }   // 2.7 — le modèle est en réserve : sens des quasi identiques
   dessinerSimultane();
-  classerOfficeSimultane();
+  if (agir) classerOfficeSimultane();
 }
 // rubriqueId = null → écarter ; une seule écriture du clausier pour tout le lot
 async function trancherSimultane(items, rubriqueId, bloc) {
@@ -2295,7 +2475,8 @@ async function ecarterDoublonsTs(a) {   // a : [{ it, clause, motif }]
   if (!a.length) return;
   try {
     ts.clausier = await modifierClausier(f => {
-      for (const x of a) (f.journal ||= []).push({ quand: new Date().toISOString(), quoi: "doublon", point: x.it.num, clause: x.clause, depot: x.it.depot.id, depot_nom: x.it.depot.nom, office: true, motif: x.motif });
+      for (const x of a) (f.journal ||= []).push({ quand: new Date().toISOString(), quoi: "doublon", point: x.it.num, clause: x.clause, depot: x.it.depot.id, depot_nom: x.it.depot.nom, office: true, motif: x.motif,
+        ...(x.it.texte ? { extrait: String(x.it.texte).slice(0, 400) } : {}), ...(x.nb != null ? { nb: x.nb } : {}), ...(x.sens != null ? { sens: Math.round(x.sens * 1000) / 1000 } : {}) });
     }, ts.fichier);
     for (const x of a) { x.it.etat = { doublon: x.clause }; x.it.ecarte = { clause: x.clause, motif: x.motif }; }
   } catch (e) { montrerErreur("Doublons écartés d'office non enregistrés : " + e.message); }
@@ -2310,7 +2491,7 @@ async function verifierToleranceTs(depot) {
   const aEcarter = [];
   cands.forEach((it, i) => {
     const c = it.cmp, ref = c.proches[0];
-    if (sims[i] >= SENS_PHRASE) { c.tolVerifiee = true; aEcarter.push({ it, clause: ref.clause.id, motif: "tolerance" }); }
+    if (sims[i] >= SENS_PHRASE) { c.tolVerifiee = true; aEcarter.push({ it, clause: ref.clause.id, motif: "tolerance", nb: c.tolerance.nb, sens: sims[i] }); }
     else it.cmp = { verdict: "variante", proches: c.proches, hesite: false, sensDiff: { phrase: sims[i] }, tolVerifiee: true };
   });
   await ecarterDoublonsTs(aEcarter);
@@ -2336,7 +2517,7 @@ async function classerOfficeSimultane() {
       }
       await ecarterStrictsTs(depot);
       if (sensDejaUtilise()) await verifierToleranceTs(depot);
-      const a = ts.items.filter(it => it.depot === depot && it.etat === undefined && !it.manuel && it.candidats[0] && it.cmp?.verdict !== "doublon" && depot.neutralisation);
+      const a = ts.items.filter(it => it.depot === depot && it.etat === undefined && !it.manuel && candidatNet(it.candidats) && it.cmp?.verdict !== "doublon" && !it.fuites && depot.neutralisation);
       if (!a.length) continue;
       const b = $("ts-office"); if (b) { b.disabled = true; b.textContent = `Classement d'office : ${depot.nom}…`; }
       ts.clausier = await modifierClausier(f => { for (const it of a)
@@ -2362,7 +2543,7 @@ async function retablirDoublonTs(it) {
 }
 async function corrigerPointSimultane(it) {
   try {
-    ts.clausier = await modifierClausier(f => retirerClauses(f, it.depot.id, [it.num], it.depot.nom), ts.fichier);
+    ts.clausier = await modifierClausier(f => retirerClauses(f, it.depot.id, [it.num], it.depot.nom, true), ts.fichier);
     it.etat = undefined; it.office = false; it.manuel = true; ts.ouverts.add(it.candidats[0]?.id || "");
   } catch (e) { montrerErreur("Correction impossible : " + e.message); }
   dessinerSimultane();
@@ -2370,8 +2551,10 @@ async function corrigerPointSimultane(it) {
 function noteOfficeSimultane() {
   const ecartes = ts.items.filter(x => x.ecarte), office = ts.items.filter(x => x.office && typeof x.etat === "string");
   const horsNeutre = ts.items.filter(x => x.etat === undefined && !x.depot.neutralisation && x.candidats[0] && x.cmp?.verdict !== "doublon").length;
-  const attente = !ts.officeFait && ts.items.some(x => x.etat === undefined);
-  return `${attente ? `<div class="note-moteur">Classement d'office en attente : il se lance tout seul une fois la comparaison complète (seconde passe de sens faite, ou sans objet). Les points restent affichés tels que le moteur les propose.
+  const attente = !ts.officeFait && !apercuEnAttenteTs() && ts.items.some(x => x.etat === undefined);
+  return `${reglagesOffice()}
+    ${apercuEnAttenteTs() ? blocApercu(planSimultane(), "ts", it => libRubDe(ts.clausier, it.candidats[0].id), it => `${it.depot.nom}, point ${it.num}`) : ""}
+    ${attente ? `<div class="note-moteur">Classement d'office en attente : il se lance tout seul une fois la comparaison complète (seconde passe de sens faite, ou sans objet). Les points restent affichés tels que le moteur les propose.
       <button class="bouton secondaire" id="ts-office" style="margin-left:8px" title="Le classement d'office se lance tout seul dès que la comparaison est complète ; ce bouton permet de passer outre">Classer d'office sans attendre</button></div>` : ""}
     ${ts.officeFait && (office.length || horsNeutre) ? `<div class="note-moteur">${office.length ? `<b>${pl(office.length, "point classé", "points classés")} d'office</b> dans la rubrique proposée par le moteur. Ne retouchez que les erreurs : <b>Corriger</b> ressort le point du clausier et le rend à trancher à la main. ` : ""}${horsNeutre ? `${pl(horsNeutre, "point d'un dépôt non neutralisé reste", "points de dépôts non neutralisés restent")} à ranger à la main : ${horsNeutre > 1 ? "leurs" : "ses"} vrais noms et prix n'entrent pas d'office au clausier.` : ""}</div>` : ""}
     ${ecartes.length ? `<details class="ecartes"><summary>${pl(ecartes.length, "doublon écarté d'office", "doublons écartés d'office")}, non montrés : identiques, ou quasi identiques de même sens</summary><ul>${ecartes.map(x => `<li>${echapper(x.depot.nom)}, point ${echapper(x.num)} — ${x.ecarte.motif === "tolerance" ? "quasi identique, même sens, à" : "identique à"} ${echapper(x.ecarte.clause)} <button class="bouton discret" data-ts-retablir="${ts.items.indexOf(x)}" title="Le point redevient à trancher à la main et n'est plus jamais écarté d'office">Rétablir</button></li>`).join("")}</ul></details>` : ""}`;
@@ -2499,9 +2682,31 @@ async function chargerType(code) {
   const cree = await ecrireJson(NOM_CLAUSIER, donnees, idType);
   return { fichier: cree.id, donnees };
 }
+/* SAUVEGARDE AUTOMATIQUE DU CLAUSIER (3.2) : le fichier est réécrit en entier à chaque geste ; avant la première écriture d'une session, puis
+   au plus toutes les deux heures, une copie datée est déposée dans le sous-dossier « Sauvegardes » du dossier du type d'acte ; les trente
+   plus récentes sont gardées, les autres vont à la corbeille du Drive (récupérables). Un échec ne bloque jamais l'écriture : il est signalé une fois. */
+const SAUVEGARDES_GARDEES = 30, DELAI_SAUVEGARDE_MS = 2 * 3600 * 1000, dernieresSauvegardes = new Map();
+async function sauvegarderClausier(fichier) {
+  const dernier = dernieresSauvegardes.get(fichier);
+  if (dernier && Date.now() - dernier < DELAI_SAUVEGARDE_MS) return;
+  dernieresSauvegardes.set(fichier, Date.now());   // posé avant : un échec n'est pas retenté à chaque geste
+  try {
+    const meta = await drive(`${DRIVE}/${fichier}?fields=name,parents`), parent = meta?.parents?.[0]; if (!parent) return;
+    const dos = await dossier("Sauvegardes", parent), n = new Date(), p2 = x => String(x).padStart(2, "0");
+    const nom = `clausier_${n.getFullYear()}-${p2(n.getMonth() + 1)}-${p2(n.getDate())}_${p2(n.getHours())}h${p2(n.getMinutes())}.json`;
+    await drive(`${DRIVE}/${fichier}/copy`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name: nom, parents: [dos] }) });
+    const toutes = (await lister(dos, " and name contains 'clausier_'")).sort((a, b) => String(a.createdTime).localeCompare(String(b.createdTime)));
+    for (const f of toutes.slice(0, Math.max(0, toutes.length - SAUVEGARDES_GARDEES)))
+      await drive(`${DRIVE}/${f.id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ trashed: true }) });
+  } catch (e) {
+    console.warn("Sauvegarde du clausier impossible :", e);
+    if (!etat.sauvegardeSignalee) { etat.sauvegardeSignalee = true; montrerErreur("Sauvegarde automatique du clausier impossible (" + e.message + "). L'écriture continue ; prévenez l'administrateur."); }
+  }
+}
 // Toute modification relit d'abord le fichier : un collègue a pu l'enrichir entre-temps
 async function modifierClausier(changement, fichier = cl.fichier) {
   if (!fichier) throw new Error("fichier du clausier introuvable");
+  await sauvegarderClausier(fichier);
   const frais = await lireJson(fichier);
   const avant = (frais.journal || []).length;
   changement(frais);
@@ -2644,6 +2849,73 @@ function dessinerType() {
    Le point redevient rangeable depuis « À traiter ». Tout va au journal.
    ============================================================ */
 const LIB_MOUVEMENT = { ranger: "rangé", ecarter: "écarté", doublon: "doublon confirmé", "choisir-etoile": "étoile choisie", "retirer-etoile": "étoile retirée", fiche: "fiche modifiée", annuler: "rangement défait", retablir: "doublon écarté d'office remis à trancher" };
+/* ---------- BILAN DES DÉCISIONS AUTOMATIQUES ET TAUX DE CORRECTION (3.2) ----------
+   Réservé aux administrateurs (même zone que le journal). Il liste les décisions prises d'office — points rangés, doublons écartés — avec
+   le texte, la rubrique ou la clause en regard, le motif et la ressemblance, et mesure, mois par mois, combien ont été corrigées ou
+   rétablies. Un taux qui baisse autorise à desserrer les seuils ; un taux qui monte invite à les resserrer. Export CSV de tout. */
+function decisionsAuto(d) {
+  const clauses = new Map(); for (const r of Object.values(d.rubriques)) for (const c of r.clauses) clauses.set((c.source?.depot || "") + "|" + c.point, c);
+  const out = [];
+  for (const e of d.journal || []) {
+    if (e.quoi === "ranger" && e.office) { const c = clauses.get(e.depot + "|" + e.point);
+      out.push({ quand: e.quand, par: e.par || "", depot_nom: e.depot_nom || "", point: e.point, genre: "range", cible: e.rubrique || "", motif: "proposition du moteur", texte: c?.texte || "" }); }
+    else if (e.quoi === "doublon" && e.office)
+      out.push({ quand: e.quand, par: e.par || "", depot_nom: e.depot_nom || "", point: e.point, genre: "ecarte", cible: e.clause || "", motif: e.motif === "tolerance" ? "quasi identique, même sens" : "identique", nb: e.nb, sens: e.sens, texte: e.extrait || "" });
+  }
+  return out;
+}
+function bilanMensuel(d) {
+  const m = new Map(), mois = q => String(q || "").slice(0, 7), ligne = k => { if (!m.has(k)) m.set(k, { range: 0, corriges: 0, ecartes: 0, retablis: 0 }); return m.get(k); };
+  for (const e of d.journal || []) {
+    if (e.quoi === "ranger" && e.office) ligne(mois(e.quand)).range++;
+    else if (e.quoi === "annuler" && e.corrige) ligne(mois(e.quand)).corriges += (Array.isArray(e.points) ? e.points.length : 1);
+    else if (e.quoi === "doublon" && e.office) ligne(mois(e.quand)).ecartes++;
+    else if (e.quoi === "retablir") ligne(mois(e.quand)).retablis++;
+  }
+  const total = { range: 0, corriges: 0, ecartes: 0, retablis: 0 }; for (const v of m.values()) for (const k of Object.keys(total)) total[k] += v[k];
+  return { mois: [...m].sort((a, b) => b[0].localeCompare(a[0])), total };
+}
+const tauxPc = (a, b) => b ? (Math.round(a / b * 1000) / 10).toLocaleString("fr-FR") + " %" : "—";
+const echapperCsv = v => { const t = String(v ?? "").replace(/\r?\n/g, " "); return /[";]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t; };
+function construireCsv(decisions, nomType) {
+  const tete = ["date", "par", "type d'acte", "dépôt", "point", "décision", "rubrique ou clause", "motif", "mots changés", "ressemblance de sens", "texte"];
+  return "\uFEFF" + [tete, ...decisions.map(x => [x.quand, x.par, nomType, x.depot_nom, x.point, x.genre === "range" ? "rangé d'office" : "doublon écarté d'office", x.cible, x.motif, x.nb ?? "", x.sens ?? "", x.texte])].map(l => l.map(echapperCsv).join(";")).join("\r\n");
+}
+function exporterBilanCsv(d) {
+  const blob = new Blob([construireCsv(decisionsAuto(d), libelleType(cl.type))], { type: "text/csv;charset=utf-8" }), a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = `MONETA-bilan-${cl.type}-${new Date().toISOString().slice(0, 10)}.csv`; document.body.appendChild(a); a.click(); a.remove();
+}
+/* TÉMOIN DE TAILLE (3.2) : le clausier est un seul fichier JSON, journal compris, relu et réécrit à chaque geste. Au-delà de seuils, MONETA
+   le dit aux administrateurs (journal des mouvements, page Clausier) pour qu'un archivage soit décidé avant un ralentissement. */
+const TAILLE_ORANGE = { octets: 4e6, mouvements: 3000 }, TAILLE_ROUGE = { octets: 8e6, mouvements: 6000 };
+const tailleCache = { cle: null, octets: 0 };
+function tailleClausier(d) {
+  const cle = (d.modifie_le || "") + "|" + (d.journal || []).length + "|" + Object.keys(d.rubriques || {}).length;
+  if (tailleCache.cle !== cle) { tailleCache.cle = cle; tailleCache.octets = new Blob([JSON.stringify(d)]).size; }
+  return tailleCache.octets;
+}
+function temoinTaille(d) {
+  const octets = tailleClausier(d), mv = (d.journal || []).length;
+  const niveau = octets >= TAILLE_ROUGE.octets || mv >= TAILLE_ROUGE.mouvements ? "rouge" : octets >= TAILLE_ORANGE.octets || mv >= TAILLE_ORANGE.mouvements ? "orange" : "ok";
+  const mo = (octets / 1e6).toLocaleString("fr-FR", { maximumFractionDigits: 1 });
+  return { niveau, octets, mouvements: mv, texte: `${mo} Mo, ${pl(mv, "mouvement")} au journal, ${pl((d.corrections || []).length, "correction")}`,
+    avis: niveau === "ok" ? "" : niveau === "orange" ? "Le journal devient volumineux : demandez un archivage des mouvements anciens avant qu'il ne ralentisse MONETA." : "Journal très volumineux : MONETA risque de ralentir ou d'échouer à l'écriture. Demandez l'archivage sans attendre." };
+}
+const blocTaille = d => { const t = temoinTaille(d); return `<p class="taille taille-${t.niveau}">${t.niveau === "ok" ? "✓" : "⚠"} Taille du clausier : ${echapper(t.texte)}.${t.avis ? " <b>" + echapper(t.avis) + "</b>" : ""}</p>`; };
+function dessinerBilan(d) {
+  const dec = decisionsAuto(d); if (!dec.length && !(d.journal || []).some(e => e.quoi === "retablir" || (e.quoi === "annuler" && e.corrige))) return "";
+  const { mois, total } = bilanMensuel(d), nom = id => d.rubriques[id] ? `${id}, ${d.rubriques[id].titre}` : id;
+  const recentes = [...dec].reverse().slice(0, 200);
+  return `<details class="cl-journal cl-bilan"><summary>Bilan des décisions automatiques — ${pl(total.range + total.ecartes, "décision d'office", "décisions d'office")}, ${tauxPc(total.corriges, total.range)} de points corrigés, ${tauxPc(total.retablis, total.ecartes + total.retablis)} de doublons rétablis</summary><div class="corps">
+    <table class="bilan"><thead><tr><th>Mois</th><th>Rangés d'office</th><th>Corrigés</th><th>Taux</th><th>Doublons écartés</th><th>Rétablis</th><th>Taux</th></tr></thead><tbody>
+      ${mois.map(([k, v]) => `<tr><td>${echapper(k)}</td><td>${v.range}</td><td>${v.corriges}</td><td>${tauxPc(v.corriges, v.range)}</td><td>${v.ecartes}</td><td>${v.retablis}</td><td>${tauxPc(v.retablis, v.ecartes + v.retablis)}</td></tr>`).join("")}
+      <tr class="total"><td>Total</td><td>${total.range}</td><td>${total.corriges}</td><td>${tauxPc(total.corriges, total.range)}</td><td>${total.ecartes}</td><td>${total.retablis}</td><td>${tauxPc(total.retablis, total.ecartes + total.retablis)}</td></tr></tbody></table>
+    <p class="aide">Le taux de correction compte les points ressortis du clausier par « Corriger » ; le taux de rétablissement, les doublons écartés d'office remis à trancher. Un taux qui baisse permet de desserrer les seuils, un taux qui monte invite à les resserrer.</p>
+    <p><label>Afficher : <select data-bilan-filtre><option value="">toutes les décisions</option><option value="range">rangés d'office</option><option value="ecarte">doublons écartés</option></select></label>
+      <button class="bouton secondaire" data-bilan-csv>Exporter en CSV (${dec.length})</button></p>
+    <ul class="bilan-liste">${recentes.map(x => `<li data-genre="${x.genre}"><span class="q">${dateCourte(x.quand)}${x.par ? ", " + echapper(x.par) : ""}</span> — ${echapper(x.depot_nom)}, point ${echapper(x.point)} : ${x.genre === "range" ? `rangé dans <b>${echapper(nom(x.cible))}</b>` : `écarté, ${echapper(x.motif)}, <b>${echapper(x.cible)}</b>${x.nb != null ? ` (${x.nb} ${x.nb > 1 ? "mots changés" : "mot changé"}${x.sens != null ? `, sens ${(Math.round(x.sens * 1000) / 10).toLocaleString("fr-FR")} %` : ""})` : ""}`}
+      <span class="extrait">${echapper(String(x.texte || "").slice(0, 140))}${String(x.texte || "").length > 140 ? "…" : ""}</span></li>`).join("")}${dec.length > 200 ? `<li>… ${dec.length - 200} décisions plus anciennes : voir l'export CSV.</li>` : ""}</ul></div></details>`;
+}
 function dessinerCorrections(d) {
   const c = d.corrections || []; if (!c.length) return "";
   const lib = id => id ? (d.rubriques[id] ? `${echapper(id)}, ${echapper(d.rubriques[id].titre)}` : echapper(id) + " (rubrique disparue)") : "aucune";
@@ -2654,6 +2926,7 @@ function dessinerCorrections(d) {
 }
 function dessinerJournal(d) {
   const j = d.journal || []; if (!j.length) return `<details class="cl-journal"><summary>Journal des mouvements (aucun pour l'instant)</summary></details>` + dessinerCorrections(d);
+  const taille = temoinTaille(d);
   const vivantes = new Set(Object.values(d.rubriques).flatMap(r => r.clauses).map(c => `${c.source?.depot}|${c.point}`));
   const noms = {}; Object.values(d.rubriques).forEach(r => r.clauses.forEach(c => { if (c.source?.depot) noms[c.source.depot] = c.source.nom; }));
   const lots = new Map(), autres = [];
@@ -2665,7 +2938,8 @@ function dessinerJournal(d) {
   }
   const q = iso => dateCourte(iso);
   const ordre = [...lots.entries()].sort((a, b) => b[1].at(-1).quand.localeCompare(a[1].at(-1).quand));
-  return `<details class="cl-journal"${cl.journalOuvert ? " open" : ""}><summary>Journal des mouvements (${j.length})</summary><div class="corps">
+  return `<details class="cl-journal"${cl.journalOuvert ? " open" : ""}><summary>Journal des mouvements (${j.length})${taille.niveau !== "ok" ? " ⚠ volumineux" : ""}</summary><div class="corps">
+    ${blocTaille(d)}
     ${ordre.map(([depot, es]) => {
       const ranges = es.filter(e => e.quoi === "ranger"), encore = ranges.filter(e => vivantes.has(`${depot}|${e.point}`)).length;
       return `<div class="cl-lot"><div class="tete"><b>${echapper(noms[depot] || "dépôt " + depot.slice(0, 8))}</b>
@@ -2681,18 +2955,20 @@ function dessinerJournal(d) {
       const r = d.rubriques[e.rubrique];
       return `<li><span class="q">${q(e.quand)}</span><span>${LIB_MOUVEMENT[e.quoi] || echapper(e.quoi)}${e.clause ? ` : ${echapper(e.clause)}` : ""}${e.nb ? ` : ${e.nb} clause${e.nb > 1 ? "s" : ""} de « ${echapper(noms[e.depot] || "dépôt")} »` : ""}${r ? `, ${echapper(r.id)} ${echapper(r.titre)}` : ""}</span></li>`;
     }).join("")}</ul></div>` : ""}
-  </div></details>${dessinerCorrections(d)}`;
+  </div></details>${dessinerBilan(d)}${dessinerCorrections(d)}`;
 }
 function brancherJournal() {
   const z = $("cl-corps"), det = z.querySelector(".cl-journal");
   det?.addEventListener("toggle", () => { cl.journalOuvert = det.open; });
   z.querySelectorAll("[data-annuler-lot]").forEach(b => b.addEventListener("click", () => defaireRangements(b.dataset.annulerLot, null)));
   z.querySelectorAll("[data-retirer-cor]").forEach(b => b.addEventListener("click", () => retirerCorrection(b.dataset.retirerCor, b.dataset.point)));
+  z.querySelector("[data-bilan-filtre]")?.addEventListener("change", e => z.querySelectorAll(".bilan-liste li[data-genre]").forEach(li => { li.hidden = !!e.target.value && li.dataset.genre !== e.target.value; }));
+  z.querySelector("[data-bilan-csv]")?.addEventListener("click", () => exporterBilanCsv(cl.donnees));
   z.querySelectorAll("[data-annuler-un]").forEach(b => b.addEventListener("click", () => defaireRangements(b.dataset.annulerUn, [b.dataset.point])));
 }
 // Sortie de clauses du clausier (défaire au journal, ou « Corriger » dans le rangement) : la clause part, ses mots-clés auto partent
 // sauf s'ils sont partagés, l'étoile est retirée si c'était elle, les numéros ne sont jamais réutilisés ; mouvement « annuler » au journal
-function retirerClauses(f, depot, points, nom) {
+function retirerClauses(f, depot, points, nom, corrige = false) {
   let nb = 0;
   for (const r of Object.values(f.rubriques)) {
     const partent = r.clauses.filter(c => c.source?.depot === depot && (!points || points.includes(c.point)));
@@ -2703,7 +2979,7 @@ function retirerClauses(f, depot, points, nom) {
     const aRetirer = new Set(partent.flatMap(c => c.mots_ajoutes || []).map(normMot).filter(m => !encore.has(m)));
     r.mots_cles = r.mots_cles.filter(k => !(k.origine === "auto" && aRetirer.has(normMot(k.mot))));
   }
-  (f.journal ||= []).push({ quand: new Date().toISOString(), quoi: "annuler", depot, depot_nom: nom, points: points || "tous", nb });
+  (f.journal ||= []).push({ quand: new Date().toISOString(), quoi: "annuler", depot, depot_nom: nom, points: points || "tous", nb, ...(corrige ? { corrige: true } : {}) });
   return nb;
 }
 async function defaireRangements(depot, points) {
