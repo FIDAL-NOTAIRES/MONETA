@@ -432,7 +432,7 @@ details.ecartes ul{margin:6px 0 0 18px;padding:0}
 <body>
 <header>
   <h1>MONETA</h1>
-  <small>Le clausier du cabinet, version 2.6</small>
+  <small>Le clausier du cabinet, version 2.7</small>
   <span id="qui"></span>
   <span id="etat-connexion">Connexion au Drive…</span>
   <button id="btn-connexion">Autoriser l'accès au Drive</button>
@@ -539,7 +539,7 @@ details.ecartes ul{margin:6px 0 0 18px;padding:0}
 
 <script>
 /* ============================================================
-   MONETA — version 2.6 du 17/10/2026 (JOURNAL DES CORRECTIONS : tout point rangé à la main ailleurs que dans la rubrique proposée en premier est gardé — texte, rubrique proposée, rubrique retenue, auteur — ; le moteur de rangement relit ce journal avant de proposer : un point presque identique, à 80 % de ressemblance, à un point déjà corrigé reçoit en tête la rubrique retenue par l'humain, ce qui vaut aussi pour le classement d'office ; liste visible et retirable par les administrateurs) ; 2.5 du 17/10/2026 (RÈGLE DES DOUBLONS : identiques à 100 % des mots écartés d'office sans rien montrer ; quasi identiques — moins de 10 % de mots changés et au plus 5 — écartés d'office après vérification du sens (garde-fou par les mots, puis comparaison de sens des phrases modifiées), sinon gardés comme variantes ; au-delà de la tolérance, variante gardée ; doublon de sens présenté pour confirmation ; aucun compteur de fréquence ; chiffres provisoires à caler sur DUVAL) ; 2.4 du 17/10/2026 (RÔLES : trois rôles d'administrateur par matière — famille, immobilier, général —, JFD seul administrateur de chacun pour l'instant ; nom choisi dans une liste à l'entrée, code demandé aux seuls administrateurs et contrôlé par le serveur ; tout le cabinet consulte et verse, le collaborateur qui verse arbitre son dépôt, seuls les administrateurs modifient le clausier constitué, lancent « Proposer une amélioration » et ouvrent le traitement simultané ; auteur noté au journal) ; 2.3 du 17/10/2026 (CLASSEMENT D'OFFICE, tranché par JFD : les propositions du moteur ne sont plus validées une à une ; dès que la comparaison est complète, chaque point qui a une rubrique proposée et n'est pas un doublon est rangé d'office en une seule écriture, le collaborateur ne retouche que les erreurs par « Corriger », les doublons et les points sans rubrique évidente restent à trancher à la main) ; 2.2 du 10/10/2026 (PROPOSITIONS DE L'IA pour challenger la clause étoile : bouton dans la rubrique, estimatif, au plus deux rédactions fondées sur la seule bibliothèque d'appui rattachée, à adopter comme variante ou à écarter) ; 2.1 du 10/10/2026 (BIBLIOTHÈQUE D'APPUI, une par type d'acte : onglet « Bibliothèque », lecture des vingt premières lignes et refus d'un article déjà présent, fiche pré-remplie, rubriques proposées par mots-clés, section « Appui » dans chaque rubrique avec rattachement et retrait) ; 2.0 du 10/10/2026 (« POURQUOI CETTE VARIANTE » : à chaque point gardé comme variante, Claude rédige en une ligne ce qu'elle change sur le fond par rapport à la clause étoile ou à la plus proche ; affichée dans le clausier, corrigeable dans la fiche) ; 1.9 du 10/10/2026 (NEUTRALISATION PAR CLAUDE à l'amorçage : bouton dans le rangement, estimatif, points neutralisés par lots, champs [ ] en couleur, texte neutralisé rangé et comparé, original gardé caché dans la clause) ; 1.8 du 10/10/2026 (seconde passe, par le sens, aussi dans le TRAITEMENT SIMULTANÉ) ; 1.7 du 10/10/2026 (RACCOURCIS CLAVIER dans le rangement, désactivés par défaut : D doublon, V variante, Entrée valider la proposée, E écarter, flèches pour changer de point) ; 1.6 du 10/10/2026 (SECONDE PASSE DE COMPARAISON, PAR LE SENS : empreintes fabriquées par un seul petit modèle dans le navigateur, gardées par type d'acte sur le Drive, appliquées aux seuls points que la première passe n'a pas tranchés) ; 1.5 du 09/10/2026 (MOTEUR DE COMPARAISON, première passe mot à mot : verdict doublon / variante / nouvelle pour chaque point, AFFICHAGE CÔTE À CÔTE avec la clause de référence et ses différences, toutes les candidates proches quand le moteur hésite, doublon confirmé = une occurrence de plus sur la clause existante, verdict en couleur dans la file après première consultation) ; 1.4 du 09/10/2026 (article « Clôture et signature » ajouté aux deux plans, y compris aux clausiers déjà créés ; partie finale de l'acte versée ; mentions techniques de signature électronique et pieds de page répétés retirés avant découpe ; reconnaissance gratuite lancée d'office sur un scan, lecture par Claude proposée seulement pour les pages mal reconnues, avec le détail de ce qui manque) ; 1.3 du 09/10/2026 (DOUBLE PASSE SUR LES ACTES SCANNÉS, méthode reprise de TRENTE : pages sans texte détectées une à une, reconnaissance gratuite Tesseract dans le navigateur, puis lecture par Claude pour compléter, sur validation et après estimatif de coût ; texte reconnu signalé à relire dans la fiche) ; 1.2 du 09/10/2026 (MODE LECTURE SEULE : onglet « Consulter le clausier » en teinte de consultation, adresse directe ?consulter, bandeau avec retour au mode travail, aucun geste de modification ; sélection de clauses et envoi par mail d'un fichier Word aux champs entre crochets colorisés) ; 1.1 du 09/10/2026 (TRAITEMENT SIMULTANÉ : tous les points restants des dépôts d'un même type d'acte regroupés par rubrique proposée, tranchés en bloc ou un à un ; bascule avec l'ordre d'arrivée) ; 1.0 du 09/10/2026 (file « À traiter » : tableau de bord de la file, avancement de chaque dépôt, bouton « Mettre de côté » et liste des dépôts en attente ; compteurs d'usage dissociés du classement des clauses) ; 0.9 du 09/10/2026 (couverture du clausier par rubrique et par article, fiche éditable de la clause, journal de relecture avec rangement défait seul ou par lot, signal d'un acte non numéroté versé dans un clausier pauvre) ; 0.8 du 09/10/2026 (ciseau : coupe manuelle d'un point entre paragraphes ou puces, partie détachée lettrée, phrase d'annonce reprise, coupes conservées à la redécoupe, recollage) ; 0.7 du 09/10/2026 (ergonomie : fil d'Ariane collant, clause étoile choisie à la main et épinglée, compteurs indicatifs d'actes versés et de reprises en rédaction, comparaison côte à côte de deux variantes, recherche plein texte et filtres par contexte, sens, nature et texte visé, étapes du versement) ; 0.6 du 08/10/2026 (rangement des points d'un dépôt dans le clausier : proposition et deuxième candidate, contexte coché, validation point par point ou en bloc, journal des mouvements) ; 0.5 du 08/10/2026 (module Clausier, première tranche : plans de référence PSV AKZO et PUV R3S, numéros permanents, page Clausier) ; 0.4 du 08/10/2026 (titres des PDF non numérotés déduits de la mise en forme) ; 0.3 du 08/10/2026 (lecture Word avec numérotation automatique, contrôles de vraisemblance) ; 0.2 : moteur de découpe en service ; squelette du 07/10/2026
+   MONETA — version 2.7 du 17/10/2026 (TRAITEMENT SIMULTANÉ aligné sur le rangement d'un dépôt : doublons identiques écartés d'office sans rien montrer, quasi identiques écartés après vérification du sens, puis classement d'office des points restants — dépôts neutralisés seulement — en une seule écriture, « Corriger » pour reprendre un point à la main) ; 2.6 du 17/10/2026 (JOURNAL DES CORRECTIONS : tout point rangé à la main ailleurs que dans la rubrique proposée en premier est gardé — texte, rubrique proposée, rubrique retenue, auteur — ; le moteur de rangement relit ce journal avant de proposer : un point presque identique, à 80 % de ressemblance, à un point déjà corrigé reçoit en tête la rubrique retenue par l'humain, ce qui vaut aussi pour le classement d'office ; liste visible et retirable par les administrateurs) ; 2.5 du 17/10/2026 (RÈGLE DES DOUBLONS : identiques à 100 % des mots écartés d'office sans rien montrer ; quasi identiques — moins de 10 % de mots changés et au plus 5 — écartés d'office après vérification du sens (garde-fou par les mots, puis comparaison de sens des phrases modifiées), sinon gardés comme variantes ; au-delà de la tolérance, variante gardée ; doublon de sens présenté pour confirmation ; aucun compteur de fréquence ; chiffres provisoires à caler sur DUVAL) ; 2.4 du 17/10/2026 (RÔLES : trois rôles d'administrateur par matière — famille, immobilier, général —, JFD seul administrateur de chacun pour l'instant ; nom choisi dans une liste à l'entrée, code demandé aux seuls administrateurs et contrôlé par le serveur ; tout le cabinet consulte et verse, le collaborateur qui verse arbitre son dépôt, seuls les administrateurs modifient le clausier constitué, lancent « Proposer une amélioration » et ouvrent le traitement simultané ; auteur noté au journal) ; 2.3 du 17/10/2026 (CLASSEMENT D'OFFICE, tranché par JFD : les propositions du moteur ne sont plus validées une à une ; dès que la comparaison est complète, chaque point qui a une rubrique proposée et n'est pas un doublon est rangé d'office en une seule écriture, le collaborateur ne retouche que les erreurs par « Corriger », les doublons et les points sans rubrique évidente restent à trancher à la main) ; 2.2 du 10/10/2026 (PROPOSITIONS DE L'IA pour challenger la clause étoile : bouton dans la rubrique, estimatif, au plus deux rédactions fondées sur la seule bibliothèque d'appui rattachée, à adopter comme variante ou à écarter) ; 2.1 du 10/10/2026 (BIBLIOTHÈQUE D'APPUI, une par type d'acte : onglet « Bibliothèque », lecture des vingt premières lignes et refus d'un article déjà présent, fiche pré-remplie, rubriques proposées par mots-clés, section « Appui » dans chaque rubrique avec rattachement et retrait) ; 2.0 du 10/10/2026 (« POURQUOI CETTE VARIANTE » : à chaque point gardé comme variante, Claude rédige en une ligne ce qu'elle change sur le fond par rapport à la clause étoile ou à la plus proche ; affichée dans le clausier, corrigeable dans la fiche) ; 1.9 du 10/10/2026 (NEUTRALISATION PAR CLAUDE à l'amorçage : bouton dans le rangement, estimatif, points neutralisés par lots, champs [ ] en couleur, texte neutralisé rangé et comparé, original gardé caché dans la clause) ; 1.8 du 10/10/2026 (seconde passe, par le sens, aussi dans le TRAITEMENT SIMULTANÉ) ; 1.7 du 10/10/2026 (RACCOURCIS CLAVIER dans le rangement, désactivés par défaut : D doublon, V variante, Entrée valider la proposée, E écarter, flèches pour changer de point) ; 1.6 du 10/10/2026 (SECONDE PASSE DE COMPARAISON, PAR LE SENS : empreintes fabriquées par un seul petit modèle dans le navigateur, gardées par type d'acte sur le Drive, appliquées aux seuls points que la première passe n'a pas tranchés) ; 1.5 du 09/10/2026 (MOTEUR DE COMPARAISON, première passe mot à mot : verdict doublon / variante / nouvelle pour chaque point, AFFICHAGE CÔTE À CÔTE avec la clause de référence et ses différences, toutes les candidates proches quand le moteur hésite, doublon confirmé = une occurrence de plus sur la clause existante, verdict en couleur dans la file après première consultation) ; 1.4 du 09/10/2026 (article « Clôture et signature » ajouté aux deux plans, y compris aux clausiers déjà créés ; partie finale de l'acte versée ; mentions techniques de signature électronique et pieds de page répétés retirés avant découpe ; reconnaissance gratuite lancée d'office sur un scan, lecture par Claude proposée seulement pour les pages mal reconnues, avec le détail de ce qui manque) ; 1.3 du 09/10/2026 (DOUBLE PASSE SUR LES ACTES SCANNÉS, méthode reprise de TRENTE : pages sans texte détectées une à une, reconnaissance gratuite Tesseract dans le navigateur, puis lecture par Claude pour compléter, sur validation et après estimatif de coût ; texte reconnu signalé à relire dans la fiche) ; 1.2 du 09/10/2026 (MODE LECTURE SEULE : onglet « Consulter le clausier » en teinte de consultation, adresse directe ?consulter, bandeau avec retour au mode travail, aucun geste de modification ; sélection de clauses et envoi par mail d'un fichier Word aux champs entre crochets colorisés) ; 1.1 du 09/10/2026 (TRAITEMENT SIMULTANÉ : tous les points restants des dépôts d'un même type d'acte regroupés par rubrique proposée, tranchés en bloc ou un à un ; bascule avec l'ordre d'arrivée) ; 1.0 du 09/10/2026 (file « À traiter » : tableau de bord de la file, avancement de chaque dépôt, bouton « Mettre de côté » et liste des dépôts en attente ; compteurs d'usage dissociés du classement des clauses) ; 0.9 du 09/10/2026 (couverture du clausier par rubrique et par article, fiche éditable de la clause, journal de relecture avec rangement défait seul ou par lot, signal d'un acte non numéroté versé dans un clausier pauvre) ; 0.8 du 09/10/2026 (ciseau : coupe manuelle d'un point entre paragraphes ou puces, partie détachée lettrée, phrase d'annonce reprise, coupes conservées à la redécoupe, recollage) ; 0.7 du 09/10/2026 (ergonomie : fil d'Ariane collant, clause étoile choisie à la main et épinglée, compteurs indicatifs d'actes versés et de reprises en rédaction, comparaison côte à côte de deux variantes, recherche plein texte et filtres par contexte, sens, nature et texte visé, étapes du versement) ; 0.6 du 08/10/2026 (rangement des points d'un dépôt dans le clausier : proposition et deuxième candidate, contexte coché, validation point par point ou en bloc, journal des mouvements) ; 0.5 du 08/10/2026 (module Clausier, première tranche : plans de référence PSV AKZO et PUV R3S, numéros permanents, page Clausier) ; 0.4 du 08/10/2026 (titres des PDF non numérotés déduits de la mise en forme) ; 0.3 du 08/10/2026 (lecture Word avec numérotation automatique, contrôles de vraisemblance) ; 0.2 : moteur de découpe en service ; squelette du 07/10/2026
    Arbitrages (fiche clausier) : une application, deux moteurs ;
    on VERSE d'un côté (file d'attente sur le Drive), on TRAITE quand on veut ;
    le DÉCOUPAGE (neutralisation en champs, coupe en clauses, destination
@@ -1975,14 +1975,19 @@ async function ecarterStricts() {
 }
 const tolAVerifier = () => rg.points.filter(p => rg.choix[p.num] === undefined && !rg.dejaRanges.has(p.num) && rg.cmp?.[p.num]?.tolerance && !rg.cmp[p.num].tolVerifiee);
 // Vérification du sens des phrases modifiées (quasi identiques, sans mot sensible) : comparaison des empreintes des phrases touchées
+// Ressemblance de sens des phrases touchées, pour une liste de tolérances ; null si le modèle ne répond pas
+async function mesurerSensTolerance(tols, maj) {
+  const textes = []; tols.forEach(t => textes.push(t.phrasesA.join(" ").slice(0, 700) || "-", t.phrasesB.join(" ").slice(0, 700) || "-"));
+  try { const v = (await calculer(textes, maj, "Vérification du sens des différences")).map(depuisOctets); return tols.map((t, i) => cosQ(v[2 * i], v[2 * i + 1])); }
+  catch (e) { console.warn("Vérification du sens impossible :", e); return null; }
+}
 async function verifierTolerance() {
   const cands = tolAVerifier(); if (!cands.length || !sensDejaUtilise()) return;
-  const textes = []; cands.forEach(p => { const t = rg.cmp[p.num].tolerance; textes.push(t.phrasesA.join(" ").slice(0, 700) || "-", t.phrasesB.join(" ").slice(0, 700) || "-"); });
-  let vecs; try { vecs = (await calculer(textes, t => { rg.sensEtat = t; const z = $("rg-sens-etat"); if (z) z.textContent = t; }, "Vérification du sens des différences")).map(depuisOctets); }
-  catch (e) { console.warn("Vérification du sens impossible :", e); return; }
+  const sims = await mesurerSensTolerance(cands.map(p => rg.cmp[p.num].tolerance), t => { rg.sensEtat = t; const z = $("rg-sens-etat"); if (z) z.textContent = t; });
+  if (!sims) return;
   const aEcarter = [];
   cands.forEach((p, i) => {
-    const c = rg.cmp[p.num], sim = cosQ(vecs[2 * i], vecs[2 * i + 1]), ref = c.proches[0];
+    const c = rg.cmp[p.num], sim = sims[i], ref = c.proches[0];
     if (sim >= SENS_PHRASE) { c.tolVerifiee = true; aEcarter.push({ num: p.num, clause: ref.clause.id, motif: "tolerance" }); }
     else rg.cmp[p.num] = { verdict: "variante", proches: c.proches, hesite: false, sensDiff: { phrase: sim }, tolVerifiee: true };
   });
@@ -2086,7 +2091,7 @@ async function ouvrirSimultane(type) {
   zone.innerHTML = `<h3>Traitement simultané — ${echapper(libelleType(type))}</h3><p class="note-moteur" id="ts-etat">Lecture du clausier…</p>`;
   try {
     const r = await chargerType(type);
-    Object.assign(ts, { type, clausier: r.donnees, fichier: r.fichier, items: [], ouverts: new Set() });
+    Object.assign(ts, { type, clausier: r.donnees, fichier: r.fichier, items: [], ouverts: new Set(), officeFait: false });
     const rubriques = Object.values(ts.clausier.rubriques).map(x => ({ id: x.id, titre: x.titre, article: x.article,
       article_titre: ts.clausier.articles.find(a => a.num === x.article)?.titre || "", mots_cles: x.mots_cles }));
     for (const [n, d] of depots.entries()) {
@@ -2106,15 +2111,19 @@ async function ouvrirSimultane(type) {
     }
     const premier = groupesSimultane()[0]; if (premier) ts.ouverts.add(premier.cle);
     ts.sensEtat = null;
+    await ecarterStrictsTs();                              // 2.7 — identiques à 100 % : écartés d'office, sans rien montrer
+    if (sensDejaUtilise()) await verifierToleranceTs();    // quasi identiques : sens vérifié si le modèle est en réserve
     dessinerSimultane();
-    if (sensDejaUtilise() && aTrancherSensTs().length) lancerSensSimultane();   // modèle déjà en réserve : seconde passe d'office
+    const sensAttenduTs = aTrancherSensTs().length && Object.values(ts.clausier.rubriques).some(r => r.clauses.length);
+    if (sensAttenduTs && sensDejaUtilise()) lancerSensSimultane();   // modèle déjà en réserve : seconde passe d'office, puis classement d'office
+    else if (!sensAttenduTs) classerOfficeSimultane();               // rien à comparer par le sens : classement d'office tout de suite
   } catch (e) { $("ts-etat").textContent = "Traitement simultané impossible : " + e.message; }
 }
 function groupesSimultane() {
   const ordre = new Map(); let i = 0;
   for (const a of ts.clausier.articles) for (const id of a.rubriques) ordre.set(id, i++);
   const g = new Map();
-  for (const it of ts.items) { const k = it.candidats[0]?.id || ""; if (!g.has(k)) g.set(k, []); g.get(k).push(it); }
+  for (const it of ts.items) { if (it.ecarte) continue; const k = it.candidats[0]?.id || ""; if (!g.has(k)) g.set(k, []); g.get(k).push(it); }
   return [...g.entries()].map(([cle, items]) => ({ cle, items }))
     .sort((a, b) => (a.cle ? ordre.get(a.cle) ?? 1e9 : 2e9) - (b.cle ? ordre.get(b.cle) ?? 1e9 : 2e9));
 }
@@ -2125,9 +2134,10 @@ function dessinerSimultane() {
   const groupes = groupesSimultane(), restants = ts.items.filter(x => x.etat === undefined).length;
   const nbDep = new Set(ts.items.map(x => x.depot.id)).size;
   zone.innerHTML = `<div class="ts-tete"><div><h3>Traitement simultané — ${echapper(libelleType(ts.type))}</h3>
-      <p class="aide">${pl(ts.items.length, "point")} de ${pl(nbDep, "dépôt")}, regroupés en ${pl(groupes.length, "rubrique")} proposée${groupes.length > 1 ? "s" : ""} ; ${pl(restants, "point restant", "points restants")}. Le contexte de chaque clause est celui de son dépôt.</p></div>
+      <p class="aide">${pl(ts.items.filter(x => !x.ecarte).length, "point")} de ${pl(nbDep, "dépôt")}, regroupés en ${pl(groupes.length, "rubrique")} proposée${groupes.length > 1 ? "s" : ""} ; ${pl(restants, "point restant", "points restants")}. Le contexte de chaque clause est celui de son dépôt.</p></div>
       <button class="bouton secondaire" id="ts-fermer">Revenir à l'ordre d'arrivée</button></div>
     ${barreSensSimultane()}
+    ${noteOfficeSimultane()}
     ${ts.items.length ? "" : `<p class="vide">Aucun point restant pour ce type d'acte.</p>`}
     ${groupes.map(g => {
       const reste = g.items.filter(x => x.etat === undefined).length, r = rubs[g.cle];
@@ -2140,9 +2150,9 @@ function dessinerSimultane() {
           ${g.cle && reste > 1 ? `<div class="ts-actions-groupe"><button class="bouton secondaire" data-tout="${echapper(g.cle)}">Valider les ${reste} points dans cette rubrique</button></div>` : ""}
           ${g.items.map((it, j) => {
             const fait = it.etat !== undefined;
-            const verdict = it.etat === null ? '<span class="verdict">écarté</span>' : it.etat?.doublon ? `<span class="verdict">doublon de ${echapper(it.etat.doublon)}</span>` : it.etat ? `<span class="verdict ok">→ ${echapper(libRub(it.etat))}</span>` : it.candidats.length ? "" : '<span class="verdict">aucune rubrique évidente</span>';
+            const verdict = it.etat === null ? '<span class="verdict">écarté</span>' : it.etat?.doublon ? `<span class="verdict">doublon de ${echapper(it.etat.doublon)}</span>` : it.etat ? `<span class="verdict ok">→ ${echapper(libRub(it.etat))}${it.office ? " · d'office" : ""}</span>` : it.candidats.length ? "" : '<span class="verdict">aucune rubrique évidente</span>';
             return `<div class="ranger-point${fait ? " classee" : ""}" data-item="${ts.items.indexOf(it)}">
-              <div class="rp-haut"><span class="source">${echapper(it.depot.nom)}</span><span class="num">Point ${echapper(it.num)}</span>${verdict}
+              <div class="rp-haut"><span class="source">${echapper(it.depot.nom)}</span><span class="num">Point ${echapper(it.num)}</span>${verdict}${typeof it.etat === "string" ? '<button class="bouton discret corriger" title="La clause ressort du clausier ; le point redevient à trancher à la main">Corriger</button>' : ""}
                 ${it.contextes.length ? `<span class="ctx">${echapper(it.contextes.join(", "))}</span>` : ""}</div>
               ${fait || !it.cmp ? `<div class="rp-texte">${echapper(it.texte.slice(0, 600))}${it.texte.length > 600 ? "…" : ""}</div>` : blocComparaison(it.cmp, it.texte)}
               ${fait ? "" : `<div class="rp-prop">
@@ -2162,6 +2172,7 @@ function brancherSimultane() {
   const zone = $("simultane");
   $("ts-fermer").addEventListener("click", () => { zone.style.display = "none"; zone.innerHTML = ""; ts.items = []; chargerFile(); });
   $("ts-sens")?.addEventListener("click", lancerSensSimultane);
+  $("ts-office")?.addEventListener("click", classerOfficeSimultane);
   zone.querySelectorAll(".ts-groupe").forEach(d => d.addEventListener("toggle", () => { d.open ? ts.ouverts.add(d.dataset.groupe) : ts.ouverts.delete(d.dataset.groupe); }));
   zone.querySelectorAll("[data-tout]").forEach(b => b.addEventListener("click", () => { b.disabled = true; b.textContent = "Rangement…"; validerGroupe(b.dataset.tout); }));
   zone.querySelectorAll(".ranger-point[data-item]").forEach(bloc => {
@@ -2176,6 +2187,7 @@ function brancherSimultane() {
     if (it.cmp && it.etat === undefined) brancherComparaison(bloc, it.cmp, it.texte, { doublon: id => trancherSimultane([it], { doublon: id }, bloc),
       variante: async (rid, refId) => { await trancherSimultane([it], rid, bloc); if (it.etat === rid) indiquerVariante({ fichier: ts.fichier, depotId: it.depot.id, num: it.num, rid, refId }).then(f => { if (f) ts.clausier = f; }); } });
     bloc.querySelector(".ecarter")?.addEventListener("click", () => trancherSimultane([it], null, bloc));
+    bloc.querySelector(".corriger")?.addEventListener("click", () => corrigerPointSimultane(it));
   });
 }
 // 1.8 — seconde passe, par le sens, dans le traitement simultané : même moteur, dépôt par dépôt
@@ -2183,19 +2195,22 @@ function brancherSimultane() {
 const aTrancherSensTs = () => ts.items.filter(it => it.etat === undefined && it.cmp && it.cmp.verdict !== "doublon" && it.cmp.passe !== 2 && !it.cmp.sensVu);
 function barreSensSimultane() {
   if (ts.sensEtat) return `<div class="note-moteur" id="ts-sens-etat">${ts.sensEtat}</div>`;
-  const n = aTrancherSensTs().length;
-  if (!n || !Object.values(ts.clausier.rubriques).some(r => r.clauses.length)) return "";
-  return `<div class="note-moteur">${pl(n, "point reste", "points restent")} sans doublon évident mot à mot : la <b>seconde passe, par le sens</b>, cherche les clauses qui disent la même chose avec d'autres mots. Gratuite, dans votre navigateur${sensDejaUtilise() ? "" : " ; la première fois, le modèle (environ 120 Mo) se télécharge"}.
+  const n = aTrancherSensTs().length, t = tsAVerifier().length;
+  if ((!n && !t) || !Object.values(ts.clausier.rubriques).some(r => r.clauses.length)) return "";
+  const quasi = t ? `${pl(t, "point quasi identique", "points quasi identiques")} à une clause existante attend la vérification du sens avant d'être écarté. ` : "";
+  const reste = n ? `${pl(n, "point reste", "points restent")} sans doublon évident mot à mot : la <b>seconde passe, par le sens</b>, cherche les clauses qui disent la même chose avec d'autres mots. ` : "";
+  return `<div class="note-moteur">${quasi}${reste}Gratuite, dans votre navigateur${sensDejaUtilise() ? "" : " ; la première fois, le modèle (environ 120 Mo) se télécharge"}.
     <button class="bouton secondaire" id="ts-sens" style="margin-left:8px">Comparer le sens</button></div>`;
 }
 async function lancerSensSimultane() {
-  const items = aTrancherSensTs(); if (!items.length) return;
+  const items = aTrancherSensTs(); if (!items.length && !tsAVerifier().length) return;
   const maj = t => { ts.sensEtat = t; const z = $("ts-sens-etat"); if (z) z.textContent = t; else dessinerSimultane(); };
   maj("Seconde passe : préparation du modèle…");
   const rang = { nouvelle: 0, variante: 1, doublon: 2 }, bilan = { doublon: 0, variante: 0, nouvelle: 0 };
   try {
     const parDepot = new Map(); for (const it of items) { if (!parDepot.has(it.depot.id)) parDepot.set(it.depot.id, []); parDepot.get(it.depot.id).push(it); }
     let k = 0;
+    if (!parDepot.size) await chargerSens(maj);
     for (const [depotId, lot] of parDepot) {
       k++;
       const res = await passeSens({ code: ts.type, clausier: ts.clausier, depotId, points: lot.map(it => ({ num: it.num, texte: it.texte })),
@@ -2206,7 +2221,9 @@ async function lancerSensSimultane() {
     try { localStorage.setItem("moneta-sens", MODELE_SENS); } catch { }
     ts.sensEtat = `Seconde passe faite sur ${pl(items.length, "point")} : ${bilan.doublon} même sens, ${bilan.variante} même sujet, ${bilan.nouvelle} sans équivalent.`;
   } catch (e) { ts.sensEtat = `Seconde passe impossible : ${echapper(e.message)}. La première passe reste valable.`; }
+  try { await verifierToleranceTs(); } catch (e) { console.warn(e); }   // 2.7 — le modèle est en réserve : sens des quasi identiques
   dessinerSimultane();
+  classerOfficeSimultane();
 }
 // rubriqueId = null → écarter ; une seule écriture du clausier pour tout le lot
 async function trancherSimultane(items, rubriqueId, bloc) {
@@ -2223,6 +2240,70 @@ async function trancherSimultane(items, rubriqueId, bloc) {
     items.forEach(it => it.etat = rubriqueId);
   } catch (e) { montrerErreur((rubriqueId ? "Rangement" : "Écart") + " non enregistré : " + e.message); }
   dessinerSimultane();
+}
+/* ---------- TRAITEMENT SIMULTANÉ : MÊMES RÈGLES QUE LE RANGEMENT D'UN DÉPÔT (2.7) ----------
+   Identiques à 100 % : écartés d'office, sans rien montrer. Quasi identiques : écartés d'office si le sens est vérifié équivalent,
+   sinon variante gardée. Puis tout point restant qui a une rubrique proposée et n'est pas un doublon est rangé d'office, en une
+   seule écriture, SEULEMENT s'il vient d'un dépôt neutralisé. Les points d'un dépôt non neutralisé restent à ranger à la main.
+   « Corriger » ressort un point du clausier et le rend à trancher à la main. */
+const tsAVerifier = () => ts.items.filter(it => it.etat === undefined && it.cmp?.tolerance && !it.cmp.tolVerifiee);
+async function ecarterDoublonsTs(a) {   // a : [{ it, clause, motif }]
+  if (!a.length) return;
+  try {
+    ts.clausier = await modifierClausier(f => {
+      for (const x of a) (f.journal ||= []).push({ quand: new Date().toISOString(), quoi: "doublon", point: x.it.num, clause: x.clause, depot: x.it.depot.id, depot_nom: x.it.depot.nom, office: true, motif: x.motif });
+    }, ts.fichier);
+    for (const x of a) { x.it.etat = { doublon: x.clause }; x.it.ecarte = { clause: x.clause, motif: x.motif }; }
+  } catch (e) { montrerErreur("Doublons écartés d'office non enregistrés : " + e.message); }
+}
+async function ecarterStrictsTs() {
+  await ecarterDoublonsTs(ts.items.filter(it => it.etat === undefined && it.cmp?.strict).map(it => ({ it, clause: it.cmp.proches[0].clause.id, motif: "identique" })));
+}
+async function verifierToleranceTs() {
+  const cands = tsAVerifier(); if (!cands.length || !sensDejaUtilise()) return;
+  const sims = await mesurerSensTolerance(cands.map(it => it.cmp.tolerance), t => { ts.sensEtat = t; const z = $("ts-sens-etat"); if (z) z.textContent = t; });
+  if (!sims) return;
+  const aEcarter = [];
+  cands.forEach((it, i) => {
+    const c = it.cmp, ref = c.proches[0];
+    if (sims[i] >= SENS_PHRASE) { c.tolVerifiee = true; aEcarter.push({ it, clause: ref.clause.id, motif: "tolerance" }); }
+    else it.cmp = { verdict: "variante", proches: c.proches, hesite: false, sensDiff: { phrase: sims[i] }, tolVerifiee: true };
+  });
+  await ecarterDoublonsTs(aEcarter);
+}
+async function classerOfficeSimultane() {
+  if (ts.officeFait || !ts.items.length) return;
+  ts.officeFait = true;
+  const a = ts.items.filter(it => it.etat === undefined && !it.manuel && it.candidats[0] && it.cmp?.verdict !== "doublon" && it.depot.neutralisation);
+  if (!a.length) { dessinerSimultane(); return; }
+  const b = $("ts-office"); if (b) { b.disabled = true; b.textContent = `Classement d'office de ${a.length} points…`; }
+  try {
+    ts.clausier = await modifierClausier(f => { for (const it of a)
+      ajouterClause(f, { depot: it.depot, num: it.num, texte: it.texte, origine: it.origine, contextes: it.contextes, rubriqueId: it.candidats[0].id, office: true }); }, ts.fichier);
+    for (const it of a) { it.etat = it.candidats[0].id; it.office = true; }
+    dessinerSimultane();
+    // une variante probable rangée d'office dans la rubrique de sa clause proche reçoit son « pourquoi », comme à la main (en arrière-plan)
+    (async () => { for (const it of a) { const c = it.cmp, ref = c?.proches?.[0];
+      if (c?.verdict === "variante" && ref && ref.rubrique.id === it.candidats[0].id) {
+        const f = await indiquerVariante({ fichier: ts.fichier, depotId: it.depot.id, num: it.num, rid: it.candidats[0].id, refId: ref.clause.id }).catch(() => null);
+        if (f) ts.clausier = f; } } })();
+  } catch (e) { ts.officeFait = false; montrerErreur("Classement d'office impossible : " + e.message); dessinerSimultane(); }
+}
+async function corrigerPointSimultane(it) {
+  try {
+    ts.clausier = await modifierClausier(f => retirerClauses(f, it.depot.id, [it.num], it.depot.nom), ts.fichier);
+    it.etat = undefined; it.office = false; it.manuel = true; ts.ouverts.add(it.candidats[0]?.id || "");
+  } catch (e) { montrerErreur("Correction impossible : " + e.message); }
+  dessinerSimultane();
+}
+function noteOfficeSimultane() {
+  const ecartes = ts.items.filter(x => x.ecarte), office = ts.items.filter(x => x.office && typeof x.etat === "string");
+  const horsNeutre = ts.items.filter(x => x.etat === undefined && !x.depot.neutralisation && x.candidats[0] && x.cmp?.verdict !== "doublon").length;
+  const attente = !ts.officeFait && ts.items.some(x => x.etat === undefined);
+  return `${attente ? `<div class="note-moteur">Classement d'office en attente : il se lance tout seul une fois la comparaison complète (seconde passe de sens faite, ou sans objet). Les points restent affichés tels que le moteur les propose.
+      <button class="bouton secondaire" id="ts-office" style="margin-left:8px" title="Le classement d'office se lance tout seul dès que la comparaison est complète ; ce bouton permet de passer outre">Classer d'office sans attendre</button></div>` : ""}
+    ${ts.officeFait && (office.length || horsNeutre) ? `<div class="note-moteur">${office.length ? `<b>${pl(office.length, "point classé", "points classés")} d'office</b> dans la rubrique proposée par le moteur. Ne retouchez que les erreurs : <b>Corriger</b> ressort le point du clausier et le rend à trancher à la main. ` : ""}${horsNeutre ? `${pl(horsNeutre, "point d'un dépôt non neutralisé reste", "points de dépôts non neutralisés restent")} à ranger à la main : ${horsNeutre > 1 ? "leurs" : "ses"} vrais noms et prix n'entrent pas d'office au clausier.` : ""}</div>` : ""}
+    ${ecartes.length ? `<details class="ecartes"><summary>${pl(ecartes.length, "doublon écarté d'office", "doublons écartés d'office")}, non montrés : identiques, ou quasi identiques de même sens</summary><ul>${ecartes.map(x => `<li>${echapper(x.depot.nom)}, point ${echapper(x.num)} — ${x.ecarte.motif === "tolerance" ? "quasi identique, même sens, à" : "identique à"} ${echapper(x.ecarte.clause)}</li>`).join("")}</ul></details>` : ""}`;
 }
 function validerGroupe(cle) {
   const items = ts.items.filter(x => x.etat === undefined && x.candidats[0]?.id === cle && x.cmp?.verdict !== "doublon");
