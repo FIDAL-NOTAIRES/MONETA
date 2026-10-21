@@ -11,10 +11,16 @@
    [TAUX], [QUOTITÉ], pour que deux clauses qui ne diffèrent que par ces valeurs deviennent identiques ; les délais et taux
    FIXÉS PAR LA LOI restent tels quels. Chaque point peut porter une liste « garder » : les sortes d'éléments à laisser en clair
    dans CE point (rubriques qui protègent un champ). Sans liste, tout est neutralisé.
+   1.2 (21/10/2026, tranché par JFD) : trois manques comblés — (a) PROFESSION, COORDONNÉES (courriel, téléphone, références
+   bancaires) et RÉFÉRENCES propres au dossier (numéro de permis, de dossier, de police, de rapport) deviennent [PROFESSION],
+   [COORDONNÉES], [RÉFÉRENCE] ; (b) les SOMMES fixées par la loi (droit fixe, seuils, abattements) restent en clair comme les
+   délais et taux légaux ; (c) les DATES qui sont des seuils ou des dates d'entrée en vigueur fixés par la loi (« avant le
+   1er juillet 1997 », « avant 1949 ») restent en clair. La liste des rubriques qui protègent un champ devient une sécurité
+   de plus, et non plus la seule protection.
    Même clé et même modèle que la lecture des scans (voir _lecture.js).
    ===================================================================== */
 import { MODELE, tarif } from "./_lecture.js";
-export const VERSION_NEUTRALISATION = "1.1";
+export const VERSION_NEUTRALISATION = "1.2";
 // sorte d'élément à laisser en clair → champs concernés
 export const SORTES_EN_CLAIR = { "quotité": "les quotités", "durée": "les durées convenues", "taux": "les taux convenus", "date": "les dates", "montant": "les sommes d'argent et le prix" };
 const CONSIGNE = `Tu es le clerc d'un office notarial français. Tu prépares un CLAUSIER : chaque clause d'un acte réel doit devenir un MODÈLE réutilisable dans un autre dossier.
@@ -22,14 +28,16 @@ const CONSIGNE = `Tu es le clerc d'un office notarial français. Tu prépares un
 Pour chaque point reçu, rends le MÊME TEXTE, mot pour mot, en remplaçant SEULEMENT les éléments propres à ce dossier par un champ entre crochets, en majuscules :
 - personnes et sociétés parties à l'acte, selon leur rôle dans l'acte : [VENDEUR], [ACQUÉREUR], [PROMETTANT], [BÉNÉFICIAIRE], [DONATEUR], [DONATAIRE], [SOCIÉTÉ], [ASSOCIÉ] ; leurs représentants : [REPRÉSENTANT] ; si l'acte emploie déjà « le VENDEUR », « le PROMETTANT »… comme désignation générique, garde ces mots tels quels ;
 - autres personnes nommées : [NOTAIRE], [AGENCE], [ÉTABLISSEMENT PRÊTEUR], [TIERS] ;
-- sommes d'argent : [PRIX] pour le prix, [MONTANT] pour toute autre somme ;
-- dates précises : [DATE] ; adresses et lieux précis : [ADRESSE], [COMMUNE] ;
+- profession d'une personne : [PROFESSION] ; courriel, téléphone, références bancaires (IBAN, RIB, numéro de compte) : [COORDONNÉES] ;
+- sommes d'argent propres au dossier : [PRIX] pour le prix, [MONTANT] pour toute autre somme convenue ou propre à l'affaire ;
+- dates propres au dossier (date d'un acte, d'un permis, d'un diagnostic, de naissance, d'une échéance convenue) : [DATE] ; adresses et lieux précis : [ADRESSE], [COMMUNE] ;
 - durées et taux CONVENUS entre les parties (durée d'un prêt, d'un bail, d'une convention ; délai fixé par les parties ; taux d'intérêt convenu) : [DURÉE] pour une durée ou un délai, [TAUX] pour un taux ;
 - quotités et fractions de droits (« la moitié indivise », « les trois dixièmes en pleine propriété », « 50 % ») : [QUOTITÉ] ;
-- désignation cadastrale, lots, volumes, références de publication, numéros SIREN ou RCS : [CADASTRE], [LOT], [PUBLICATION], [SIREN].
+- désignation cadastrale, lots, volumes, références de publication, numéros SIREN ou RCS : [CADASTRE], [LOT], [PUBLICATION], [SIREN] ;
+- autres numéros propres au dossier (permis de construire, numéro de dossier, police d'assurance, rapport de diagnostic, immatriculation) : [RÉFÉRENCE].
 Quand une même partie revient plusieurs fois, garde le même champ. S'il y a deux personnes de même rôle, numérote : [ACQUÉREUR 1], [ACQUÉREUR 2].
 
-NE TOUCHE PAS : la rédaction, la ponctuation, les références de textes (articles de loi, codes, décrets), les délais et taux FIXÉS PAR LA LOI (par exemple un délai de rétractation, un taux d'intérêt légal : ils restent tels quels, avec leur chiffre), les termes juridiques, les titres. Seuls les délais, durées et taux CONVENUS entre les parties sont remplacés par [DURÉE] ou [TAUX] ; dans le doute sur l'origine d'un délai (légal ou convenu), laisse-le tel quel. Ne corrige pas les fautes.
+NE TOUCHE PAS : la rédaction, la ponctuation, les références de textes (articles de loi, codes, décrets, et leur date), les délais, taux et SOMMES FIXÉS PAR LA LOI (par exemple un délai de rétractation, un taux d'intérêt légal, le droit fixe d'enregistrement, un seuil ou un abattement fiscal : ils restent tels quels, avec leur chiffre), les DATES SEUILS fixées par la loi (par exemple « permis délivré avant le 1er juillet 1997 », « construit avant le 1er janvier 1949 »), les termes juridiques, les titres. Seuls les délais, durées et taux CONVENUS entre les parties sont remplacés par [DURÉE] ou [TAUX] ; dans le doute sur l'origine d'un délai, d'une somme ou d'une date (fixé par la loi ou propre au dossier), laisse-le tel quel. Ne corrige pas les fautes.
 Certains points portent, après leur numéro, la mention « [laisser en clair dans ce point : … ] » : dans CE point seulement, ne remplace PAS les éléments de ces sortes (ils font alors partie de la clause) ; neutralise tout le reste normalement. Si un point ne contient rien de propre au dossier, rends-le à l'identique.
 
 Réponds UNIQUEMENT par un objet JSON, sans texte autour : {"points":[{"num":"<numéro reçu>","texte":"<texte neutralisé>"}]}`;
