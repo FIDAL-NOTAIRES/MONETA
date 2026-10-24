@@ -17,10 +17,12 @@
    délais et taux légaux ; (c) les DATES qui sont des seuils ou des dates d'entrée en vigueur fixés par la loi (« avant le
    1er juillet 1997 », « avant 1949 ») restent en clair. La liste des rubriques qui protègent un champ devient une sécurité
    de plus, et non plus la seule protection.
+   1.3 (24/10/2026, JFD) : SURLIGNEUR — les champs déjà posés à la main entre crochets ([NOM DU VENDEUR], [DURÉE EN MOIS]…)
+   restent tels quels, et Claude reprend le même nom de champ pour toute autre mention de la même personne ou valeur.
    Même clé et même modèle que la lecture des scans (voir _lecture.js).
    ===================================================================== */
 import { MODELE, tarif } from "./_lecture.js";
-export const VERSION_NEUTRALISATION = "1.2";
+export const VERSION_NEUTRALISATION = "1.3";
 // sorte d'élément à laisser en clair → champs concernés
 export const SORTES_EN_CLAIR = { "quotité": "les quotités", "durée": "les durées convenues", "taux": "les taux convenus", "date": "les dates", "montant": "les sommes d'argent et le prix" };
 const CONSIGNE = `Tu es le clerc d'un office notarial français. Tu prépares un CLAUSIER : chaque clause d'un acte réel doit devenir un MODÈLE réutilisable dans un autre dossier.
@@ -35,6 +37,7 @@ Pour chaque point reçu, rends le MÊME TEXTE, mot pour mot, en remplaçant SEUL
 - quotités et fractions de droits (« la moitié indivise », « les trois dixièmes en pleine propriété », « 50 % ») : [QUOTITÉ] ;
 - désignation cadastrale, lots, volumes, références de publication, numéros SIREN ou RCS : [CADASTRE], [LOT], [PUBLICATION], [SIREN] ;
 - autres numéros propres au dossier (permis de construire, numéro de dossier, police d'assurance, rapport de diagnostic, immatriculation) : [RÉFÉRENCE].
+CHAMPS DÉJÀ POSÉS : le texte peut contenir des champs déjà mis entre crochets à la main par le notaire (par exemple [NOM DU VENDEUR], [DURÉE EN MOIS], [INDEMNITÉ D'IMMOBILISATION]). Garde-les EXACTEMENT tels quels, sans les renommer ni les traduire dans la liste ci-dessus ; et si la même personne ou la même valeur apparaît ailleurs sous une autre forme, emploie ce même champ.
 Quand une même partie revient plusieurs fois, garde le même champ. S'il y a deux personnes de même rôle, numérote : [ACQUÉREUR 1], [ACQUÉREUR 2].
 
 NE TOUCHE PAS : la rédaction, la ponctuation, les références de textes (articles de loi, codes, décrets, et leur date), les délais, taux et SOMMES FIXÉS PAR LA LOI (par exemple un délai de rétractation, un taux d'intérêt légal, le droit fixe d'enregistrement, un seuil ou un abattement fiscal : ils restent tels quels, avec leur chiffre), les DATES SEUILS fixées par la loi (par exemple « permis délivré avant le 1er juillet 1997 », « construit avant le 1er janvier 1949 »), les termes juridiques, les titres. Seuls les délais, durées et taux CONVENUS entre les parties sont remplacés par [DURÉE] ou [TAUX] ; dans le doute sur l'origine d'un délai, d'une somme ou d'une date (fixé par la loi ou propre au dossier), laisse-le tel quel. Ne corrige pas les fautes.
