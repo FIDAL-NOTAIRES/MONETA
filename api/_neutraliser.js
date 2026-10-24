@@ -19,10 +19,13 @@
    de plus, et non plus la seule protection.
    1.3 (24/10/2026, JFD) : SURLIGNEUR — les champs déjà posés à la main entre crochets ([NOM DU VENDEUR], [DURÉE EN MOIS]…)
    restent tels quels, et Claude reprend le même nom de champ pour toute autre mention de la même personne ou valeur.
+   1.4 (24/10/2026, JFD) : CATALOGUE DES CHAMPS — la page transmet la liste des champs du cabinet ; Claude emploie le nom exact d'un
+   champ du catalogue quand il convient, et sinon CRÉE un champ court et explicite ; la page relève ces champs nouveaux et les soumet
+   à la validation de l'administrateur avant de les verser au catalogue.
    Même clé et même modèle que la lecture des scans (voir _lecture.js).
    ===================================================================== */
 import { MODELE, tarif } from "./_lecture.js";
-export const VERSION_NEUTRALISATION = "1.3";
+export const VERSION_NEUTRALISATION = "1.4";
 // sorte d'élément à laisser en clair → champs concernés
 export const SORTES_EN_CLAIR = { "quotité": "les quotités", "durée": "les durées convenues", "taux": "les taux convenus", "date": "les dates", "montant": "les sommes d'argent et le prix" };
 const CONSIGNE = `Tu es le clerc d'un office notarial français. Tu prépares un CLAUSIER : chaque clause d'un acte réel doit devenir un MODÈLE réutilisable dans un autre dossier.
@@ -38,6 +41,7 @@ Pour chaque point reçu, rends le MÊME TEXTE, mot pour mot, en remplaçant SEUL
 - désignation cadastrale, lots, volumes, références de publication, numéros SIREN ou RCS : [CADASTRE], [LOT], [PUBLICATION], [SIREN] ;
 - autres numéros propres au dossier (permis de construire, numéro de dossier, police d'assurance, rapport de diagnostic, immatriculation) : [RÉFÉRENCE].
 CHAMPS DÉJÀ POSÉS : le texte peut contenir des champs déjà mis entre crochets à la main par le notaire (par exemple [NOM DU VENDEUR], [DURÉE EN MOIS], [INDEMNITÉ D'IMMOBILISATION]). Garde-les EXACTEMENT tels quels, sans les renommer ni les traduire dans la liste ci-dessus ; et si la même personne ou la même valeur apparaît ailleurs sous une autre forme, emploie ce même champ.
+CATALOGUE : si un catalogue des champs du cabinet est fourni, emploie le nom EXACT du champ du catalogue qui convient le mieux (par exemple [PRÉNOM ET NOM DU NOTAIRE QUI REÇOIT L'ACTE] plutôt que [NOTAIRE], [SECTION CADASTRALE] et [NUMÉRO DE PARCELLE] plutôt que [CADASTRE]) ; si aucun champ du catalogue ni de la liste ci-dessus ne convient, CRÉE un champ court et explicite en majuscules (par exemple [DATE DU DIAGNOSTIC]).
 Quand une même partie revient plusieurs fois, garde le même champ. S'il y a deux personnes de même rôle, numérote : [ACQUÉREUR 1], [ACQUÉREUR 2].
 
 NE TOUCHE PAS : la rédaction, la ponctuation, les références de textes (articles de loi, codes, décrets, et leur date), les délais, taux et SOMMES FIXÉS PAR LA LOI (par exemple un délai de rétractation, un taux d'intérêt légal, le droit fixe d'enregistrement, un seuil ou un abattement fiscal : ils restent tels quels, avec leur chiffre), les DATES SEUILS fixées par la loi (par exemple « permis délivré avant le 1er juillet 1997 », « construit avant le 1er janvier 1949 »), les termes juridiques, les titres. Seuls les délais, durées et taux CONVENUS entre les parties sont remplacés par [DURÉE] ou [TAUX] ; dans le doute sur l'origine d'un délai, d'une somme ou d'une date (fixé par la loi ou propre au dossier), laisse-le tel quel. Ne corrige pas les fautes.
@@ -45,18 +49,19 @@ Certains points portent, après leur numéro, la mention « [laisser en clair da
 
 Réponds UNIQUEMENT par un objet JSON, sans texte autour : {"points":[{"num":"<numéro reçu>","texte":"<texte neutralisé>"}]}`;
 
-export async function neutraliser({ points, nom, type }) {
+export async function neutraliser({ points, nom, type, champs = [] }) {
   const cle = process.env.ANTHROPIC_API_KEY;
   if (!cle) { const e = new Error("ANTHROPIC_API_KEY absente des variables d'environnement Vercel du projet MONETA"); e.code = "cle"; throw e; }
   const mention = p => { const g = [...new Set((Array.isArray(p.garder) ? p.garder : []).filter(x => SORTES_EN_CLAIR[x]))];
     return g.length ? ` [laisser en clair dans ce point : ${g.map(x => SORTES_EN_CLAIR[x]).join(", ")}]` : ""; };
   const corps = points.map(p => `— POINT ${p.num} —${mention(p)}\n${p.texte}`).join("\n\n");
   const longueur = points.reduce((n, p) => n + p.texte.length, 0);
+  const catalogue = champs.length ? `\n\nCATALOGUE DES CHAMPS DU CABINET (à employer en priorité, nom exact entre crochets, en majuscules) : ${champs.map(c => `[${String(c).toLocaleUpperCase("fr-FR")}]`).join(", ")}.` : "";
   const rep = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: { "content-type": "application/json", "x-api-key": cle, "anthropic-version": "2023-06-01" },
     body: JSON.stringify({ model: MODELE, max_tokens: Math.min(16000, Math.ceil(longueur / 2.2) + 1500), temperature: 0, system: CONSIGNE,
-      messages: [{ role: "user", content: `Acte : ${nom || "?"} (${type || "type non précisé"}). ${points.length} points à neutraliser.\n\n${corps}\n\nProduis le JSON.` }] }),
+      messages: [{ role: "user", content: `Acte : ${nom || "?"} (${type || "type non précisé"}). ${points.length} points à neutraliser.${catalogue}\n\n${corps}\n\nProduis le JSON.` }] }),
   });
   const brut = await rep.text();
   if (!rep.ok) { const e = new Error(`API ${rep.status} : ${brut.slice(0, 300)}`); e.code = "api"; throw e; }

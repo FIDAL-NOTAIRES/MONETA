@@ -89,10 +89,10 @@ export default async function handler(req, res) {
     catch (e) { return res.status(e.code === "cle" ? 503 : 502).json({ erreur: { code: e.code || "indication", message: "Indication en échec : " + (e.message || e) } }); }
   }
   if (action === "neutraliser") {
-    const { points, nom, type } = corps;
+    const { points, nom, type, champs } = corps;   // 3.10 — catalogue des champs du cabinet, transmis à Claude
     if (!Array.isArray(points) || !points.length || points.some(p => !p || typeof p.texte !== "string")) return res.status(400).json({ erreur: { code: "points", message: "Aucun point à neutraliser." } });
     if (points.reduce((n, p) => n + p.texte.length, 0) > 30000) return res.status(400).json({ erreur: { code: "lot", message: "Lot trop long (30 000 signes au plus)." } });
-    try { return res.status(200).json({ neutralisation: await neutraliser({ points, nom, type }) }); }
+    try { return res.status(200).json({ neutralisation: await neutraliser({ points, nom, type, champs: Array.isArray(champs) ? champs.filter(x => typeof x === "string").slice(0, 300) : [] }) }); }
     catch (e) { return res.status(e.code === "cle" ? 503 : 502).json({ erreur: { code: e.code || "neutralisation", message: "Neutralisation en échec : " + (e.message || e) } }); }
   }
   if (action === "lire") {
