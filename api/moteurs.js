@@ -17,6 +17,7 @@ import { indiquer, VERSION_INDICATION } from "./_indication.js";
 import { proposer, VERSION_PROPOSITION } from "./_proposer.js";
 import { repondre, VERSION_ASSISTANT } from "./_assistant.js";
 import { timingSafeEqual } from "node:crypto";
+import { verifierPersonne } from "./_acces.js";
 
 const ACTIONS = { decouper: "découpe", ranger: "rangement", lire: "lecture des pages scannées", neutraliser: "neutralisation", indication: "indication de variante", proposer: "propositions de l'IA", assistant: "assistant de classement", comparer: "comparaison", acces: "contrôle du code d'administrateur" };
 // 2.4 — code d'administrateur : posé dans la variable MONETA_CODE_ADMIN du projet Vercel, jamais dans la page.
@@ -31,7 +32,7 @@ const TAILLE_MAX = 3_000_000;   // caractères : un acte fait rarement plus de 3
 
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
-  if (req.method === "GET") return res.status(200).json({ moneta: { version: "2.5",
+  if (req.method === "GET") return res.status(200).json({ moneta: { version: "2.6", garde: "CARNET",
     moteurs: { decouper: { etat: "en service", version: VERSION_DECOUPE },
                ranger: { etat: "en service", version: VERSION_RANGEMENT },
                lire: { etat: tarif().disponible ? "en service" : "clé API absente", version: VERSION_LECTURE, ...tarif() },
@@ -46,6 +47,11 @@ export default async function handler(req, res) {
   if (typeof corps === "string") { try { corps = JSON.parse(corps); } catch { corps = null; } }
   const action = corps?.action;
   if (!ACTIONS[action]) return res.status(400).json({ erreur: { code: "action", message: `Action inconnue : ${action ?? "(aucune)"}. Attendu : ${Object.keys(ACTIONS).join(", ")}.` } });
+
+  // 2.6 (lot 5 de CARNET, 26/11/2026) — toute action demande une personne connectée ayant MONETA dans CARNET ;
+  // la lecture par Claude des pages scannées (payante) demande en plus la « version payante » (niveau 2), comme dans la page.
+  const qui = await verifierPersonne(req, "moneta", action === "lire" ? 2 : 1);
+  if (!qui.ok) { if (qui.expire) res.setHeader("X-Acces", "carnet"); return res.status(qui.code).json({ erreur: { code: "acces", message: qui.message } }); }
 
   if (action === "acces") {
     if (!process.env.MONETA_CODE_ADMIN) return res.status(503).json({ erreur: { code: "code-absent", message: "Le code d'administrateur n'est pas encore posé sur le serveur (variable MONETA_CODE_ADMIN du projet Vercel)." } });
